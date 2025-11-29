@@ -1,0 +1,118 @@
+# START HERE — Bob System Protocol (Refreshed)
+
+This file is the minimal onboarding and operating reference for the Bob multi‑persona system. Keep it short and actionable.
+
+## Quick Start (When you type `*chat`)
+1. Read the tail (end) of `agents/CHAT.md` (most recent entries are at the bottom). Chat is append‑only — ALWAYS append new messages to the end.
+2. Identify the persona to respond next.
+3. Load the persona from `agents/[persona].docs/*_AGENT.md`.
+4. Execute one focused action as that persona.
+5. Post a short chat entry (1–3 lines) referencing any long artifact in `agents/[persona].docs/`.
+
+## Available Personas (file → prefix)
+- Bob — agents/bob.docs/Bob_PE_AGENT.md — `*prompt` / `*reprompt` / `*learn`
+- Morpheus — agents/morpheus.docs/Morpheus_SE_AGENT.md — `*lead`
+- Neo — agents/neo.docs/Neo_SWE_AGENT.md — `*swe`
+- Trin — agents/trin.docs/Trin_QA_AGENT.md — `*qa`
+- Oracle — agents/oracle.docs/Oracle_INFO_AGENT.md — `*ora`
+- Mouse — agents/mouse.docs/Mouse_SM_AGENT.md — `*sm`
+- Cypher — agents/cypher.docs/Cypher_PM_AGENT.md — `*pm`
+
+## Core Rules (enforced)
+- Chat entries must be short conversational updates only (1–3 lines). Longer content goes in persona docs and is referenced from chat.
+- All chat messages are appended to the end of `agents/CHAT.md`. Do not edit or reorder past entries.
+- Before making major decisions, consult Oracle: `@Oracle *ora ask`.
+- Each persona must persist state in their `.docs/` folder (see State Files).
+
+## State Files (per persona)
+- `context.md` — cumulative findings/decisions
+- `current_task.md` — active work and progress
+- `next_steps.md` — resume plan for next activation
+
+ENTRY:
+- Read last 10–20 chat lines and load persona state files.
+
+WORK:
+- Perform one focused action.
+- If you produce a long artifact (report, PRD, test log), save it under `agents/[persona].docs/` and post a 1‑line chat summary linking it.
+
+EXIT (MANDATORY before switching persona):
+- Update `context.md`, `current_task.md`, and `next_steps.md`.
+- Append final short summary to `agents/CHAT.md`.
+
+## Brevity & Artifact Policy
+- Chat = coordination and signaling only.
+- Artifacts (PRDs, reports, long status) = `agents/[persona].docs/*.md`.
+- Examples:
+  - Good chat line:
+    [2025-11-28 09:00:00] [Cypher] *pm status PRD draft ready — agents/cypher.docs/PRD.md
+  - Bad (long) chat: move to docs and reprompt.
+
+Use `*reprompt` to request moving long chat content into docs:
+- Example: `@Neo *swe impl — *reprompt: move full log to agents/neo.docs/IMPLEMENTATION_LOG.md and post a short summary here.`
+
+## Loop Detection & Escalation
+- If the same request repeats 3+ times without progress:
+  - Append a loop note to chat.
+  - Escalate: `@Morpheus *lead decide` and `@Bob *prompt iterate`.
+  - Log details in the relevant persona docs.
+
+## Example Minimal Session
+User: *chat
+
+[Read last lines of agents/CHAT.md]
+[Switch to Morpheus]
+
+[2025-11-28 10:30:00] [Morpheus] *lead plan Investigated APDU padding; details: agents/morpheus.docs/APDU_INVESTIGATION.md. @Neo please fix.
+
+[Switch to Neo]
+
+[2025-11-28 10:35:00] [Neo] *swe impl Fixed padding in utils.py; tests added. Implementation notes: agents/neo.docs/IMPLEMENTATION_NOTES.md. @Trin to verify.
+
+## Running tests (Windows)
+Always activate the venv in the workspace before running tests:
+
+```powershell
+# In workspace root
+. .\.venv\Scripts\Activate.ps1
+.venv\Scripts\python.exe -m pytest -v
+```
+
+## Documentation Quick Reference
+
+**Primary References:**
+- **Type `*help`** - Complete command reference with examples
+- **Quick Start:** This file (`START_HERE.md`)
+- **Full Protocol:** `agents/bob.docs/BOB_SYSTEM_PROTOCOL.md`
+- **Complete Help:** `agents/bob.docs/HELP.md`
+
+**MCP Tools:**
+- **Overview:** `agents/MCP_INTEGRATION_SUMMARY.md`
+- **Tool Docs:** `agents/tools/` (centralized documentation)
+- **Protocol:** `agents/tools/mcp_protocol.md`
+
+**File Structure:**
+```
+agents/
+├── tools/                    # MCP tool documentation
+│   ├── README.md            # Tools overview
+│   ├── mcp_protocol.md      # Integration protocol
+│   └── *_mcp.md             # Individual tool docs
+│
+├── bob.docs/                # Bob (Prompt Engineering)
+├── cypher.docs/             # Cypher (Product Manager)
+├── morpheus.docs/           # Morpheus (Tech Lead)
+├── neo.docs/                # Neo (Software Engineer)
+├── oracle.docs/             # Oracle (Knowledge Officer)
+├── trin.docs/               # Trin (QA)
+├── mouse.docs/              # Mouse (Scrum Master)
+│
+├── CHAT.md                  # Team communication
+└── MCP_INTEGRATION_SUMMARY.md
+```
+
+**Each persona.docs/ contains:**
+- `*_AGENT.md` - Persona definition
+- `context.md` - Working memory
+- `current_task.md` - Active work
+- `next_steps.md` - Resume plan

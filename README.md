@@ -1,384 +1,156 @@
-# BobProtocol
+# BobProtocol: Persona-as-a-Service
 
-> A multi-persona AI development system that orchestrates specialized agents for collaborative software development.
+> A development system that orchestrates a team of specialized AI agents, exposed as a suite of powerful MCP services.
 
 ## What is BobProtocol?
 
-BobProtocol is an innovative system where a single AI dynamically switches between **7 specialized personas**, each an expert in their domain. Instead of managing multiple separate agents, you interact with one intelligent system that knows when to be a Product Manager, Software Engineer, QA Tester, or any other role your project needs.
+BobProtocol has evolved into a **Persona-as-a-Service (PaaS)** architecture. Instead of a single AI agent switching roles, each of the 7 specialized personas is now a dedicated **MCP Service** with a clear, command-driven API.
 
-Think of it as having an entire development team available through simple commands.
+This makes the system more robust, predictable, and automatable. You no longer have conversations to coax a persona into action; you directly command a specialized service to perform a task.
 
-## The Team
+## The Service Team
 
-| Persona | Role | Expertise | Command Prefix |
-|---------|------|-----------|----------------|
-| 👔 **Bob** | Prompt Engineer | Agent creation, team process | `*prompt`, `*reprompt`, `*learn` |
-| 📋 **Cypher** | Product Manager | Requirements, roadmap, PRDs | `*pm` |
-| 🧠 **Morpheus** | Tech Lead | Architecture, design decisions | `*lead` |
-| 💻 **Neo** | Software Engineer | Implementation, debugging | `*swe` |
-| 📚 **Oracle** | Knowledge Officer | Documentation, knowledge base | `*ora` |
-| 🛡️ **Trin** | QA Engineer | Testing, quality assurance | `*qa` |
-| 🐭 **Mouse** | Scrum Master | Sprint coordination, metrics | `*sm` |
+| Persona | Role | Service Name | Purpose |
+|---------|------|--------------|---------|
+| 👔 **Bob** | Prompt Engineer | `mcp__bob__*` | Agent creation and system metaprogramming |
+| 📋 **Cypher** | Product Manager | `mcp__cypher__*` | Manages requirements, user stories, and PRDs |
+| 🧠 **Morpheus** | Tech Lead | `mcp__morpheus__*` | Provides architecture, planning, and design decisions |
+| 💻 **Neo** | Software Engineer | `mcp__neo__*` | Handles implementation, debugging, and testing |
+| 📚 **Oracle** | Knowledge Officer | `mcp__oracle__*` | Manages the documentation and knowledge base |
+| 🛡️ **Trin** | QA Engineer | `mcp__trin__*` | Ensures quality and verifies features |
+| 🐭 **Mouse** | Scrum Master | `mcp__mouse__*` | Coordinates sprints, tasks, and metrics |
 
-## Quick Start
+## Core Concept
 
-### 1. Get Help
-```bash
-*help
-```
-Shows complete command reference with examples for all personas.
+The old `*chat` workflow is now deprecated. To interact with the system, you invoke a persona's commands directly using the MCP tool pattern.
 
-### 2. Start a Conversation
-```bash
-*chat
-```
-The system reads the conversation context and responds as the appropriate persona.
+**The command structure is:**
+`mcp__<persona_name>__<command> [parameters...]`
 
-### 3. Direct Commands
-```bash
-*swe impl Add password validation
-*qa test all
-*ora ask What's our authentication pattern?
-```
-Use commands directly to activate specific personas.
+For example, to ask the Oracle a question, you would use:
+`mcp__oracle__ask question="What is the established pattern for TUI development?"`
 
-## How It Works
+### Shorthand Guide
+For easier use, a set of command shorthands has been created (e.g., `morph plan` instead of `mcp__morpheus__plan`).
 
-### Chat-Driven Development
-```
-User: @Morpheus *lead plan Add user authentication
+**Please see the [SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md) for a full list of aliases.**
 
-[Morpheus analyzes and creates plan]
-Morpheus: Breaking down into tasks:
-  1. Password hashing (bcrypt)
-  2. Session management (JWT)
-  3. Login endpoint
-@Neo please implement, @Trin verify when done
+## Getting Started
 
-User: *chat
-
-[Neo activates]
-Neo: Implementing authentication service...
-[Codes the solution]
-Done! @Trin ready for testing
-
-User: *chat
-
-[Trin activates]
-Trin: Running test suite... ✅ All tests passing
-```
-
-### Cross-Persona Collaboration
-```
-@Oracle *ora ask Have we decided on caching strategy?
-→ Oracle searches knowledge base, provides answer
-
-@Morpheus *lead refactor authentication
-→ Morpheus analyzes code, suggests refactoring
-
-@Neo *swe impl Apply refactoring
-→ Neo implements changes
-
-@Trin *qa test Verify no regressions
-→ Trin runs full test suite
-```
+The best place to start is the new **[USER_GUIDE.md](USER_GUIDE.md)**. It provides a comprehensive overview of the new architecture, the available services, and a step-by-step workflow example.
 
 ## Key Features
 
-### 🎯 Specialized Expertise
-Each persona is a domain expert with specific tools and knowledge:
-- **Morpheus** knows architecture patterns and SOLID principles
-- **Neo** specializes in implementation and debugging
-- **Trin** ensures quality and prevents regressions
-- **Oracle** maintains institutional knowledge
+### 🎯 Persona-as-a-Service
+Each persona is a dedicated tool with a specific API. This makes their behavior predictable and allows you to compose them into powerful, automated workflows.
 
-### 🔄 Persistent Memory
-Every persona maintains state files:
-- `context.md` - Working memory, decisions, findings
-- `current_task.md` - Active work and progress
-- `next_steps.md` - Resume plan for next activation
+### 📚 Centralized Knowledge
+The **Oracle** service acts as the team's long-term memory. It manages a searchable knowledge base of architectural decisions, lessons learned, and project documentation.
 
-**No context loss between switches!**
+### 🤖 Self-Improving System
+The **Bob** service can modify the prompts and protocols of the other services, allowing the system to learn and improve over time.
 
-### 🛠️ MCP Tools Integration
-Optional Model Control Protocol tools enhance capabilities:
-- **Filesystem MCP** - Advanced file operations
-- **Testing MCP** - Coverage analysis, mutation testing
-- **Code Analysis MCP** - Automated smell detection
-- **Search MCP** - Semantic documentation search
-- **Debug MCP** - Advanced debugging and profiling
-- And more...
-
-All tools have automatic fallback to standard operations.
-
-### 📚 Knowledge Management
-Oracle maintains a searchable knowledge base:
-- `DECISIONS.md` - Architectural decisions
-- `LESSONS.md` - Best practices learned
-- `ARCH.md` - System architecture
-- `OBJECTIVES.md` - Goals and risks
-
-### 🚫 Anti-Loop Protection
-Built-in safeguards prevent infinite retry loops:
-1. First failure → Stop and consult Oracle
-2. Review what's been tried
-3. One retry with new approach
-4. Second failure → Log and escalate
+### 🛠️ Integrated Workflow
+The services are designed to work together, creating a seamless development process:
+- **Cypher** defines *what* to build.
+- **Morpheus** designs *how* to build it.
+- **Neo** builds it.
+- **Trin** verifies that it's built correctly.
+- **Mouse** tracks the progress of the build.
+- **Oracle** remembers everything.
+- **Bob** improves the builders.
 
 ## File Structure
 
 ```
 BobProtocol/
 ├── README.md                    # You are here
-├── START_HERE.md               # Quick start guide
+├── USER_GUIDE.md                # The primary guide for the new PaaS architecture
 │
 ├── agents/
-│   ├── tools/                  # MCP tool documentation
-│   │   ├── README.md
-│   │   └── *_mcp.md           # Individual tool docs
+│   ├── tools/                  # MCP service definitions
+│   │   ├── morpheus_mcp.md    # Morpheus service commands
+│   │   ├── neo_mcp.md         # Neo service commands
+│   │   └── ... (and so on for each persona)
 │   │
-│   ├── bob.docs/              # Bob (Prompt Engineering)
-│   │   ├── Bob_PE_AGENT.md
-│   │   ├── HELP.md            # Complete reference (use *help)
-│   │   ├── BOB_SYSTEM_PROTOCOL.md
-│   │   └── context.md, current_task.md, next_steps.md
-│   │
-│   ├── [persona].docs/        # Other personas
-│   │
-│   ├── CHAT.md                # Team communication log
-│   ├── DOCUMENTATION_INDEX.md # Documentation map
-│   └── MCP_INTEGRATION_SUMMARY.md
+│   └── [persona].docs/        # Each persona's internal state files
+│       ├── context.md
+│       ├── current_task.md
+│       └── next_steps.md
 │
-└── .claude/
-    └── mcp.json               # MCP configuration (optional)
+└── .mcp.json                    # MCP service registry
 ```
 
-## Real-World Examples
+## Testing the System
 
-### Building a Feature
+This project includes a sandboxed environment for safely testing and experimenting with the Persona-as-a-Service system. You can create an isolated copy of the configuration, run tests, and then clean it up with simple scripts.
+
+For detailed instructions, please see the **[TESTING_GUIDE.md](TESTING_GUIDE.md)**.
+
+## Example Workflow: Building a Feature
+
+### 1. Define the Feature
+Use the **Cypher** service to translate a request into a formal user story.
 ```bash
-# Product planning
-*pm doc PRD
-[Cypher writes Product Requirements Document]
-
-# Technical planning
-*lead plan User registration system
-[Morpheus breaks down into tasks]
-
-# Implementation
-*swe impl Registration endpoint
-[Neo codes the feature]
-
-# Testing
-*qa test registration
-[Trin verifies all works]
-
-# Documentation
-*ora record decision Email validation required server-side
-[Oracle documents the decision]
+mcp__cypher__define_feature request="Users need a button that shows the tag's UID."
 ```
 
-### Debugging a Problem
+### 2. Create an Implementation Plan
+Ask the **Morpheus** service to create a technical plan.
 ```bash
-# Check history
-*ora ask Have we seen timeout errors before?
-[Oracle searches past solutions]
-
-# Fix implementation
-*swe fix Login timeout
-[Neo debugs and fixes]
-
-# Verify fix
-*qa test Login flow
-[Trin validates]
-
-# Record learning
-*ora record lesson Always set connection timeout to 30s
-[Oracle saves for future reference]
+mcp__morpheus__plan story="US-124: As a user, I can press a button to view the tag's UID."
 ```
 
-### Sprint Planning
+### 3. Implement the Feature
+Delegate the implementation work to the **Neo** service.
 ```bash
-# Current status
-*sm status
-[Mouse shows sprint progress]
-
-# Prioritize work
-*pm prioritize backlog
-[Cypher ranks by business value]
-
-# Technical breakdown
-*lead plan Top priority feature
-[Morpheus creates technical tasks]
-
-# Assign work
-*sm assign tasks
-[Mouse coordinates sprint]
+mcp__neo__implement task="Implement a 'Show UID' button on the main TUI screen."
 ```
 
-## Core Principles
-
-### 🏆 Quality First
-**"We don't ship shit."** - Uncle Bob
-- Test before commit
-- No regressions allowed
-- Working, testable, maintainable code
-
-### 🔍 Oracle First
-Before major decisions, consult Oracle:
+### 4. Verify the Feature
+Use the **Trin** service to verify that the implementation meets the acceptance criteria.
 ```bash
-*ora ask What's our pattern for [problem]?
-*ora ask Have we solved this before?
+mcp__trin__verify feature="US-124: Show UID Button"
 ```
 
-### 💾 State Management
-All personas must save state before switching:
-- Entry: Load context, current task, next steps
-- Work: Execute and update CHAT.md
-- Exit: Save all state files (MANDATORY)
+## Service Command Cheat Sheet
 
-### 🔄 Short Iterations
-- Keep CHAT.md entries brief (1-3 lines)
-- Detailed content goes in persona.docs/
-- Oracle checkpoints every 3-5 steps
+This is a high-level overview. For detailed parameters, see the documentation for each service in `agents/tools/`.
 
-## Getting Started
+- **`mcp__bob__*`**
+  - `reprompt`: Updates a service's prompt.
+  - `learn`: Establishes a new global standard.
 
-1. **Read This File** ✅ You're doing it!
-2. **Quick Start**: [START_HERE.md](START_HERE.md)
-3. **Get Help**: Type `*help` or read [HELP.md](agents/bob.docs/HELP.md)
-4. **Full Protocol**: [BOB_SYSTEM_PROTOCOL.md](agents/bob.docs/BOB_SYSTEM_PROTOCOL.md)
-5. **MCP Tools**: [tools/README.md](agents/tools/README.md)
+- **`mcp__cypher__*`**
+  - `define_feature`: Creates user stories from a request.
+  - `prioritize`: Prioritizes the backlog.
 
-## Installation
+- **`mcp__morpheus__*`**
+  - `plan`: Creates a technical plan for a feature.
+  - `decide`: Makes an architectural decision.
+  - `review`: Reviews code or documents.
 
-BobProtocol is a prompt-based system that works with Claude Code. No installation required!
+- **`mcp__neo__*`**
+  - `init_python_project`: Initializes a complete Python project with modern tooling (pyproject.toml, ruff, pytest, mypy, VS Code config)
+  - `implement`: Implements a feature or task.
+  - `fix`: Fixes a bug.
+  - `test`: Writes unit tests.
 
-**Optional: MCP Tools Enhancement**
-```bash
-# Check available MCPs
-claude mcp list
+- **`mcp__oracle__*`**
+  - `ask`: Answers questions from the knowledge base.
+  - `record`: Records a decision or lesson.
+  - `distill`: Summarizes a document.
 
-# Install recommended tools
-claude mcp add filesystem
-claude mcp add git
-claude mcp add testing
+- **`mcp__trin__*`**
+  - `verify`: Verifies a feature or fix.
+  - `report`: Reports on quality and test coverage.
+  - `repro`: Reproduces a bug.
 
-# Configuration saved to .claude/mcp.json
-```
-
-## Documentation
-
-| Document | Purpose |
-|----------|---------|
-| [README.md](README.md) | Introduction (this file) |
-| [START_HERE.md](START_HERE.md) | Minimal onboarding |
-| [HELP.md](agents/bob.docs/HELP.md) | Complete reference (`*help`) |
-| [BOB_SYSTEM_PROTOCOL.md](agents/bob.docs/BOB_SYSTEM_PROTOCOL.md) | Full protocol |
-| [DOCUMENTATION_INDEX.md](agents/DOCUMENTATION_INDEX.md) | Documentation map |
-| [MCP_INTEGRATION_SUMMARY.md](agents/MCP_INTEGRATION_SUMMARY.md) | MCP overview |
-| [tools/](agents/tools/) | MCP tool documentation |
-
-## FAQ
-
-**Q: Do I need to install anything?**
-A: No! BobProtocol is a prompt system. MCP tools are optional enhancements.
-
-**Q: How do I know which persona to use?**
-A: Use `*chat` and the system decides, or use direct commands like `*swe impl` or `*qa test`.
-
-**Q: What if I forget a command?**
-A: Type `*help` for complete reference with examples.
-
-**Q: How does the system remember context?**
-A: Each persona maintains state files (context.md, current_task.md, next_steps.md).
-
-**Q: Can I add new personas?**
-A: Yes! Use `*prompt Create a [role] agent` and Bob will create one using templates.
-
-**Q: What are MCP tools?**
-A: Optional enhancements for advanced features. The system works perfectly without them.
-
-## Command Cheat Sheet
-
-```bash
-# Help & System
-*help                          # Show complete reference
-*chat                          # Activate multi-persona mode
-
-# Bob (Prompt Engineering)
-*prompt <desc>                 # Create new agent
-*reprompt <instructions>       # Update agents
-*learn <lesson>                # Broadcast lesson
-
-# Cypher (Product Manager)
-*pm doc <type>                 # Create PRD/docs
-*pm prioritize                 # Prioritize features
-
-# Morpheus (Tech Lead)
-*lead plan <epic>              # Break down work
-*lead refactor <target>        # Refactoring strategy
-*lead decide <choice>          # Make decision
-
-# Neo (Software Engineer)
-*swe impl <task>               # Implement feature
-*swe fix <issue>               # Fix bug
-*swe test <scope>              # Run tests
-
-# Oracle (Knowledge Officer)
-*ora ask <question>            # Query knowledge
-*ora record <type> <content>   # Log decision/lesson
-*ora groom                     # Organize docs
-
-# Trin (QA)
-*qa test <scope>               # Run tests
-*qa verify <feature>           # Create test plan
-*qa report                     # Health summary
-
-# Mouse (Scrum Master)
-*sm status                     # Sprint status
-*sm velocity                   # Team metrics
-*sm blocked                    # List blockers
-```
-
-## Contributing
-
-To add new personas or enhance existing ones:
-1. Use templates in `agents/_template_*.md`
-2. Follow state management protocol
-3. Document MCP tools if applicable
-4. Update HELP.md with new commands
-
-## Philosophy
-
-BobProtocol embodies these principles:
-
-**🎭 Separation of Concerns**
-Each persona has distinct responsibilities. No overlap.
-
-**🧠 Institutional Memory**
-Oracle maintains knowledge. Nothing is forgotten.
-
-**⚡ Short Iterations**
-Quick cycles with Oracle checkpoints. No deep dives without checking.
-
-**✅ Quality Gates**
-Trin ensures no regressions. If tests fail, it's not done.
-
-**📖 Documentation First**
-Oracle records decisions. Future you will thank current you.
-
-## License
-
-This is a prompt engineering system. Use it, modify it, share it!
-
-## Support
-
-- Type `*help` for command reference
-- Read `START_HERE.md` for quick start
-- Consult `HELP.md` for complete guide
-- Ask Oracle: `*ora ask <your question>`
+- **`mcp__mouse__*`**
+  - `plan_sprint`: Creates a sprint plan.
+  - `status`: Reports on sprint progress.
+  - `update_task`: Updates a task's status.
 
 ---
 
-**Welcome to BobProtocol.** Let's build something great together! 🚀
+**Welcome to the new BobProtocol.** Let's build something great together! 🚀

@@ -6,9 +6,10 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "${workspaceFolder}"
+        "."
       ],
-      "env": {}
+      "env": {},
+      "description": "File operations confined to project root directory only."
     },
     "github": {
       "type": "stdio",
@@ -45,9 +46,73 @@
       "args": [
         "-y",
         "@modelcontextprotocol/server-sqlite",
-        "${workspaceFolder}/bob_knowledge.db"
+        "./bob_knowledge.db"
       ],
-      "env": {}
+      "env": {},
+      "description": "Knowledge database stored in project root directory."
+    },
+    "morpheus": {
+      "type": "stdio",
+      "command": "echo",
+      "args": [
+        "Morpheus Persona Service - Not an executable."
+      ],
+      "env": {},
+      "description": "Persona Service for architectural guidance and planning."
+    },
+    "neo": {
+      "type": "stdio",
+      "command": "echo",
+      "args": [
+        "Neo Persona Service - Not an executable."
+      ],
+      "env": {},
+      "description": "Persona Service for software implementation and fixing bugs."
+    },
+    "trin": {
+      "type": "stdio",
+      "command": "echo",
+      "args": [
+        "Trin Persona Service - Not an executable."
+      ],
+      "env": {},
+      "description": "Persona Service for quality assurance and verification."
+    },
+    "oracle": {
+      "type": "stdio",
+      "command": "echo",
+      "args": [
+        "Oracle Persona Service - Not an executable."
+      ],
+      "env": {},
+      "description": "Persona Service for knowledge management and documentation."
+    },
+    "cypher": {
+      "type": "stdio",
+      "command": "echo",
+      "args": [
+        "Cypher Persona Service - Not an executable."
+      ],
+      "env": {},
+      "description": "Persona Service for product management and requirements."
+    },
+    "mouse": {
+      "type": "stdio",
+      "command": "echo",
+      "args": [
+        "Mouse Persona Service - Not an executable."
+      ],
+      "env": {},
+      "description": "Persona Service for sprint and task management."
+    },
+    "bob": {
+      "type": "stdio",
+      "command": "echo",
+      "args": [
+        "Bob Persona Service - Not an executable."
+      ],
+      "env": {},
+      "description": "Persona Service for managing the agent system itself."
     }
   }
 }

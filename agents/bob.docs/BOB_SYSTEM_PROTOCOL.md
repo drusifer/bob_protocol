@@ -13,6 +13,8 @@ Each persona is defined in `bob.docs/*_AGENT.md`:
 - **Morpheus** (`Morpheus_SE_AGENT.md`) - Tech Lead / Senior Engineer
 - **Trin** (`Trin_QA_AGENT.md`) - QA / Guardian
 - **Oracle** (`Oracle_INFO_AGENT.md`) - Knowledge Officer / Documentation Architect
+- **Mouse** (`Mouse_SM_AGENT.md`) - Scrum Master / Project Coordinator
+- **Cypher** (`Cypher_PM_AGENT.md`) - Product Manager
 
 ## The `*chat` Command Workflow
 
@@ -142,7 +144,7 @@ After posting, Adopt the bob persona (see step 3) and identify the next persona 
 
 ## MCP Integration Protocol
 
-**MCP Configuration Location:** All MCP server configurations must be saved in the workspace at `.claude/mcp.json` for team consistency and version control.
+**MCP Configuration Location:** All MCP server configurations are stored in `.mcp.json` in the project root directory for team consistency and version control.
 
 ### MCP Priority System
 
@@ -172,13 +174,13 @@ Each persona has access to different MCP tools based on their role:
 If a persona needs an MCP that isn't installed:
 ```
 @User I need '[mcp-name]' MCP for [use-case].
-Configuration should be saved in workspace .claude/mcp.json
+Configuration should be saved in project root .mcp.json
 Should I proceed with fallback or install the MCP?
 ```
 
 ### MCP Configuration Management
 
-- All MCP configs stored in `.claude/mcp.json` (workspace-level)
+- All MCP configs stored in `.mcp.json` in the project root directory
 - Versioned with git for team consistency
 - Each persona documents MCP usage in their state files
 - Oracle maintains MCP usage documentation
@@ -192,6 +194,11 @@ Should I proceed with fallback or install the MCP?
 5. **Cross-Persona Commands**: Use `@Persona *command` for clear communication
 6. **Loop Detection**: use *chat calls to break out of failure loops by identifying repeated attempts at the same (already attempted and failed) solution
 7. **MCP First**: All personas should check for MCP tools before using standard tools
+8. **SHORT SPRINTS (CRITICAL)**: Work in small increments and hand off frequently
+   - ✅ Complete one small task, then delegate to next agent
+   - ❌ Don't spend numerous cycles as one persona
+   - ✅ Break large tasks into smaller chunks
+   - ✅ Hand off work frequently to ensure incremental progress
 ## Example Session
 
 ```

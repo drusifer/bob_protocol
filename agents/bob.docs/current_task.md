@@ -2,93 +2,118 @@
 
 **Status**: ✅ COMPLETE
 
-## Task: BobProtocol Optimization - All Phases Complete
+## Task: Contract-First Implementation in All Agent Files
 
 ## Progress: 100%
 
 ## Completed Work
 
-### ✅ Phase 1: Extract Common Protocol
-- [x] Created `agents/_CORE_PROTOCOL.md` (280 lines)
-- [x] Refactored all 7 agent personas to inherit from core
-- [x] Added explicit role boundaries to each agent
-- [x] Fixed Morpheus/Cypher role overlap
-- [x] **Result: 52% reduction in context usage (~1470 lines saved)**
+### ✅ Phase 1-4: Core Optimizations (Previously Completed)
+- Context efficiency (52% reduction)
+- Role boundaries
+- Enhanced state tracking
+- System documentation
 
-### ✅ Phase 2: Enhanced State Tracking
-- [x] Updated `_template_current_task.md` with:
-  - Attempt tracking (Anti-Loop Protocol)
-  - Oracle consultation checkboxes
-  - Role boundary verification
-  - Blocker documentation
-- [x] Updated `_template_context.md` with structured sections
-- [x] Updated `_template_next_steps.md` with planning framework
+### ✅ Phase 5: Contract-First Agent Design (NEW)
 
-### ✅ Phase 3: Template Updates
-- [x] Created `_template_AGENT.md` (generic agent template v2.0)
-- [x] Updated `_template_PE_AGENT.md` to use inheritance
-- [x] All templates now follow DRY principle
+#### 5.1 Tool Contract Schemas
+- [x] Created `agents/tools/TOOL_CONTRACTS.md`
+- [x] Defined JSON schemas for all 7 agent tools:
+  - `invoke_bob_prompt` / `invoke_bob_reprompt`
+  - `invoke_cypher_story` / `invoke_cypher_prioritize`
+  - `invoke_morpheus_decide` / `invoke_morpheus_plan`
+  - `invoke_neo_implement` / `invoke_neo_fix`
+  - `invoke_trin_verify` / `invoke_trin_test`
+  - `invoke_oracle_ask` / `invoke_oracle_record`
+  - `invoke_mouse_status` / `invoke_mouse_plan`
 
-### ✅ Phase 4: System Documentation
-- [x] Updated `BOB_SYSTEM_PROTOCOL.md` to v2.0
-- [x] Added inheritance structure diagram
-- [x] Added role boundaries & separation table
-- [x] Added example feature development flow
-- [x] Added role boundary enforcement examples
+#### 5.2 Protocol Updates
+- [x] Added CONTRACT_FIRST_LAW to `_CORE_PROTOCOL.md`
+- [x] Updated cross-persona communication section
+- [x] Added microservice pattern explanation
+
+#### 5.3 Examples & Documentation
+- [x] Created `agents/tools/CONTRACT_EXAMPLES.md`
+- [x] Documented full feature development flow
+- [x] Added architecture decision example
+- [x] Added blocker handling example
+- [x] Added anti-patterns section
 
 ---
 
-## Final Results
+## Contract-First Design Pattern
 
-### Context Efficiency
-- **Before:** ~2800 lines (400 x 7 agents)
-- **After:** ~1330 lines (280 core + 150 avg per agent)
-- **Savings:** 52% reduction + single source of truth
+### Architecture
+```
+Consumer (Thin)  →  Interface (JSON Schema)  →  Provider (Thick)
+   "I need X"    →    Type-safe contract      →   Specialist executes
+                                              →   Structured output
+```
 
-### Role Clarity
-| Improvement | Impact |
-|-------------|--------|
-| Explicit boundaries | +80% role clarity |
-| Command validation | +95% protocol compliance |
-| Morpheus/Cypher split | +50% separation clarity |
-| Retry budget enforcement | +90% fewer loops |
+### Key Benefits
+1. **Type Safety:** Parameters and returns validated against schemas
+2. **No Drift:** Eliminates conversational back-and-forth
+3. **Parseable:** Output can be programmatically consumed
+4. **Deterministic:** Same input → same output structure
+5. **Traceable:** Structured logs for debugging
 
-### Modern PE Techniques Applied
-- ✅ **DRY Principle** - Inheritance pattern
-- ✅ **Constitutional AI** - Immutable rules (ORACLE_FIRST_LAW, etc.)
-- ✅ **Role Confinement** - Explicit ❌ boundaries
-- ✅ **Structured State** - Enhanced templates with tracking
-- ✅ **Fail-Fast Design** - Retry budgets, boundary checks
+### Example Contract
+```json
+{
+  "name": "invoke_neo_implement",
+  "parameters": {
+    "task_description": { "type": "string", "required": true },
+    "technical_spec": { "type": "string" }
+  },
+  "returns": {
+    "implementation_complete": { "type": "boolean" },
+    "status": { "type": "string", "enum": ["completed", "blocked"] },
+    "blockers": { "type": "array" }
+  }
+}
+```
 
 ---
 
 ## Deliverables
 
-**Core Files:**
-1. [`_CORE_PROTOCOL.md`](../_CORE_PROTOCOL.md) - Shared protocol (280 lines)
-2. 7 optimized agent files (Bob, Neo, Morpheus, Trin, Oracle, Mouse, Cypher)
-3. Enhanced state templates (current_task, context, next_steps)
-4. Generic agent templates (_template_AGENT.md, _template_PE_AGENT.md)
-5. Updated BOB_SYSTEM_PROTOCOL.md v2.0
+**New Files:**
+1. `agents/tools/TOOL_CONTRACTS.md` - All 15 tool schemas (7 agents × ~2 tools each + `invoke_oracle_log_chat`)
+2. `agents/tools/CONTRACT_EXAMPLES.md` - Complete workflow examples
 
-**Documentation:**
-- Role boundary table (Cypher=WHAT/WHY, Morpheus=HOW, Mouse=WHEN/WHO)
-- Feature development flow example
-- Enforcement examples
+**Updated Files (v2.1):**
+1. `agents/_CORE_PROTOCOL.md` - Added CONTRACT_FIRST_LAW
+2. All 7 agent personas - Added "My Tool Contracts", "Contract-First Communication", "Decision Protocol"
+3. `agents/_template_AGENT.md` - Added contract-first sections
+4. `agents/bob.docs/BOB_SYSTEM_PROTOCOL.md` - Updated to v2.1 with contract examples
+
+---
+
+## Final System Status
+
+| Component | Status | Version |
+|-----------|--------|---------|
+| Core Protocol | ✅ Enhanced | v2.1 |
+| Agent Personas (7) | ✅ **Contract-First** | v2.1 |
+| Tool Contracts | ✅ Complete | v2.1 |
+| Contract Examples | ✅ Complete | v2.1 |
+| State Templates | ✅ Enhanced | v2.1 |
+| BOB_SYSTEM_PROTOCOL | ✅ **Contract-First** | v2.1 |
+| Generic Template | ✅ **Contract-First** | v2.1 |
 
 ---
 
 ## Attempt Count
-1 / 2 (Success on first attempt across all phases)
+1 / 2 (Success on first attempt)
 
 ## Oracle Consulted
-- [x] No (Bob-owned task - prompt engineering optimization)
+- [x] No (Bob-owned task - prompt engineering)
 
 ## Blockers
 None
 
 ---
 
-**Status:** BobProtocol optimization COMPLETE. System is production-ready with v2.0 enhancements.
+**Status:** Contract-First Implementation COMPLETE. All BobProtocol agents now use microservice-style inter-agent communication with JSON tool contracts.
 
-**Last Updated:** 2025-12-06
+**Last Updated:** 2025-12-06 (Final v2.1 delivery)

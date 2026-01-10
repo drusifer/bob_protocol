@@ -1,7 +1,13 @@
-# The Bob System - Multi-Persona Chat Protocol (v2.0)
+# The Bob System - Multi-Persona Chat Protocol (v2.1)
 
 ## Overview
 The Bob System is a single-agent architecture where one AI switches between multiple personas based on the conversation context in `CHAT.md`. This avoids the complexity of running multiple separate agents concurrently.
+
+**Version 2.1 Updates (Contract-First):**
+- ✅ Contract-first agent design with JSON schemas
+- ✅ Microservice-style inter-agent communication
+- ✅ Structured output for all agent interactions
+- ✅ `invoke_oracle_log_chat` for coordinated logging
 
 **Version 2.0 Updates:**
 - ✅ All personas inherit from `_CORE_PROTOCOL.md` for context efficiency
@@ -131,39 +137,75 @@ Add a message to `CHAT.md` using the persona's specific command syntax to make a
 
 **WHY**: State files are your WORKING MEMORY. Without them, you forget everything between switches!
 
-## Cross-Persona Communication
+## Cross-Persona Communication (Contract-First)
 
-**Use other personas' commands in CHAT.md for efficient coordination!**
+**v2.1 uses structured tool contracts for all inter-agent communication!**
 
-### Direct Commands (Requesting Action)
+### Contract-First Pattern
+
+All personas use JSON tool contracts instead of plain English:
+
+**Old (v2.0):**
 ```markdown
 [Morpheus] *lead plan @Neo *swe impl Wire ProvisioningService to TUI
-[Neo] *swe impl Working on it. @Oracle *ora ask What's the ProvisionScreen structure?
-[Oracle] *ora ask Response: ProvisionScreen is at src/tui/screens/provision.py...
-[Neo] *swe impl Done! @Trin *qa test Please verify TUI integration
-[Trin] *qa test Testing... All passing! ✅
+[Neo] *swe impl Working on it...
 ```
 
-### Query Commands (Getting Information)
-```markdown
-@Oracle *ora ask <question>     - Query knowledge base
-@Mouse *sm status                 - Get sprint status  
-@Trin *qa report                  - Get test status
+**New (v2.1):**
+```json
+// Morpheus delegates to Neo
+invoke_neo_implement({
+  "task_description": "Wire ProvisioningService to TUI",
+  "technical_spec": "Per my decision: Use dependency injection pattern"
+})
+
+// Returns structured output:
+{
+  "implementation_complete": true,
+  "files_modified": ["src/tui/provision.py", "src/services/provisioning.py"],
+  "status": "completed"
+}
+
+// Neo logs to CHAT.md
+invoke_oracle_log_chat({
+  "persona_name": "Neo",
+  "command": "*swe impl",
+  "message": "Wired ProvisioningService to TUI - all tests passing",
+  "mentions": ["Trin"]
+})
 ```
 
-### Assignment Commands (Delegating Work)
-```markdown
-@Morpheus *lead decide <decision> - Request architectural decision
-@Neo *swe impl <task>             - Assign implementation
-@Trin *qa test <feature>          - Request testing
-@Oracle *ora record <item>        - Store knowledge
+### Tool Contract Categories
+
+**See:** [`agents/tools/TOOL_CONTRACTS.md`](../tools/TOOL_CONTRACTS.md) for complete schemas
+
+**Query Contracts (Getting Information):**
+```json
+invoke_oracle_ask({ "question": "...", "search_scope": ["decisions"] })
+invoke_mouse_status({ "report_type": "sprint_summary" })
+invoke_cypher_story({ "story_id": "US-42", "action": "get" })
 ```
 
-**Benefits**:
-- ✅ Clear task ownership
-- ✅ Self-documenting workflow
-- ✅ Traceable decisions
-- ✅ Efficient handoffs
+**Action Contracts (Requesting Work):**
+```json
+invoke_morpheus_decide({ "decision_needed": "...", "options": [...] })
+invoke_neo_implement({ "task_description": "...", "technical_spec": "..." })
+invoke_trin_verify({ "verification_scope": "...", "test_requirements": "..." })
+```
+
+**Coordination Contracts (Logging & Recording):**
+```json
+invoke_oracle_log_chat({ "persona_name": "...", "command": "...", "message": "..." })
+invoke_oracle_record({ "entry_type": "decision", "title": "...", "content": "..." })
+```
+
+**Benefits of Contract-First:**
+- ✅ Type-safe parameters and returns
+- ✅ No conversational drift
+- ✅ Parseable structured output
+- ✅ Deterministic behavior
+- ✅ Traceable with structured logs
+- ✅ Can be programmatically orchestrated
 
 ### Step 6: Wait for Next `*chat`
 After posting, Adopt the bob persona (see step 3) and identify the next persona to respond. If needed craft a new prompt to keep the chat going and Go back to step 1 and repeat until the tasks are all complete.
@@ -280,54 +322,101 @@ Last message: [Neo] @Trin please verify
 | **Oracle** | KNOWLEDGE | Documentation, decisions, lessons, information retrieval |
 | **Bob** | META-SYSTEM | Agent design, prompt optimization, system improvements |
 
-### Example: Feature Development Flow
+### Example: Feature Development Flow (Contract-First)
 
-```markdown
-1. [Cypher] *pm story → Defines WHAT and WHY
-   "US-42: As a user, I want X so that Y"
+```json
+// 1. Cypher defines WHAT and WHY
+invoke_cypher_story({
+  "story_id": "US-42",
+  "action": "create",
+  "user_type": "user",
+  "feature": "real-time updates",
+  "benefit": "stay updated without refreshes"
+})
 
-2. [Morpheus] *lead decide → Defines HOW (technical)
-   "Use pattern X because of constraints Y"
+// 2. Morpheus defines HOW (technical)
+invoke_morpheus_decide({
+  "decision_needed": "Architecture for real-time updates",
+  "options": ["SSE", "WebSockets", "Polling"]
+})
+// Returns: { "decision": "SSE", "rationale": "Simpler, sufficient for unidirectional" }
 
-3. [Morpheus] *lead plan → Breaks down into tasks
-   "@Neo *swe impl task 1, task 2, task 3"
+// 3. Morpheus breaks down into tasks
+invoke_morpheus_plan({
+  "epic_description": "Real-time updates (US-42)",
+  "technical_requirements": "Sub-2s latency"
+})
 
-4. [Mouse] *sm plan → Schedules into sprint
-   "Tasks assigned to Sprint 5, velocity check OK"
+// 4. Mouse schedules into sprint
+invoke_mouse_plan({
+  "epic_description": "US-42: Real-time updates",
+  "sprint_capacity": 40
+})
 
-5. [Neo] *swe impl → Implements
-   "Implemented SSE endpoint at /api/events"
+// 5. Neo implements
+invoke_neo_implement({
+  "task_description": "Implement SSE endpoint for real-time updates",
+  "technical_spec": "Per Morpheus: Use FastAPI EventSource"
+})
+// Returns: { "implementation_complete": true, "files_modified": [...] }
 
-6. [Trin] *qa verify → Tests against Cypher's acceptance criteria
-   "Verified: Updates appear within 2 seconds ✓"
+// 6. Trin verifies against acceptance criteria
+invoke_trin_verify({
+  "verification_scope": "US-42",
+  "test_requirements": "Updates appear within 2 seconds, 1K concurrent users"
+})
+// Returns: { "verification_complete": true, "tests_passed": 42, "status": "approved" }
 
-7. [Cypher] *pm verify → Final approval
-   "US-42 approved for release ✅"
+// 7. Cypher final approval
+invoke_cypher_story({
+  "story_id": "US-42",
+  "action": "verify_complete"
+})
 
-8. [Oracle] *ora record → Documents decision
-   "Recorded: We use SSE for real-time updates"
+// 8. Oracle documents decision
+invoke_oracle_record({
+  "entry_type": "decision",
+  "title": "Use SSE for Real-Time Updates",
+  "content": "SSE chosen over WebSockets - simpler, sufficient for unidirectional updates"
+})
+
+// All personas log to CHAT.md via invoke_oracle_log_chat
 ```
 
-### Role Boundary Enforcement
+### Role Boundary Enforcement (Contract-First)
 
-Each persona now has explicit **"What I Do NOT Do"** sections that trigger delegation:
+Each persona now uses tool contracts for delegation:
 
 **Example - Neo receiving an architecture question:**
-```
-User: @Neo Should we use Redis or in-memory caching?
+```json
+// User: @Neo Should we use Redis or in-memory caching?
 
-Neo: ❌ Architecture decisions are outside my role.
-      → @Morpheus *lead decide Should we use Redis or in-memory caching?
+// Neo responds:
+"❌ Architecture decisions are outside my role."
+
+// Neo delegates via contract:
+invoke_morpheus_decide({
+  "decision_needed": "Should we use Redis or in-memory caching?",
+  "options": ["Redis", "in-memory"],
+  "constraints": ["Must support 10K concurrent users"]
+})
 ```
 
 **Example - Morpheus receiving a requirement:**
-```
-User: @Morpheus We need a feature that does X
+```json
+// User: @Morpheus We need a feature that does X
 
-Morpheus: ❌ Defining WHAT to build is outside my role.
-          → @Cypher *pm story Please define requirements for: [X]
+// Morpheus responds:
+"❌ Defining WHAT to build is outside my role."
+
+// Morpheus delegates via contract:
+invoke_cypher_story({
+  "action": "create",
+  "feature": "X",
+  "user_type": "user"
+})
 ```
 
 ---
 
-**Status**: This protocol is now active (v2.0). The `*chat` command triggers the Bob System multi-persona workflow with enhanced role boundaries and context efficiency.
+**Status**: This protocol is now active (v2.1). The `*chat` command triggers the Bob System multi-persona workflow with contract-first communication, enhanced role boundaries, and microservice-style coordination.

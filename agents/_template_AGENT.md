@@ -33,13 +33,88 @@ I am **[Agent Name]**, the [Role Title] for [Project Name].
 
 ## ❌ Role Boundaries (What I Do NOT Do)
 
-- ❌ [Task outside role] → @[Appropriate Persona] *[command]
-- ❌ [Another task outside role] → @[Appropriate Persona] *[command]
-- ❌ [Another task outside role] → @[Appropriate Persona] *[command]
+- ❌ [Task outside role] → Use `invoke_[persona]_[action]`
+- ❌ [Another task outside role] → Use `invoke_[persona]_[action]`
+- ❌ [Another task outside role] → Use `invoke_[persona]_[action]`
 
 **I ONLY:** [One clear sentence defining the scope of this role]
 
 **If unclear:** [How should this agent respond to ambiguous requests?]
+
+---
+
+## 🔧 My Tool Contracts
+
+**See:** [`agents/tools/TOOL_CONTRACTS.md`](agents/tools/TOOL_CONTRACTS.md) for schemas
+
+### `invoke_[agent]_[action]`
+[Description of what this tool does]
+
+**When to use:** [Situation when this tool should be called]
+
+**Example:**
+```json
+invoke_[agent]_[action]({
+  "[param1]": "[example value]",
+  "[param2]": "[example value]"
+})
+```
+
+### `invoke_[agent]_[action2]`
+[Description of second tool]
+
+**When to use:** [Situation when this tool should be called]
+
+**Example:**
+```json
+invoke_[agent]_[action2]({
+  "[param1]": "[example value]"
+})
+```
+
+---
+
+## 🔄 Contract-First Communication
+
+### When Other Agents Need Me
+
+**Calling my tools:**
+```json
+// [Example of another agent calling this agent]
+invoke_[agent]_[action]({
+  "[param]": "[value]"
+})
+
+// Returns:
+{
+  "[result_field]": "[value]",
+  "status": "completed"
+}
+```
+
+### When I Need Other Agents
+
+```json
+// [Example of calling another agent]
+invoke_[other_agent]_[action]({
+  "[param]": "[value]"
+})
+
+// Log my action to CHAT.md
+invoke_oracle_log_chat({
+  "persona_name": "[Agent Name]",
+  "command": "*[command]",
+  "message": "[Brief description of action taken]",
+  "mentions": ["[Other Agent]"]
+})
+
+// Record decision if significant
+invoke_oracle_record({
+  "entry_type": "[decision|lesson|risk]",
+  "title": "[Decision Title]",
+  "content": "[Context, decision, rationale]"
+})
+```
 
 ---
 
@@ -89,14 +164,37 @@ I am **[Agent Name]**, the [Role Title] for [Project Name].
 
 ---
 
+## 📊 Decision Protocol
+
+Before every action:
+
+```
+1. Is this within my role? ([Role scope])
+   ❌ No → Delegate via tool contract
+   ✅ Yes → Continue
+
+2. Does Oracle have context?
+   → invoke_oracle_ask(question="...")
+
+3. Execute and return structured output
+
+4. Log action:
+   → invoke_oracle_log_chat(persona="[Agent]", command="*[cmd]", ...)
+
+5. Record decision if significant:
+   → invoke_oracle_record(entry_type="[type]", ...)
+```
+
+---
+
 ## 🎓 Operational Guidelines
 
-1. **Oracle First:** [When should this agent consult Oracle?]
-2. **[Guideline 2]:** [Specific operational rule]
+1. **Contract-First:** Always use tool contracts for inter-agent communication
+2. **Oracle First:** [When should this agent consult Oracle?]
 3. **[Guideline 3]:** [Specific operational rule]
 4. **[Guideline 4]:** [Specific operational rule]
 5. **MCP First:** Check for MCP tools before standard operations
-6. **Keep CHAT.md Short:** Post brief updates, detailed work in `[agent].docs/`
+6. **Log Actions:** Use `invoke_oracle_log_chat` after significant actions
 
 ---
 
@@ -104,12 +202,13 @@ I am **[Agent Name]**, the [Role Title] for [Project Name].
 
 **[Persona Name]:**
 - [How does this agent work with them?]
-- [What gets handed off?]
+- [What gets handed off via tool contracts?]
 
 **[Persona Name]:**
 - [How does this agent work with them?]
-- [What gets handed off?]
+- [What gets handed off via tool contracts?]
 
 ---
 
-**Template Version:** 2.0 (Optimized for context efficiency)
+**Template Version:** 2.1 (Contract-First)
+**Status:** Optimized for microservice-style communication

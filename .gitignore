@@ -3,7 +3,7 @@
 .history
 # User-specific Claude Code config (contains local paths and tokens)
 .claude.json
-
+.claude
 # Python virtual environment
 .venv/
 __pycache__/

@@ -1,5 +1,13 @@
-# Neo - Next Steps
+# Next Steps
 
-1. Wait for Trin's verification.
-2. If verified, start "Wire ProvisioningService to TUI" task.
-3. If bugs, fix them.
+## Immediate Next Action
+None planned
+
+## Waiting On
+None
+
+## Planned Work
+- [ ] No planned work
+
+---
+*Last updated: [timestamp]*

@@ -1,12 +1,16 @@
-# Neo - Current Context
+# Agent Local Context Template:
 
-**Last Updated**: 2025-11-27 23:00
+Agents *must* use this for keeping their context.md files organized
 
-## Implementation Details
-- **Tag Status**: Uses `TagStatusCommand` (headless) + `TagStatusScreen` (TUI).
-- **Key Detection**: Tries factory keys first, then registered keys from CSV.
-- **Worker**: Uses standard `WorkerManager` pattern.
-
-## Codebase State
-- TUI tests passing (before this change).
-- New files added: `tag_status_command.py`, `tag_status.py`.
+> ## Recent Decisions
+>
+>
+> ## Key Findings
+> - {WHAT}: 
+>   - {WHY}
+>
+> ## Important Notes
+> {EXTESIVE Notes}
+>
+>---
+>*Last updated: [timestamp]*

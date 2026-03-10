@@ -1,13 +1,20 @@
-# Oracle - Current Task
+# Current Task
 
-**Status**: Active - Knowledge Support
+**Status:** Not started
+**Assigned to:** N/A
+**Started:** N/A
 
-## Task: TUI UX Enhancements
+## Task Description
+No active task
 
 ## Progress
-- Analyzed `test_changekey` failure: ✅ Complete
-- Identified Root Cause: Test uses real hardware `CardManager`.
-- Recommendation: Switch to `SeritagCardManager`.
+- [ ] Not started
 
-## Next Priority
-Support Trin in fixing the regression.
+## Blockers
+None
+
+## Oracle Consultations
+None yet
+
+---
+*Last updated: [timestamp]*

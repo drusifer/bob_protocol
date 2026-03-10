@@ -1,18 +1,16 @@
-# Mouse - Current Context
+# Agent Local Context Template:
 
-**Last Updated**: 2025-11-27 22:45
+Agents *must* use this for keeping their context.md files organized
 
-## Sprint Status
-- **Epic**: TUI UX Enhancements
-- **Focus**: Tag Status Screen
-- **Status**: In Progress
-
-## Task Tracking
-- `task.md` initialized in project root.
-- Neo assigned to Tag Status Screen.
-
-## Team Coordination
-- Morpheus: Planning (Approved)
-- Neo: Implementation (Assigned)
-- Trin: QA (Pending)
-- Oracle: Knowledge (Query Sent)
+> ## Recent Decisions
+>
+>
+> ## Key Findings
+> - {WHAT}: 
+>   - {WHY}
+>
+> ## Important Notes
+> {EXTESIVE Notes}
+>
+>---
+>*Last updated: [timestamp]*

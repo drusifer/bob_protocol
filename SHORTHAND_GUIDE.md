@@ -1,32 +1,108 @@
-# Shorthand Guide for Persona Services
+TL;DR: Use `*chat @Persona *command args` for explicit invocation, or just `*command args` as a direct skill trigger. All triggers listed below.
 
-To make interacting with the Persona-as-a-Service (PaaS) system faster, you can use the following shorthand prefixes. When you use these aliases, the system will expand them into the full MCP service commands.
+# Shorthand Guide — Skill Triggers
 
-## Shorthand Convention
+## Direct Skill Triggers
 
-The convention is to use a short, intuitive alias for the persona, followed by the command and its parameters.
+Invoke a persona directly without the `*chat` routing layer:
 
-`shorthand <command> [parameters...]`
+### Bob — Prompt Engineer
+| Trigger | Action |
+|---------|--------|
+| `*new <description>` | Create a new agent from description |
+| `*reprompt <instructions>` | Update existing agent prompts |
+| `*learn <lesson>` | Broadcast lesson to all agents |
+| `*help` | Show full system reference |
 
-### Example
-Typing this:
-`morph plan "Create a new TUI screen for diagnostics."`
+### Cypher — Product Manager
+| Trigger | Action |
+|---------|--------|
+| `*pm story <request>` | Write user stories from a feature request |
+| `*pm req <feature>` | Define requirements and acceptance criteria |
+| `*pm prioritize` | Prioritize the backlog |
+| `*pm update` | Post product status update |
+| `*pm doc <topic>` | Create a PRD or product document |
 
-Is equivalent to executing this:
-`mcp__morpheus__plan goal="Create a new TUI screen for diagnostics."`
+### Morpheus — Tech Lead
+| Trigger | Action |
+|---------|--------|
+| `*lead arch <topic>` | Architecture review or decision |
+| `*lead plan <story>` | Create technical implementation plan |
+| `*lead decide <choice>` | Make and record an architectural decision |
+| `*lead guide <area>` | Provide technical guidance |
+| `*lead refactor <target>` | Plan a refactoring strategy |
 
-## Alias Reference Table
+### Neo — Software Engineer
+| Trigger | Action |
+|---------|--------|
+| `*swe impl <task>` | Implement a feature |
+| `*swe fix <issue>` | Diagnose and fix a bug |
+| `*swe test <scope>` | Write and run tests |
+| `*swe refactor <target>` | Refactor code without changing behaviour |
 
-| Persona | **Shorthand** | Example Usage | Expanded Command |
-| :--- | :--- | :--- | :--- |
-| Morpheus | `morph` | `morph plan "New UI"` | `mcp__morpheus__plan goal="New UI"` |
-| Neo | `neo` | `neo implement "US-123"` | `mcp__neo__implement story="US-123"` |
-| Trin | `trin` | `trin verify "US-123"` | `mcp__trin__verify feature="US-123"` |
-| Oracle | `ora` | `ora ask "What is the pattern?"` | `mcp__oracle__ask question="..."` |
-| Cypher | `cy` | `cy define "New login flow"` | `mcp__cypher__define_feature request="..."` |
-| Mouse | `mouse` | `mouse status` | `mcp__mouse__status` |
-| Bob | `bob` | `bob reprompt "neo"` | `mcp__bob__reprompt service="neo"` |
+### Oracle — Knowledge Officer
+| Trigger | Action |
+|---------|--------|
+| `*ora ask <question>` | Query the knowledge base |
+| `*ora record <type> <content>` | Log a decision, lesson, or finding |
+| `*ora distill <file>` | Break down a large document with TL;DR + ToC |
+| `*ora tldr <file or topic>` | Generate a TL;DR summary |
+| `*ora groom` | Audit and organise the knowledge base |
+
+### Trin — QA Guardian
+| Trigger | Action |
+|---------|--------|
+| `*qa test <scope>` | Run tests (`all`, `unit`, `integration`, or specific) |
+| `*qa verify <feature>` | Verify a feature meets acceptance criteria |
+| `*qa review <change>` | Code review for quality and correctness |
+| `*qa report` | Summarise codebase health |
+| `*qa repro <issue>` | Create a minimal reproduction of a bug |
+
+### Mouse — Scrum Master
+| Trigger | Action |
+|---------|--------|
+| `*sm status` | Report current sprint progress |
+| `*sm plan <sprint>` | Create or update a sprint plan |
+| `*sm tasks` | List all active tasks |
+| `*sm next` | Identify and assign the next task |
+| `*sm blocked` | Report and triage a blocker |
+| `*sm done <task>` | Mark a task complete |
+| `*sm assign <task> <persona>` | Assign a task to a persona |
+| `*sm velocity` | Report team velocity metrics |
 
 ---
 
-Feel free to use these shorthands in all your future requests.
+## `*chat` Routing Syntax
+
+Use `*chat` to let the system auto-select a persona, or target one explicitly:
+
+```
+*chat <message>                    # auto-select persona
+*chat @<Persona> *<command> <args> # direct invocation
+```
+
+### Examples
+```
+*chat fix the bug in parser.py
+*chat @Neo *swe fix bug in parser.py line 42
+*chat @Trin *qa test all
+*chat @Oracle *ora ask What's our DB pattern?
+*chat @Morpheus *lead decide REST vs GraphQL
+*chat @Cypher *pm story users need CSV export
+*chat @Mouse *sm status
+*chat @Bob *reprompt Neo needs to know about the new cache layer
+```
+
+---
+
+## Common Make Targets
+
+```bash
+make help          # list all targets
+make tldr          # show TL;DR from all project files
+make test          # run full test suite
+make lint          # run all quality checks
+make coverage      # run tests with coverage report
+```
+
+Run `make help` in any project to see its full target list.

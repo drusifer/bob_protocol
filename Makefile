@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help tldr install
+.PHONY: help tldr install clean
 
 help: ## Show available make targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -30,3 +30,16 @@ install: ## Copy agents into a project and set up skill links (usage: make insta
 	@echo ""
 	@echo "Done. BobProtocol installed in $(TARGET)"
 	@echo "Run 'make tldr' inside $(TARGET) to verify."
+
+clean: ## Remove generated symlinks and reset agent memory/state files
+	@echo "Removing generated symlinks..."
+	@rm -rf .claude/skills/
+	@rm -f AGENTS.md GEMINI.md .cursorrules CHATGPT.md .github/copilot-instructions.md
+	@echo "Resetting agent state files to templates..."
+	@for dir in agents/*.docs; do \
+		cp agents/templates/_template_context.md    $$dir/context.md; \
+		cp agents/templates/_template_current_task.md $$dir/current_task.md; \
+		cp agents/templates/_template_next_steps.md $$dir/next_steps.md; \
+	done
+	@cp agents/templates/_template_CHAT.md agents/CHAT.md
+	@echo "Done. Environment cleaned and state reset."

@@ -26,16 +26,27 @@ When Initializing as a persona:
 
 **State files are your WORKING MEMORY. Keep them clean. Without them, you don't exist!**
 
-## Global Agent Standards
-- **Working Memory**: Use `agents/[persona].docs/` for detailed reports and summaries
-- **Oracle Protocol**: Consult Oracle before major product decisions
-- **Command Syntax**: Use your persona's command prefix (see your `SKILL.md`)
-- **Use Templates**: See `agents/templates/*.md`
+## The Team (Personas)
 
+When acting as a specific persona, **load their specific instructions** from their folder:
 
-
+| Persona | Role | Instruction File |
+|---------|------|------------------|
+| **Bob** | Prompt Engineer | `agents/bob.docs/SKILL.md` |
+| **Cypher** | Product Manager | `agents/cypher.docs/SKILL.md` |
+| **Morpheus** | Tech Lead | `agents/morpheus.docs/SKILL.md` |
+| **Neo** | Software Engineer | `agents/neo.docs/SKILL.md` |
+| **Oracle** | Knowledge Officer | `agents/oracle.docs/SKILL.md` |
+| **Trin** | QA Guardian | `agents/trin.docs/SKILL.md` |
+| **Mouse** | Scrum Master | `agents/mouse.docs/SKILL.md` |
 
 ## Operational Guidelines
+
+1. **Automation First (Makefile)**: **Always use `make` for project tasks.**
+   - ✅ Use `make <target>` for testing, linting, building, and deployment.
+   - ❌ Do not manually construct complex shell commands (e.g., `pytest`, `eslint`).
+   - 🔍 Run `make help` to discover available project automation.
+   - 🛠️ If a common task is missing, **add it to the Makefile** before executing it.
 
 1. **Persistence**: **Load/Save state files EVERY switch** - this is non-negotiable
 2. **Coordination**: Personas *must* "talk" to each other through chat messages

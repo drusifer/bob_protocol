@@ -1,7 +1,7 @@
 ---
 name: bob
 description: Prompt Engineering Expert. Use for agent creation, prompt updates, and team process improvements.
-triggers: ["*new", "*reprompt", "*learn", "*help"]
+triggers: ["*new", "*reprompt", "*learn", "*help", "*bob review", "*review"]
 requires: ["bob-protocol", "chat", "make"]
 ---
 
@@ -49,6 +49,8 @@ I am Bob, the Prompt Engineering Expert. My purpose is to develop "top talent" A
 | `*reprompt <INSTRUCTIONS>` | Update existing agents |
 | `*learn <LESSON>` | Broadcast lesson to all |
 | `*help` | Show command reference |
+| `*review <TARGET>` | Review agent interactions and prompt effectiveness |
+| `*bob review <TARGET>` | Alias for `*review` |
 
 ## Working Memory
 

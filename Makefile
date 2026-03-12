@@ -1,9 +1,10 @@
 .DEFAULT_GOAL := help
 
-.PHONY: help tldr install clean
+ifdef MKF_ACTIVE
 
-help: ## Show available make targets
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+# ── Real recipes (invoked by mkf, not directly by the user) ─────────────────
+
+.PHONY: tldr install_bob update_bob pull_bob clean_bob
 
 tldr: ## Show TL;DR summaries from all project files (quick orientation for agents)
 	@rg --no-heading "TL;DR:" --glob "*.md" -N | sed 's|^\./||' | sort
@@ -81,9 +82,48 @@ clean_bob: ## Remove generated symlinks and reset agent memory/state files
 	@cp agents/templates/_template_CHAT.md agents/CHAT.md
 	@echo "Done. Environment cleaned and state reset."
 
+else
+
+# ── Interception layer ───────────────────────────────────────────────────────
+# All targets except help and chat route through mkf (agents/tools/mkf.py).
+# mkf captures output to build/build.out, posts status to CHAT.md,
+# and prints the last 10 lines on exit.
+#
+# Verbosity (set V=):
+#   make tldr              silent  — exit code only, full log in build/build.out
+#   make tldr V=-v         stderr to terminal
+#   make tldr V=-vv        stderr + filtered failures to terminal
+#   make tldr V=-vvv       stderr + full stdout to terminal
+
+.PHONY: help chat
+
+help: ## Show available make targets
+	@echo ""
+	@echo "  Build output filter (mkf) is active. All targets route through agents/tools/mkf.py."
+	@echo "  Full log: build/build.out   Status posted to: agents/CHAT.md"
+	@echo ""
+	@echo "  Verbosity: append V=-v | V=-vv | V=-vvv to any target"
+	@echo "    (none)   silent — exit code only"
+	@echo "    -v       stderr to terminal"
+	@echo "    -vv      stderr + failures/errors to terminal"
+	@echo "    -vvv     stderr + full stdout to terminal"
+	@echo ""
+	@echo "  Examples:"
+	@echo "    make pull_bob          # silent, log → build/build.out"
+	@echo "    make update_bob V=-vvv # full output"
+	@echo ""
+	@echo "  Targets:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "    \033[36m%-22s\033[0m %s\n", $$1, $$2}'
+	@echo ""
+
 chat: ## Post a message to CHAT.md (usage: make chat MSG="<msg>" [PERSONA="<name>"] [CMD="<cmd>"] [TO="<recipient>"])
 	@[ -n "$(MSG)" ] || { echo "Usage: make chat MSG=\"<message>\" [PERSONA=\"<name>\"] [CMD=\"<cmd>\"] [TO=\"<recipient>\"]"; exit 1; }
 	@python agents/tools/chat.py "$(MSG)" \
 		$(if $(PERSONA),--persona "$(PERSONA)") \
 		$(if $(CMD),--cmd "$(CMD)") \
 		$(if $(TO),--to "$(TO)")
+
+%:
+	@./agents/tools/mkf.py $(V) $@
+
+endif

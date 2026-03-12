@@ -59,7 +59,7 @@ pull_bob: ## Pull updates from another project using BobProtocol, preserving loc
 	@[ -n "$(SRC)" ] || { echo "Usage: make pull_bob SRC=/path/to/project"; exit 1; }
 	@[ -d "$(SRC)" ] || { echo "Error: $(SRC) does not exist"; exit 1; }
 	@echo "Pulling BobProtocol updates from $(SRC)..."
-	@rsync -a \
+	@rsync -a --existing \
 		--exclude='*.docs/context.md' \
 		--exclude='*.docs/current_task.md' \
 		--exclude='*.docs/next_steps.md' \

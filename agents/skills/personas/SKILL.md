@@ -58,8 +58,8 @@ When handing off to another persona:
 1. **Complete your current action** (don't switch mid-task)
 2. **Post to CHAT.md** with the handoff assignment:
    ```bash
-   python agents/tools/chat.py "@Trin please verify the fix in auth.py" \
-     --persona Neo --cmd "handoff" --to Trin
+   make chat MSG="@Trin please verify the fix in auth.py" \
+     PERSONA="Neo" CMD="handoff" TO="Trin"
    ```
 3. **Save your state files** before switching:
    - `agents/[persona].docs/context.md`

@@ -8,8 +8,8 @@ help: ## Show available make targets
 tldr: ## Show TL;DR summaries from all project files (quick orientation for agents)
 	@rg --no-heading "TL;DR:" --glob "*.md" -N | sed 's|^\./||' | sort
 
-install: ## Copy agents into a project and set up skill links (usage: make install TARGET=/path/to/project)
-	@[ -n "$(TARGET)" ] || { echo "Usage: make install TARGET=/path/to/project"; exit 1; }
+install_bob: ## Copy agents into a project and set up skill links (usage: make install_bob TARGET=/path/to/project)
+	@[ -n "$(TARGET)" ] || { echo "Usage: make install_bob TARGET=/path/to/project"; exit 1; }
 	@[ -d "$(TARGET)" ] || { echo "Error: $(TARGET) does not exist"; exit 1; }
 	@echo "Installing BobProtocol into $(TARGET)..."
 	@rsync -a \
@@ -31,8 +31,8 @@ install: ## Copy agents into a project and set up skill links (usage: make insta
 	@echo "Done. BobProtocol installed in $(TARGET)"
 	@echo "Run 'make tldr' inside $(TARGET) to verify."
 
-update: ## Update agents and skills in a project, preserving state (usage: make update TARGET=/path/to/project)
-	@[ -n "$(TARGET)" ] || { echo "Usage: make update TARGET=/path/to/project"; exit 1; }
+update_bob: ## Update agents and skills in a project, preserving state (usage: make update_bob TARGET=/path/to/project)
+	@[ -n "$(TARGET)" ] || { echo "Usage: make update_bob TARGET=/path/to/project"; exit 1; }
 	@[ -d "$(TARGET)" ] || { echo "Error: $(TARGET) does not exist"; exit 1; }
 	@echo "Updating BobProtocol in $(TARGET)..."
 	@rsync -a \
@@ -54,7 +54,21 @@ update: ## Update agents and skills in a project, preserving state (usage: make 
 	@echo ""
 	@echo "Done. BobProtocol updated in $(TARGET)"
 
-clean: ## Remove generated symlinks and reset agent memory/state files
+pull_bob: ## Pull updates from another project using BobProtocol, preserving local state (usage: make pull_bob SRC=/path/to/project)
+	@[ -n "$(SRC)" ] || { echo "Usage: make pull_bob SRC=/path/to/project"; exit 1; }
+	@[ -d "$(SRC)" ] || { echo "Error: $(SRC) does not exist"; exit 1; }
+	@echo "Pulling BobProtocol updates from $(SRC)..."
+	@rsync -a \
+		--exclude='*.docs/context.md' \
+		--exclude='*.docs/current_task.md' \
+		--exclude='*.docs/next_steps.md' \
+		--exclude='CHAT.md' \
+		--exclude='chat_archive/' \
+		$(SRC)/agents/ agents/
+	@echo ""
+	@echo "Done. BobProtocol pulled from $(SRC)"
+
+clean_bob: ## Remove generated symlinks and reset agent memory/state files
 	@echo "Removing generated symlinks..."
 	@rm -rf .claude/skills/
 	@rm -f AGENTS.md GEMINI.md .cursorrules CHATGPT.md .github/copilot-instructions.md
@@ -66,3 +80,10 @@ clean: ## Remove generated symlinks and reset agent memory/state files
 	done
 	@cp agents/templates/_template_CHAT.md agents/CHAT.md
 	@echo "Done. Environment cleaned and state reset."
+
+chat: ## Post a message to CHAT.md (usage: make chat MSG="<msg>" [PERSONA="<name>"] [CMD="<cmd>"] [TO="<recipient>"])
+	@[ -n "$(MSG)" ] || { echo "Usage: make chat MSG=\"<message>\" [PERSONA=\"<name>\"] [CMD=\"<cmd>\"] [TO=\"<recipient>\"]"; exit 1; }
+	@python agents/tools/chat.py "$(MSG)" \
+		$(if $(PERSONA),--persona "$(PERSONA)") \
+		$(if $(CMD),--cmd "$(CMD)") \
+		$(if $(TO),--to "$(TO)")

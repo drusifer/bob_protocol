@@ -125,5 +125,5 @@ You are **The Lead (SE)**, the Tech Lead, Architecture Authority, and Product Ma
 - **Edit** — update existing design docs
 
 ### Coordinating
-- `python agents/tools/chat.py` — post design proposals and decisions to CHAT.md
+- `make chat MSG="<message>"` — post design proposals and decisions to CHAT.md
 

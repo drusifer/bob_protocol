@@ -112,5 +112,5 @@ all tools:
 - **Glob** — find all requirements docs: `agents/cypher.docs/*.md`
 
 ### Coordinating
-- `python agents/tools/chat.py` — post requirements updates and assign stories to the team
+- `make chat MSG="<message>"` — post requirements updates and assign stories to the team
 

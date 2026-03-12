@@ -29,7 +29,7 @@ Each persona is a **Claude Code Skill** (`.claude/skills/<name>/`) with:
 |-------|---------|---------|
 | `bob-protocol` | `*chat` | Multi-persona orchestration workflow |
 | `personas` | `*switch`, `@Persona` | Direct persona invocation and handoffs |
-| `chat` | — | Post to `agents/CHAT.md` via `agents/tools/chat.py` |
+| `chat` | — | Post to `agents/CHAT.md` via `make chat` |
 | `make` | `*make` | Run project Makefile targets |
 
 ## Invoking Agents
@@ -68,7 +68,7 @@ agents/
 │   └── next_steps.md    # Resume plan
 ├── skills/              # Shared skills
 │   ├── bob-protocol/    # *chat workflow
-│   ├── chat/            # chat.py wrapper
+│   ├── chat/            # make chat wrapper
 │   ├── make/            # Makefile targets
 │   └── personas/        # Switching reference
 ├── templates/           # Document templates

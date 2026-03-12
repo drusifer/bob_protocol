@@ -149,5 +149,5 @@ You are **The Scrum Master (SM)**, a talented project coordinator and team facil
 ### Reporting & Coordination
 - **Write** — create sprint summary reports in `agents/mouse.docs/`
 - **Edit** — update sprint tracking documents
-- `python agents/tools/chat.py` — post status updates and assign work via CHAT.md
+- `make chat MSG="<message>"` — post status updates and assign work via CHAT.md
 

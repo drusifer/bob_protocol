@@ -28,8 +28,8 @@ ANSI_ESCAPE = re.compile(r'\x1b\[[0-9;]*m')
 TAIL_LINES = 10
 CHAT_MAX = 256
 
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent
+SCRIPT_DIR = Path(__file__).resolve().parent   # agents/tools/
+PROJECT_ROOT = SCRIPT_DIR.parent.parent        # project root
 BUILD_DIR = PROJECT_ROOT / 'build'
 CHAT_TOOL = PROJECT_ROOT / 'agents' / 'tools' / 'chat.py'
 

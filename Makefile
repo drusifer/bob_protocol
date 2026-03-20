@@ -2,6 +2,10 @@
 
 ifdef MKF_ACTIVE
 
+# ── Project targets (invoked by mkf via re-invocation) ───────────────────────
+# Included here so mkf can find them when it re-runs: make MKF_ACTIVE=1 <target>
+-include Makefile.prj
+
 # ── Real recipes (invoked by mkf, not directly by the user) ─────────────────
 
 .PHONY: tldr install_bob update_bob pull_bob clean_bob
@@ -26,6 +30,11 @@ install_bob: ## Copy agents into a project and set up skill links (usage: make i
 		cp agents/templates/_template_next_steps.md $$dir/next_steps.md; \
 	done
 	@cp agents/templates/_template_CHAT.md $(TARGET)/agents/CHAT.md
+	@echo "Installing Makefile into $(TARGET)..."
+	@if [ -f "$(TARGET)/Makefile" ] && ! grep -q "MKF_ACTIVE" "$(TARGET)/Makefile"; then \
+		mv "$(TARGET)/Makefile" "$(TARGET)/Makefile.prj" && echo "  Renamed: Makefile -> Makefile.prj (project targets preserved)"; \
+	fi
+	@cp Makefile "$(TARGET)/Makefile" && echo "  Installed: Makefile (bob-managed, includes Makefile.prj)"
 	@echo "Setting up Claude skill links..."
 	@python $(TARGET)/agents/tools/setup_agent_links.py
 	@echo ""
@@ -50,6 +59,11 @@ update_bob: ## Update agents and skills in a project, preserving state (usage: m
 		[ -f $$dir/next_steps.md ] || cp agents/templates/_template_next_steps.md $$dir/next_steps.md; \
 	done
 	@[ -f $(TARGET)/agents/CHAT.md ] || cp agents/templates/_template_CHAT.md $(TARGET)/agents/CHAT.md
+	@echo "Updating Makefile in $(TARGET)..."
+	@if [ -f "$(TARGET)/Makefile" ] && ! grep -q "MKF_ACTIVE" "$(TARGET)/Makefile"; then \
+		mv "$(TARGET)/Makefile" "$(TARGET)/Makefile.prj" && echo "  Renamed: Makefile -> Makefile.prj (project targets preserved)"; \
+	fi
+	@cp Makefile "$(TARGET)/Makefile" && echo "  Updated: Makefile"
 	@echo "Updating Claude skill links..."
 	@python $(TARGET)/agents/tools/setup_agent_links.py
 	@echo ""
@@ -85,7 +99,7 @@ clean_bob: ## Remove generated symlinks and reset agent memory/state files
 else
 
 # ── Interception layer ───────────────────────────────────────────────────────
-# All targets except help and chat route through mkf (agents/tools/mkf.py).
+# All targets except help, chat, install_bob, update_bob, pull_bob, and clean_bob route through mkf (agents/tools/mkf.py).
 # mkf captures output to build/build.out, posts status to CHAT.md,
 # and prints the last 10 lines on exit.
 #
@@ -95,7 +109,19 @@ else
 #   make tldr V=-vv        stderr + filtered failures to terminal
 #   make tldr V=-vvv       stderr + full stdout to terminal
 
-.PHONY: help chat
+.PHONY: help chat install_bob update_bob pull_bob clean_bob
+
+install_bob: ## Copy agents into a project and set up skill links (usage: make install_bob TARGET=/path/to/project)
+	@$(MAKE) MKF_ACTIVE=1 install_bob TARGET="$(TARGET)"
+
+update_bob: ## Update agents and skills in a project, preserving state (usage: make update_bob TARGET=/path/to/project)
+	@$(MAKE) MKF_ACTIVE=1 update_bob TARGET="$(TARGET)"
+
+pull_bob: ## Pull updates from another project using BobProtocol, preserving local state (usage: make pull_bob SRC=/path/to/project)
+	@$(MAKE) MKF_ACTIVE=1 pull_bob SRC="$(SRC)"
+
+clean_bob: ## Remove generated symlinks and reset agent memory/state files
+	@$(MAKE) MKF_ACTIVE=1 clean_bob
 
 help: ## Show available make targets
 	@echo ""
@@ -114,6 +140,12 @@ help: ## Show available make targets
 	@echo ""
 	@echo "  Targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "    \033[36m%-22s\033[0m %s\n", $$1, $$2}'
+	@if [ -f Makefile.prj ]; then \
+		echo ""; \
+		echo "  Project targets (Makefile.prj):"; \
+		grep -E '^[a-zA-Z][a-zA-Z0-9_-]*:' Makefile.prj | \
+		awk 'BEGIN {FS = ":.*?## "}; /##/ {printf "    \033[36m%-22s\033[0m %s\n", $$1, $$2} !/##/ {split($$0,a,":"); printf "    \033[36m%-22s\033[0m\n", a[1]}'; \
+	fi
 	@echo ""
 
 chat: ## Post a message to CHAT.md (usage: make chat MSG="<msg>" [PERSONA="<name>"] [CMD="<cmd>"] [TO="<recipient>"])

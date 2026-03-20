@@ -6,11 +6,22 @@ triggers: ["*make"]
 
 # Make Skill
 
+## Discover Available Targets
+
+**Always run this first** to see the current, authoritative list of targets:
+
+```bash
+make help
+```
+
+This outputs all targets with their descriptions. The list is always up to date — do not rely on hardcoded lists in docs or memory.
+
 ## Overview
 
-All project automation runs through `make`. Every target (except `help` and `chat`) is
-automatically routed through **mkf** (`agents/tools/mkf.py`) — the build output filter. You do not
-need to call mkf directly; just run `make <target>`.
+All project automation runs through `make`. Every target (except `help`, `chat`, `install_bob`,
+`update_bob`, `pull_bob`, and `clean_bob`) is automatically routed through **mkf**
+(`agents/tools/mkf.py`) — the build output filter. You do not need to call mkf directly; just run
+`make <target>`.
 
 ## CRITICAL — Do not capture make output into context
 
@@ -80,9 +91,42 @@ cat build/build.out        # full log
 tail -20 build/build.out   # last 20 lines
 ```
 
+## Making targets discoverable
+
+`make help` shows targets that have an inline `## description` comment:
+
+```makefile
+lint: ## Run linting checks
+    @ruff check .
+```
+
+Targets without `##` still appear in `make help` under "Project targets" (by name only). Adding `##` gives them a description.
+
+## Adding a New Target
+
+The Makefile uses two blocks — real recipes inside `ifdef MKF_ACTIVE`, public stubs in `else`:
+
+```makefile
+ifdef MKF_ACTIVE
+
+lint: ## Run linting checks
+    @ruff check .
+
+else
+
+lint: ## Run linting checks
+    @./agents/tools/mkf.py $(V) $@
+
+endif
+```
+
+| Type | Where defined | When to use |
+|------|--------------|-------------|
+| Normal targets | Both blocks | Default — output captured by mkf |
+| Bypass targets (like `help`, `chat`) | `else` block only | Interactive output, must reach terminal directly |
+
+In an installed project, add project-specific targets to `Makefile.prj` instead. Bob manages `agents/Makefile.bob` (included via `-include agents/Makefile.bob`) and never touches `Makefile.prj`.
+
 ## Fallback
 
-If a target does not exist, add it to the Makefile — do not invoke tools directly.
-Place real recipes inside the `ifdef MKF_ACTIVE` block so they are captured by mkf.
-Targets that must run interactively or bypass mkf (like `help` or `chat`) should be defined
-in the `else` block alongside `help` and `chat`.
+If a target does not exist, add it to the Makefile — do not invoke tools directly. See **Adding a New Target** above.

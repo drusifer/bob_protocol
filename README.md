@@ -2,7 +2,7 @@ TL;DR: BobProtocol is a Claude Code Skills-based multi-persona AI system. Invoke
 
 # BobProtocol: Multi-Persona AI Development System
 
-A Claude Code Skills framework that orchestrates a team of specialized AI personas. One LLM dynamically switches between 7 expert roles based on task context, with persistent state and structured handoffs.
+A Claude Code Skills framework that orchestrates a team of specialized AI personas. One LLM dynamically switches between 8 expert roles based on task context, with persistent state and structured handoffs.
 
 ## How It Works
 
@@ -22,6 +22,7 @@ Each persona is a **Claude Code Skill** (`.claude/skills/<name>/`) with:
 | **Oracle** | Knowledge Officer | `*ora ask`, `*ora record`, `*ora distill`, `*ora tldr` | Documentation, knowledge queries |
 | **Trin** | QA Guardian | `*qa test`, `*qa verify`, `*qa review` | Testing, quality gates, code review |
 | **Mouse** | Scrum Master | `*sm status`, `*sm plan`, `*sm blocked` | Sprint tracking, coordination |
+| **Smith** | Expert User & UX Advocate | `*user review`, `*user test`, `*user approve` | User story review, usability testing, sprint gates |
 
 ## Common Skills (available to all personas)
 
@@ -91,4 +92,4 @@ make tldr    # Show TL;DR summaries from all project files
 ```
 
 See **[STARTUP.md](STARTUP.md)** for LLM startup instructions.
-See **[USER_GUIDE.md](USER_GUIDE.md)** for the full workflow guide.
+See **[SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md)** for a full trigger/command reference.

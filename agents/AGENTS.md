@@ -39,6 +39,7 @@ When acting as a specific persona, **load their specific instructions** from the
 | **Oracle** | Knowledge Officer | `agents/oracle.docs/SKILL.md` |
 | **Trin** | QA Guardian | `agents/trin.docs/SKILL.md` |
 | **Mouse** | Scrum Master | `agents/mouse.docs/SKILL.md` |
+| **Smith** | Expert User & UX Advocate | `agents/smith.docs/SKILL.md` |
 
 ## Global Agent Standards
 - **Working Memory**: Use `agents/[persona].docs/` for detailed reports and summaries

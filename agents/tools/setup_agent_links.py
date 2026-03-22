@@ -1,21 +1,26 @@
 #!/usr/bin/env python3
 """
-Setup Agent Discovery Links
+Setup Agent Discovery Links — creates symlinks so AI tools can find agent personas.
 
-Creates symlinks for agent discovery across different AI platforms:
-- Claude: .claude/skills/<name>/ -> agents/<name>.docs/
-- OpenAI/Codex/Cursor: AGENTS.md -> agents/AGENTS.md
-- Gemini: GEMINI.md -> agents/AGENTS.md
+TLDR:
+    Scans agents/*.docs/ directories for persona folders (identified by the
+    presence of SKILL.md) and creates the platform-specific symlinks each AI
+    tool expects: .claude/skills/<name>/ for Claude Code, AGENTS.md / GEMINI.md /
+    .cursorrules / CHATGPT.md / .github/copilot-instructions.md at the project
+    root for other tools.
+    Key functions: find_project_root() locates the repo root; find_persona_folders()
+    discovers persona dirs; find_shared_skills() finds agents/skills/*/;
+    setup_claude_skills() builds the .claude/skills/ tree; setup_root_symlinks()
+    creates root-level links; check_yaml_frontmatter() warns about missing
+    SKILL.md frontmatter; create_symlink() safely creates/replaces a symlink.
+    Role in the system: a one-time setup script run from the project root; depends
+    on agents/*.docs/SKILL.md files existing and produces the discovery artifacts
+    consumed by Claude Code, OpenAI Codex, Cursor, Gemini CLI, and GitHub Copilot.
 
-Run from project root:
-    python agents/tools/setup_agent_links.py
-
-Or make executable:
-    chmod +x agents/tools/setup_agent_links.py
-    ./agents/tools/setup_agent_links.py
 """
 
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -149,6 +154,30 @@ def setup_root_symlinks(project_root: Path, agents_dir: Path) -> int:
     return count
 
 
+def setup_via_mcp(project_root: Path) -> bool:
+    """Configure via MCP server for this project using `via install mcp`."""
+    print("\n📡 Setting up via MCP server...")
+
+    if not shutil.which("via"):
+        print("  ⚠️  via not found on PATH — skipping MCP setup")
+        print("     Install via and re-run: pip install via")
+        return False
+
+    import subprocess
+    result = subprocess.run(
+        ["via", "install", "mcp"],
+        cwd=project_root,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        print(f"  ❌ via install mcp failed: {result.stderr.strip()}")
+        return False
+
+    print(f"  ✅ via install mcp ({result.stdout.strip() or 'done'})")
+    return True
+
+
 def check_yaml_frontmatter(personas: list) -> list[str]:
     """Check which persona files are missing YAML frontmatter."""
     missing = []
@@ -207,11 +236,16 @@ def main():
     total += setup_claude_skills(project_root, personas, shared_skills)
     total += setup_root_symlinks(project_root, agents_dir)
 
+    # Set up via MCP
+    via_ok = setup_via_mcp(project_root)
+
     print(f"\n✅ Done! Created {total} symlinks.")
     print("\nAgent discovery is now enabled for:")
     print("  • Claude Code (.claude/skills/)")
     print("  • OpenAI Codex, Cursor, Copilot (AGENTS.md)")
     print("  • Gemini CLI (GEMINI.md)")
+    if via_ok:
+        print("  • via MCP server (.mcp.json)")
 
 
 if __name__ == "__main__":

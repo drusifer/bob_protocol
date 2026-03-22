@@ -58,6 +58,19 @@ Invoke a persona directly without the `*chat` routing layer:
 | `*qa report` | Summarise codebase health |
 | `*qa repro <issue>` | Create a minimal reproduction of a bug |
 
+### Smith — Expert User & UX Advocate
+| Trigger | Action |
+|---------|--------|
+| `*user review <stories>` | Review user stories and acceptance criteria |
+| `*user test <feature>` | Usability-test a feature by running the software |
+| `*user consult <question>` | Quick, non-blocking UX opinion |
+| `*user feedback <question>` | Deeper investigation of open UX/domain questions |
+| `*user research <topic>` | Research comparable tools — ends with `@Oracle *ora record` |
+| `*user bug CMD: ... \| EXPECTED: ... \| ACTUAL: ... \| UX ISSUE: ...` | File a usability defect |
+| `*user approve [gate]` | Approve a sprint review gate |
+| `*user reject REASON: ... \| FIX: ...` | Block a sprint gate |
+| `*user blocked <reason>` | Signal gate cannot be completed — escalates to Mouse |
+
 ### Mouse — Scrum Master
 | Trigger | Action |
 |---------|--------|
@@ -91,6 +104,8 @@ Use `*chat` to let the system auto-select a persona, or target one explicitly:
 *chat @Cypher *pm story users need CSV export
 *chat @Mouse *sm status
 *chat @Bob *reprompt Neo needs to know about the new cache layer
+*chat @Smith *user review sprint stories
+*chat @Smith *user test <feature>
 ```
 
 ---

@@ -1,6 +1,6 @@
 # BobProtocol Documentation Index
 
-**Last Updated:** 2025-11-28
+**Last Updated:** 2026-03-22
 
 ## Quick Access
 
@@ -11,32 +11,30 @@ Type `*help` for complete command reference with examples.
 ## Primary Documentation
 
 ### Getting Started
-- **[START_HERE.md](../START_HERE.md)** - Minimal onboarding, quick start guide
-- **[HELP.md](bob.docs/HELP.md)** - Complete command reference (use `*help`)
-- **[BOB_SYSTEM_PROTOCOL.md](bob.docs/BOB_SYSTEM_PROTOCOL.md)** - Full protocol specification
+- **[STARTUP.md](../STARTUP.md)** - LLM startup instructions
+- **[README.md](../README.md)** - Project overview and team reference
+- **[SHORTHAND_GUIDE.md](../SHORTHAND_GUIDE.md)** - Complete trigger/command reference
+- **[HELP.md](bob.docs/HELP.md)** - Quick reference for all 8 personas and commands
 
-### MCP Tools
-- **[MCP_INTEGRATION_SUMMARY.md](MCP_INTEGRATION_SUMMARY.md)** - MCP overview and mappings
-- **[tools/](tools/)** - Centralized tool documentation
-  - [README.md](tools/README.md) - Tools overview
-  - [mcp_protocol.md](tools/mcp_protocol.md) - Integration protocol
-  - Individual tool docs: `*_mcp.md`
+### Tools
+- **[tools/](tools/)** - Agent tooling scripts (`chat.py`, `mkf.py`, `setup_agent_links.py`)
 
 ---
 
 ## Persona Documentation
 
-### Active Personas (7)
+### Active Personas (8)
 
-| Persona | Role | File | Prefix |
-|---------|------|------|--------|
-| Bob | Prompt Engineering Expert | [Bob_PE_AGENT.md](bob.docs/Bob_PE_AGENT.md) | `*prompt` / `*reprompt` / `*learn` |
-| Cypher | Product Manager | [Cypher_PM_AGENT.md](cypher.docs/Cypher_PM_AGENT.md) | `*pm` |
-| Morpheus | Tech Lead / Architect | [Morpheus_SE_AGENT.md](morpheus.docs/Morpheus_SE_AGENT.md) | `*lead` |
-| Neo | Senior Software Engineer | [Neo_SWE_AGENT.md](neo.docs/Neo_SWE_AGENT.md) | `*swe` |
-| Oracle | Knowledge Officer | [Oracle_INFO_AGENT.md](oracle.docs/Oracle_INFO_AGENT.md) | `*ora` |
-| Trin | QA / Guardian | [Trin_QA_AGENT.md](trin.docs/Trin_QA_AGENT.md) | `*qa` |
-| Mouse | Scrum Master | [Mouse_SM_AGENT.md](mouse.docs/Mouse_SM_AGENT.md) | `*sm` |
+| Persona | Role | SKILL.md | Prefix |
+|---------|------|----------|--------|
+| Bob | Prompt Engineering Expert | [bob.docs/SKILL.md](bob.docs/SKILL.md) | `*new` / `*reprompt` / `*learn` |
+| Cypher | Product Manager | [cypher.docs/SKILL.md](cypher.docs/SKILL.md) | `*pm` |
+| Morpheus | Tech Lead / Architect | [morpheus.docs/SKILL.md](morpheus.docs/SKILL.md) | `*lead` |
+| Neo | Senior Software Engineer | [neo.docs/SKILL.md](neo.docs/SKILL.md) | `*swe` |
+| Oracle | Knowledge Officer | [oracle.docs/SKILL.md](oracle.docs/SKILL.md) | `*ora` |
+| Trin | QA / Guardian | [trin.docs/SKILL.md](trin.docs/SKILL.md) | `*qa` |
+| Mouse | Scrum Master | [mouse.docs/SKILL.md](mouse.docs/SKILL.md) | `*sm` |
+| Smith | Expert User & UX Advocate | [smith.docs/SKILL.md](smith.docs/SKILL.md) | `*user` |
 
 ---
 
@@ -52,44 +50,26 @@ Type `*help` for complete command reference with examples.
 
 ## Template Files
 
-Located in `agents/` root:
+Located in `agents/templates/`:
 
-- **Persona Templates:**
-  - `_template_PE_AGENT.md` - Prompt Engineering
-  - `_template_PM_AGENT.md` - Product Manager
-  - `_template_SE_AGENT.md` - Software Engineer / Tech Lead
-  - `_template_SWE_AGENT.md` - Senior Software Engineer
-  - `_template_INFO_AGENT.md` - Information / Knowledge
-  - `_template_QA_AGENT.md` - Quality Assurance
-  - `_template_SM_AGENT.md` - Scrum Master
-
-- **State Templates:**
-  - `_template_context.md`
-  - `_template_current_task.md`
-  - `_template_next_steps.md`
+- `_template_ARCH.md` - Architecture decision record
+- `_template_CHAT.md` - CHAT.md message format
+- `_template_context.md` - Agent context.md
+- `_template_current_task.md` - Agent current_task.md
+- `_template_finding.md` - Research finding
+- `_template_LESSON.md` - Lesson learned
+- `_template_next_steps.md` - Agent next_steps.md
+- `_template_tldr.md` - TLDR block formats
 
 ---
 
-## MCP Tools Directory
+## Tools Directory
 
 **Location:** `agents/tools/`
 
-### Core
-- `mcp_protocol.md` - Integration protocol
-- `README.md` - Tools overview
-
-### Tools (11)
-- `filesystem_mcp.md` - File operations
-- `git_mcp.md` - Version control
-- `testing_mcp.md` - Test execution
-- `code_analysis_mcp.md` - Code quality
-- `search_mcp.md` - Semantic search
-- `debug_mcp.md` - Debugging
-- `task_management_mcp.md` - Sprint tracking
-- `editor_mcp.md` - Bulk editing
-- `project_management_mcp.md` - Roadmap
-- `markdown_mcp.md` - Doc processing
-- `metrics_mcp.md` - Team analytics
+- `chat.py` - Post messages to CHAT.md
+- `mkf.py` - Build output filter (routes make output)
+- `setup_agent_links.py` - Create `.claude/skills/` symlinks (run once on setup)
 
 ---
 

@@ -8,10 +8,16 @@ ifdef MKF_ACTIVE
 
 # ── Real recipes (invoked by mkf, not directly by the user) ─────────────────
 
-.PHONY: tldr install_bob update_bob pull_bob clean_bob diff_bob
+.PHONY: tldr test via_index install_bob update_bob pull_bob clean_bob diff_bob
 
 tldr: ## Show TL;DR summaries from all project files (quick orientation for agents)
 	@rg --no-heading "TL;DR:" --glob "*.md" -N | sed 's|^\./||' | sort
+
+test: ## Run unit tests
+	@python -m unittest discover -s tests
+
+via_index: ## Build the via index required by the via MCP server
+	@via index "$(CURDIR)"
 
 install_bob: ## Copy agents into a project and set up skill links (usage: make install_bob TARGET=/path/to/project)
 	@[ -n "$(TARGET)" ] || { echo "Usage: make install_bob TARGET=/path/to/project"; exit 1; }
@@ -83,8 +89,7 @@ pull_bob: ## Pull bob-protocol personas, skills, tools, and templates from anoth
 
 clean_bob: ## Remove generated symlinks and reset agent memory/state files
 	@echo "Removing generated symlinks..."
-	@rm -rf .claude/skills/
-	@rm -f AGENTS.md GEMINI.md .cursorrules CHATGPT.md .github/copilot-instructions.md
+	@python agents/tools/teardown_agent_links.py --keep-mcp
 	@echo "Resetting agent state files to templates..."
 	@for dir in agents/*.docs; do \
 		cp agents/templates/_template_context.md    $$dir/context.md; \
@@ -130,7 +135,7 @@ else
 #   make tldr V=-vv        stderr + filtered failures to terminal
 #   make tldr V=-vvv       stderr + full stdout to terminal
 
-.PHONY: help chat install_bob update_bob pull_bob clean_bob diff_bob
+.PHONY: help chat test via_index install_bob update_bob pull_bob clean_bob diff_bob
 
 install_bob: ## Copy agents into a project and set up skill links (usage: make install_bob TARGET=/path/to/project)
 	@$(MAKE) MKF_ACTIVE=1 install_bob TARGET="$(TARGET)"
@@ -178,6 +183,12 @@ chat: ## Post a message to CHAT.md (usage: make chat MSG="<msg>" [PERSONA="<name
 		$(if $(PERSONA),--persona "$(PERSONA)") \
 		$(if $(CMD),--cmd "$(CMD)") \
 		$(if $(TO),--to "$(TO)")
+
+test: ## Run unit tests
+	@./agents/tools/mkf.py $(V) $@
+
+via_index: ## Build the via index required by the via MCP server
+	@./agents/tools/mkf.py $(V) $@
 
 %:
 	@./agents/tools/mkf.py $(V) $@

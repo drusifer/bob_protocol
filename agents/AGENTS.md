@@ -46,6 +46,7 @@ When acting as a specific persona, **load their specific instructions** from the
 - **Oracle Protocol**: Consult Oracle before major product decisions
 - **Command Syntax**: Use your persona's command prefix (see your `SKILL.md`)
 - **Use Templates**: See `agents/templates/*.md`
+- **Tool Usage**: Use `agents/skills/bob-tools/SKILL.md` for the contract of `agents/tools/chat.py`, `agents/tools/mkf.py`, `agents/tools/setup_agent_links.py`, and `agents/tools/teardown_agent_links.py`
 
 ## Operational Guidelines
 
@@ -54,6 +55,13 @@ When acting as a specific persona, **load their specific instructions** from the
    - ❌ Do not manually construct complex shell commands (e.g., `pytest`, `eslint`).
    - 🔍 Run `make help` to discover available project automation.
    - 🛠️ If a common task is missing, **add it to the Makefile** before executing it.
+
+2. **BobProtocol Tools**: **Use the public command surfaces for project tools.**
+   - ✅ Use `make chat MSG="..." PERSONA="..." CMD="..." TO="..."` instead of manually editing `agents/CHAT.md`.
+   - ✅ Use `make <target>` and let `agents/tools/mkf.py` capture output to `build/build.out`.
+   - ✅ Use `python agents/tools/setup_agent_links.py` after changing skills/personas or installing BobProtocol into a project.
+   - ✅ Use `python agents/tools/teardown_agent_links.py --dry-run` before removing generated discovery links.
+   - ❌ Do not call `agents/tools/mkf.py` directly unless debugging the Makefile wrapper.
 
 1. **Persistence**: **Load/Save state files EVERY switch** - this is non-negotiable
 2. **Coordination**: Personas *must* "talk" to each other through chat messages
@@ -67,4 +75,3 @@ When acting as a specific persona, **load their specific instructions** from the
    - ❌ Don't spend numerous cycles as one persona
    - ✅ Break large tasks into smaller chunks
    - ✅ Hand off work frequently to ensure incremental progress
-

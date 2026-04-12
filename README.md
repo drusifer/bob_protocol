@@ -74,8 +74,8 @@ All coordination flows through `agents/CHAT.md` — a shared team log that every
 ```
 agents/
 ├── CHAT.md                  # Shared team communication log
-├── PROJECT.md               # Project capabilities (via, etc.) — optional
-├── PROJECT.md.template      # Copy this to create PROJECT.md
+├── PROJECT.md               # Project capabilities (created by setup when missing)
+├── PROJECT.md.template      # Reference template for capability declarations
 ├── [persona].docs/          # Per-persona state and working memory
 │   ├── SKILL.md             # Persona definition + command interface
 │   ├── context.md           # Accumulated knowledge (state)
@@ -122,7 +122,7 @@ make diff_bob TARGET=/path/to/your/project
 python agents/tools/setup_agent_links.py
 ```
 
-2. Optionally declare project capabilities in `agents/PROJECT.md` (copy from `agents/PROJECT.md.template`):
+2. Review project capabilities in `agents/PROJECT.md`. Setup creates this file when it is missing:
 ```markdown
 ## Capabilities
 via: enabled   # personas will use via for code navigation
@@ -148,6 +148,8 @@ make test V=-vvv
 ## Optional: via Integration
 
 [`via`](https://github.com/drewpifer/via) is a Python codebase symbol index. When enabled in `agents/PROJECT.md`, personas use `via` for code navigation instead of reading files directly — saving significant context.
+
+Running `python agents/tools/setup_agent_links.py` installs the generic via MCP config with `via install mcp`, ensures the project has a `.via/index.db`, and, when Codex is installed, registers the same server with Codex using `codex mcp add via --env HOME=<project-root> -- <via> mcp serve --no-web <project-root>`.
 
 Each persona knows how to use `via` in the way that best fits their role (e.g. Trin uses `--stale` for coverage gap detection, Morpheus uses `-oD` for architecture diagrams).
 

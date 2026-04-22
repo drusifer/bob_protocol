@@ -1,12 +1,22 @@
 .DEFAULT_GOAL := help
 
+# ── Bob Protocol Configuration ───────────────────────────────────────────────
+# Detect if this file is being run directly as Makefile.bob
+_IS_BOB_ENTRY := $(filter %Makefile.bob,$(firstword $(MAKEFILE_LIST)))
+
 ifdef MKF_ACTIVE
 
-# ── Project targets (invoked by mkf via re-invocation) ───────────────────────
-# Included here so mkf can find them when it re-runs: make MKF_ACTIVE=1 <target>
+# ── Re-invocation Layer ──────────────────────────────────────────────────────
+# Included by mkf.py to run the actual target.
+
+# Include the project's original targets.
+# We try Makefile.prj (legacy) and Makefile (if we are running as Makefile.bob).
+ifneq ($(firstword $(MAKEFILE_LIST)),Makefile)
+-include Makefile
+endif
 -include Makefile.prj
 
-# ── Real recipes (invoked by mkf, not directly by the user) ─────────────────
+# ── Bob Protocol Targets ─────────────────────────────────────────────────────
 
 .PHONY: tldr test via_index install_bob update_bob pull_bob clean_bob diff_bob
 
@@ -37,10 +47,19 @@ install_bob: ## Copy agents into a project and set up skill links (usage: make i
 	done
 	@cp agents/templates/_template_CHAT.md $(TARGET)/agents/CHAT.md
 	@echo "Installing Makefile into $(TARGET)..."
-	@if [ -f "$(TARGET)/Makefile" ] && ! grep -q "MKF_ACTIVE" "$(TARGET)/Makefile"; then \
-		mv "$(TARGET)/Makefile" "$(TARGET)/Makefile.prj" && echo "  Renamed: Makefile -> Makefile.prj (project targets preserved)"; \
+	@if [ -f "$(TARGET)/Makefile" ]; then \
+		if grep -q "MKF_ACTIVE" "$(TARGET)/Makefile"; then \
+			cp Makefile "$(TARGET)/Makefile" && echo "  Updated: Makefile (bob-managed)"; \
+		else \
+			cp Makefile "$(TARGET)/Makefile.bob" && echo "  Installed: Makefile.bob"; \
+			if ! grep -q "include Makefile.bob" "$(TARGET)/Makefile"; then \
+				echo "include Makefile.bob" | cat - "$(TARGET)/Makefile" > "$(TARGET)/Makefile.tmp" && mv "$(TARGET)/Makefile.tmp" "$(TARGET)/Makefile"; \
+				echo "  Modified: Makefile (included Makefile.bob at top)"; \
+			fi; \
+		fi; \
+	else \
+		cp Makefile "$(TARGET)/Makefile" && echo "  Installed: Makefile (bob-managed)"; \
 	fi
-	@cp Makefile "$(TARGET)/Makefile" && echo "  Installed: Makefile (bob-managed, includes Makefile.prj)"
 	@echo "Setting up Claude skill links..."
 	@python $(TARGET)/agents/tools/setup_agent_links.py
 	@echo ""
@@ -65,10 +84,19 @@ update_bob: ## Update bob-protocol personas, skills, tools, and templates in a t
 	done
 	@[ -f $(TARGET)/agents/CHAT.md ] || cp agents/templates/_template_CHAT.md $(TARGET)/agents/CHAT.md
 	@echo "Updating Makefile in $(TARGET)..."
-	@if [ -f "$(TARGET)/Makefile" ] && ! grep -q "MKF_ACTIVE" "$(TARGET)/Makefile"; then \
-		mv "$(TARGET)/Makefile" "$(TARGET)/Makefile.prj" && echo "  Renamed: Makefile -> Makefile.prj (project targets preserved)"; \
+	@if [ -f "$(TARGET)/Makefile" ]; then \
+		if grep -q "MKF_ACTIVE" "$(TARGET)/Makefile"; then \
+			cp Makefile "$(TARGET)/Makefile" && echo "  Updated: Makefile (bob-managed)"; \
+		else \
+			cp Makefile "$(TARGET)/Makefile.bob" && echo "  Updated: Makefile.bob"; \
+			if ! grep -q "include Makefile.bob" "$(TARGET)/Makefile"; then \
+				echo "include Makefile.bob" | cat - "$(TARGET)/Makefile" > "$(TARGET)/Makefile.tmp" && mv "$(TARGET)/Makefile.tmp" "$(TARGET)/Makefile"; \
+				echo "  Modified: Makefile (included Makefile.bob at top)"; \
+			fi; \
+		fi; \
+	else \
+		cp Makefile "$(TARGET)/Makefile" && echo "  Updated: Makefile (bob-managed)"; \
 	fi
-	@cp Makefile "$(TARGET)/Makefile" && echo "  Updated: Makefile"
 	@echo "Updating Claude skill links..."
 	@python $(TARGET)/agents/tools/setup_agent_links.py
 	@echo ""
@@ -190,7 +218,14 @@ test: ## Run unit tests
 via_index: ## Build the via index required by the via MCP server
 	@./agents/tools/mkf.py $(V) $@
 
+# Interception logic: 
+# If we are the entry point (direct make call), intercept everything.
+# If we are included, we only provide targets, unless specified.
+ifeq ($(MKF_ACTIVE),)
+ifdef _IS_BOB_ENTRY
 %:
 	@./agents/tools/mkf.py $(V) $@
+endif
+endif
 
 endif

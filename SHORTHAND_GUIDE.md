@@ -2,7 +2,7 @@ TL;DR: Use `*fix`, `*impl`, `*plan sprint` for full workflow chains. Use `*chat 
 
 # Shorthand Guide — Skill Triggers
 
-## Loop Commands (Multi-Persona Chains)
+## Bloop Commands (Bob Loops — Multi-Persona Chains)
 
 Use these when you want a full automated workflow, not a single-persona response.
 
@@ -109,11 +109,15 @@ Invoke a persona directly — bypasses `*chat` routing.
 ## `*chat` Routing Syntax
 
 ```
-*chat <message>                    # auto-select persona
-*chat @<Persona> *<command> <args> # direct invocation
+*chat <message>                      # auto-select persona
+*chat @<Persona> *<command> <args>   # direct invocation
+@<Persona> <message>                 # Gemini-style direct invocation
 ```
 
-### Examples
+### Note on Direct Invocations
+Different AI harnesses use different prefixes for direct persona invocation (e.g., `@persona` or `/persona` in Gemini CLI, `/persona` in Claude, `$persona` in Codex). 
+
+**Rule**: If you are invoked directly via such a command, you MUST log the invocation to `agents/CHAT.md` immediately upon entry if it has not already been logged. This ensures the shared team context is complete.
 ```
 *chat fix the bug in parser.py
 *chat @neo *swe fix bug in parser.py line 42
@@ -144,7 +148,7 @@ Per phase (*impl <phase N>):
   → Neo *swe impl <phase>
   → Trin *qa uat <phase>
   → Morpheus *lead review <phase>
-  → (fix loop if needed)
+  → (fix Bloop if needed)
 
 Sprint close:
   → Oracle *ora groom

@@ -31,7 +31,7 @@ If `CHAT.md` has no clear handoff, ask the user: *"I'm resuming — what should 
 
 ## Quick Reference
 
-### Loop Commands (full workflow chains)
+### Bloop Commands (full workflow chains)
 ```
 *fix <bug>           → Neo fix → Trin UAT → Morpheus review
 *impl <feature>      → Neo impl → Trin UAT → Morpheus review
@@ -44,7 +44,10 @@ If `CHAT.md` has no clear handoff, ask the user: *"I'm resuming — what should 
 ```
 *chat <message>                      # auto-select persona
 *chat @<Persona> *<command> <args>   # direct invocation
+@<Persona> <message>                 # Gemini-style direct invocation
 ```
+
+**Note on Direct Invocations**: If you are invoked directly via a harness-specific command (e.g., `@persona` or `/persona` in Gemini CLI, `/persona` in Claude, `$persona` in Codex), you MUST log the invocation to `agents/CHAT.md` immediately upon entry if it has not already been logged.
 
 ### Direct Skill Triggers
 ```

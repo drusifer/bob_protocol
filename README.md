@@ -1,4 +1,4 @@
-TL;DR: BobProtocol is a reusable Claude Code Skills framework. Invoke personas with `*chat`, loop commands (`*fix`, `*impl`, `*plan sprint`), or direct skill triggers. State persists per-persona in `agents/[persona].docs/`.
+TL;DR: BobProtocol is a reusable Claude Code Skills framework. Invoke personas with `*chat`, Bloop commands (`*fix`, `*impl`, `*plan sprint`), or direct skill triggers. State persists per-persona in `agents/[persona].docs/`.
 
 # BobProtocol: Multi-Persona AI Development Framework
 
@@ -31,7 +31,7 @@ All coordination flows through `agents/CHAT.md` — a shared team log that every
 | Skill | Triggers | Purpose |
 |-------|---------|---------|
 | `bob-protocol` | `*chat` | Core routing, state management, anti-loop protocol |
-| `loops` | `*fix`, `*impl`, `*qa`, `*review`, `*plan sprint` | Multi-persona workflow chains |
+| `bloop` | `*fix`, `*impl`, `*qa`, `*review`, `*plan sprint` | Multi-persona workflow chains (Bob Loops) |
 | `sprint` | `*plan sprint`, `*sprint retro`, `*sprint launch` | Full sprint cycle |
 | `chat` | — | Post structured messages to `agents/CHAT.md` |
 | `make` | `*make` | Run project Makefile targets |
@@ -39,13 +39,13 @@ All coordination flows through `agents/CHAT.md` — a shared team log that every
 
 ## Invoking Agents
 
-### Loop commands — full workflow chains (recommended)
+### Bloop commands — full workflow chains (recommended)
 ```
-*fix <bug>               # Neo → Trin → Morpheus fix loop
-*impl <feature>          # Neo → Trin → Morpheus implementation loop
-*qa <thing>              # Trin → Morpheus QA loop
-*review <thing>          # Morpheus → Trin review loop
-*plan sprint             # Cypher → Smith → Morpheus → Mouse planning loop
+*fix <bug>               # Neo → Trin → Morpheus fix Bloop
+*impl <feature>          # Neo → Trin → Morpheus implementation Bloop
+*qa <thing>              # Trin → Morpheus QA Bloop
+*review <thing>          # Morpheus → Trin review Bloop
+*plan sprint             # Cypher → Smith → Morpheus → Mouse planning Bloop
 ```
 
 ### `*chat` — auto-select a persona for a single task
@@ -55,12 +55,18 @@ All coordination flows through `agents/CHAT.md` — a shared team log that every
 ```
 
 ### `*chat @Persona` — direct single-persona invocation
+Directly invoke a persona using Gemini's `@` syntax or the internal `@Persona` trigger.
+
 ```
-*chat @neo *swe fix authentication bug in auth.py
-*chat @trin *qa test all
+*chat @neo *fix authentication bug in auth.py
+@neo *fix authentication bug in auth.py
+*chat @trin *test all
 *chat @oracle *ora ask What's our pattern for error handling?
 *chat @smith *user review the sprint stories
 ```
+
+> **Note on Harness Prefixes**: Different AI harnesses use different prefixes for direct invocation (e.g., `@persona` or `/persona` in Gemini CLI, `/persona` in Claude, `$persona` in Codex). If you are invoked directly via such a command, you MUST log the invocation to `agents/CHAT.md` immediately upon entry if it has not already been logged.
+
 
 ### Direct skill triggers — bypass chat routing
 ```
@@ -83,7 +89,7 @@ agents/
 │   └── next_steps.md        # Resume plan (state)
 ├── skills/
 │   ├── bob-protocol/        # Core protocol (*chat routing, state management)
-│   ├── loops/               # Loop commands (*fix, *impl, *qa, *review, *plan sprint)
+│   ├── bloop/               # Bob Loop commands (*fix, *impl, *qa, *review, *plan sprint)
 │   ├── sprint/              # Full sprint cycle
 │   ├── chat/                # make chat wrapper
 │   ├── make/                # Makefile targets
@@ -102,18 +108,16 @@ Makefile                     # Bob-managed; project targets in Makefile.prj
 ```bash
 # First install
 make install_bob TARGET=/path/to/your/project
-
-# Update bob-protocol files in a project (preserves project state)
-make update_bob TARGET=/path/to/your/project
-
-# Pull bob-protocol updates from another project into this one
-make pull_bob SRC=/path/to/other/project
-
-# See what differs between this repo and a project
-make diff_bob TARGET=/path/to/your/project
 ```
 
-`install_bob` and `update_bob` sync only the framework files (skills, tools, templates, persona SKILL.md files) — project artifacts and state files are never touched.
+### Makefile Integration
+`install_bob` and `update_bob` handle your existing `Makefile` surgically:
+1.  If a `Makefile` already exists, the bob-managed targets are installed as **`Makefile.bob`**.
+2.  `include Makefile.bob` is added to the top of your existing `Makefile`.
+3.  Bob-managed targets (`chat`, `update_bob`, etc.) are directly available via `make`.
+4.  Project targets (e.g. `make test`) are automatically routed through `mkf.py` for logging and output filtering if they are wrapped in `ifdef MKF_ACTIVE`.
+
+If no `Makefile` exists, one is created as the primary `Makefile`.
 
 ## Project Setup (after install)
 

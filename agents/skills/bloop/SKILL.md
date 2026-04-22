@@ -1,28 +1,28 @@
 ---
-name: loops
-description: Top-level workflow loops that chain multiple personas autonomously. Use *fix, *review, *impl, *qa, or *plan sprint instead of manually invoking each persona in sequence.
+name: bloop
+description: Top-level workflow loops (Bob Loops) that chain multiple personas autonomously. Use *fix, *review, *impl, *qa, or *plan sprint instead of manually invoking each persona in sequence.
 triggers: ["*fix", "*review", "*impl", "*qa", "*plan sprint"]
 requires: ["bob-protocol", "chat", "make"]
 ---
 
-Top-level loop commands that run multi-persona chains autonomously without the user needing to invoke each step.
+Top-level loop commands (Bloop) that run multi-persona chains autonomously without the user needing to invoke each step.
 
 TLDR:
-    Use loop commands when you want a full workflow, not a single-persona response.
+    Use Bloop commands when you want a full workflow, not a single-persona response.
     Each loop runs its persona chain to completion — saving state and posting handoffs at every step.
     For direct single-persona control, use `*chat @persona *command` instead.
 
-# Loops — Multi-Persona Workflow Commands
+# Bloop — Bob Loop Multi-Persona Workflow Commands
 
 ## Overview
 
-Loop commands trigger an **autonomous chain** of personas. Each persona completes its role, saves state, hands off to the next, and the chain continues until the loop is done or a gate requires input.
+Bloop commands trigger an **autonomous chain** of personas. Each persona completes its role, saves state, hands off to the next, and the chain continues until the loop is done or a gate requires input.
 
 **Rule:** Every persona in a loop MUST save state and post a handoff message before switching — see bob-protocol State Management.
 
 ---
 
-## Loop Commands
+## Bloop Commands
 
 ### `*fix <thing>`
 **Fix loop** — investigate, fix, test, and review a bug or broken behavior.
@@ -120,7 +120,7 @@ Chain: Cypher → [Smith gate] → Morpheus → [Smith gate] → Mouse → Morph
 
 ---
 
-## When to Use Loops vs. Direct Invocation
+## When to Use Bloop vs. Direct Invocation
 
 | Situation | Use |
 |-----------|-----|

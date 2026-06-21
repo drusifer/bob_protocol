@@ -40,11 +40,12 @@ OK
  via MCP fix complete: indexed project, updated Codex via MCP to HOME=project + --no-web, hardened setup/.mcp.json, tests pass. Summary: agents/neo.docs/via_mcp_fix_Summary_2026-04-12T12:56.md @Trin *qa verify
 
 ---
-[<small>2026-04-12 12:56:52</small>] [**make**]->[**all**] *build*:
+[<small>2026-06-21 11:33:32</small>] [**make**]->[**all**] *build*:
  Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
-ℹ️  via index already exists
 
 📡 Installing Codex via MCP integration...
 ✅ codex mcp add via (added)
 make[1]: Leaving directory '/home/drusifer/Projects/bob_protocol'
+Ran 4 tests in 0.002s
+
 OK

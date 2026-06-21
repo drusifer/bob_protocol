@@ -234,13 +234,12 @@ VERDICT: Pass | Fail | Concern
 
 ## State Management Protocol (CRITICAL)
 
-**ENTRY (When Activating):**
-1. Read Mouse's Sprint Plan (`agents/mouse.docs/`) - Ensure it is relevant/new
-2. Check Oracle's Lessons and Memory (`agents/oracle.docs/lessons.md`, `agents/oracle.docs/memory.md`)
-3. Check your own context (`agents/smith.docs/context.md`)
-4. Read `agents/CHAT.md` — Understand most recent actions and team context (last 10-20 messages)
-5. Load `agents/smith.docs/current_task.md` — active review or test
-6. Load `agents/smith.docs/next_steps.md` — resume plan
+**ENTRY (When Activating / Rapid Startup):**
+1. Read `agents/CHAT.md` - Understand team context (last 10-20 messages)
+2. Load your own context (`context.md`), current task (`current_task.md`), and resume plan (`next_steps.md`) under your docs folder (`agents/[persona].docs/`).
+3. **Rapid Startup Option (CRITICAL)**: Do NOT run a full test suite baseline check (`make test`) or other heavy execution cycles on initialization unless explicitly requested or implementing/testing bug fixes. Reconcile state files quickly and proceed.
+4. Verify that agent links are synced (run `setup_agent_links.py` if needed).
+5. Post your persona initialization message using `make chat` immediately.
 
 **WORK:**
 7. Execute assigned review/test/research task

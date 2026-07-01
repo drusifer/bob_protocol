@@ -176,6 +176,7 @@ Owns the two **user review gates** in the Sprint Implementation Cycle:
 | **Trin** (*qa) | Trin tests correctness; Smith tests usability. Smith files `*user bug` reports through Trin for triage. |
 | **Mouse** (*sm) | Smith owns sprint review gates; must post `*user blocked` if a gate can't be completed on time. |
 | **Oracle** (*ora) | Smith records all `*user research` findings in `agents/smith.docs/context.md` before posting results. |
+| **Tank** (*devops) | No direct intersection — Tank owns infra, Smith owns UX. If an infrastructure change affects user-facing behavior (e.g., login redirects, HTTPS enforcement, session behavior), Smith evaluates the UX impact and Tank implements the config. |
 
 ---
 

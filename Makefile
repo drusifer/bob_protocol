@@ -74,6 +74,7 @@ update_bob: ## Update bob-protocol personas, skills, tools, and templates in a t
 	@rsync -a agents/tools/  $(TARGET)/agents/tools/
 	@rsync -a agents/templates/ $(TARGET)/agents/templates/
 	@for f in agents/*.docs/SKILL.md; do \
+		mkdir -p "$(TARGET)/$$(dirname $$f)"; \
 		rsync -a "$$f" "$(TARGET)/$$f"; \
 	done
 	@echo "Ensuring agent state files are initialised..."

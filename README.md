@@ -2,7 +2,7 @@ TL;DR: BobProtocol is a reusable Claude Code Skills framework. Invoke personas w
 
 # BobProtocol: Multi-Persona AI Development Framework
 
-A reusable Claude Code Skills framework that orchestrates a team of specialized AI personas. One LLM dynamically switches between 8 expert roles based on task context, with persistent state and structured handoffs across sessions.
+A reusable Claude Code Skills framework that orchestrates a team of specialized AI personas. One LLM dynamically switches between 9 expert roles based on task context, with persistent state and structured handoffs across sessions.
 
 ## How It Works
 
@@ -25,6 +25,7 @@ All coordination flows through `agents/CHAT.md` — a shared team log that every
 | **Cypher** | Product Manager | `*pm` | Requirements, user stories, PRDs |
 | **Bob** | Prompt Engineer | `*prompt` | Agent creation, system improvement |
 | **Smith** | HCI Expert | `*user` | Usability testing, HCI evaluation, sprint gates |
+| **Tank** | DevOps Engineer | `*devops` | IaC, CI/CD, deployment automation, environment management, systems reliability |
 
 ## Skills
 
@@ -80,6 +81,7 @@ Directly invoke a persona using Gemini's `@` syntax or the internal `@Persona` t
 ```
 agents/
 ├── CHAT.md                  # Shared team communication log
+├── CHAT.diagram.md          # Auto-generated Mermaid view of CHAT.md (derived, don't edit)
 ├── PROJECT.md               # Project capabilities (created by setup when missing)
 ├── PROJECT.md.template      # Reference template for capability declarations
 ├── [persona].docs/          # Per-persona state and working memory
@@ -94,7 +96,8 @@ agents/
 │   └── personas/            # Persona switching reference
 ├── templates/               # Document and state file templates
 └── tools/
-    ├── chat.py              # Post to CHAT.md
+    ├── chat.py              # Post to CHAT.md, regenerates CHAT.diagram.md
+    ├── chat_diagram.py      # Render CHAT.md as a Mermaid sequence diagram
     ├── mkf.py               # Build output filter (wraps make)
     └── setup_agent_links.py # Generate .claude/skills/ symlinks
 .claude/skills/              # Symlinks → SKILL.md files (auto-generated)
@@ -136,6 +139,7 @@ via: enabled   # personas will use via for code navigation
 make help                        # list all targets
 make tldr                        # show TL;DR from all project files
 make chat MSG="..." PERSONA="..."  # post a message to CHAT.md
+make chat_diagram                # regenerate CHAT.diagram.md on demand
 make diff_bob TARGET=<path>      # diff framework files with a project
 make update_bob TARGET=<path>    # push framework updates to a project
 make pull_bob SRC=<path>         # pull framework updates from a project

@@ -120,6 +120,7 @@ make test   # confirm no regressions
 - Move the top **75%** of the `CHAT.md` history into this archive.
 - Replace the moved content in `CHAT.md` with a concise summary of the archived conversation.
 - **MANDATORY:** Include a link to the new archive file at the very beginning of `CHAT.md` (or following existing archive links).
+- After editing `CHAT.md` directly (not through `make chat`), run `make chat_diagram` to refresh the derived `agents/CHAT.diagram.md` view — it does not update itself on manual edits.
 
 ## Working Memory
 *   **State**: `agents/oracle.docs/state.md` - Knowledge organization notes, active documentation work, documentation plans (context, current task, next steps)

@@ -36,12 +36,14 @@ install_bob: ## Copy agents into a project and set up skill links (usage: make i
 	@rsync -a \
 		--exclude='*.docs/state.md' \
 		--exclude='CHAT.md' \
+		--exclude='CHAT.diagram.md' \
 		agents/ $(TARGET)/agents/
 	@echo "Initialising agent state files..."
 	@for dir in $(TARGET)/agents/*.docs; do \
 		cp agents/templates/_template_state.md $$dir/state.md; \
 	done
 	@cp agents/templates/_template_CHAT.md $(TARGET)/agents/CHAT.md
+	@python agents/tools/chat_diagram.py --chat-file $(TARGET)/agents/CHAT.md --out $(TARGET)/agents/CHAT.diagram.md
 	@echo "Installing Makefile into $(TARGET)..."
 	@if [ -f "$(TARGET)/Makefile" ]; then \
 		if grep -q "MKF_ACTIVE" "$(TARGET)/Makefile"; then \
@@ -78,6 +80,7 @@ update_bob: ## Update bob-protocol personas, skills, tools, and templates in a t
 		[ -f $$dir/state.md ] || cp agents/templates/_template_state.md $$dir/state.md; \
 	done
 	@[ -f $(TARGET)/agents/CHAT.md ] || cp agents/templates/_template_CHAT.md $(TARGET)/agents/CHAT.md
+	@python agents/tools/chat_diagram.py --chat-file $(TARGET)/agents/CHAT.md --out $(TARGET)/agents/CHAT.diagram.md
 	@echo "Updating Makefile in $(TARGET)..."
 	@if [ -f "$(TARGET)/Makefile" ]; then \
 		if grep -q "MKF_ACTIVE" "$(TARGET)/Makefile"; then \
@@ -118,6 +121,7 @@ clean_bob: ## Remove generated symlinks and reset agent memory/state files
 		cp agents/templates/_template_state.md $$dir/state.md; \
 	done
 	@cp agents/templates/_template_CHAT.md agents/CHAT.md
+	@python agents/tools/chat_diagram.py
 	@echo "Done. Environment cleaned and state reset."
 
 diff_bob: ## Compare bob-protocol personas, skills, tools, and templates with a target project (usage: make diff_bob TARGET=/path/to/project)
@@ -146,7 +150,7 @@ diff_bob: ## Compare bob-protocol personas, skills, tools, and templates with a 
 else
 
 # ── Interception layer ───────────────────────────────────────────────────────
-# All targets except help, chat, install_bob, update_bob, pull_bob, and clean_bob route through mkf (agents/tools/mkf.py).
+# All targets except help, chat, chat_diagram, install_bob, update_bob, pull_bob, and clean_bob route through mkf (agents/tools/mkf.py).
 # mkf captures output to build/build.out, posts status to CHAT.md,
 # and prints the last 10 lines on exit.
 #
@@ -156,7 +160,7 @@ else
 #   make tldr V=-vv        stderr + filtered failures to terminal
 #   make tldr V=-vvv       stderr + full stdout to terminal
 
-.PHONY: help chat test via_index install_bob update_bob pull_bob clean_bob diff_bob
+.PHONY: help chat chat_diagram test via_index install_bob update_bob pull_bob clean_bob diff_bob
 
 install_bob: ## Copy agents into a project and set up skill links (usage: make install_bob TARGET=/path/to/project)
 	@$(MAKE) MKF_ACTIVE=1 install_bob TARGET="$(TARGET)"
@@ -204,6 +208,9 @@ chat: ## Post a message to CHAT.md (usage: make chat MSG="<msg>" [PERSONA="<name
 		$(if $(PERSONA),--persona "$(PERSONA)") \
 		$(if $(CMD),--cmd "$(CMD)") \
 		$(if $(TO),--to "$(TO)")
+
+chat_diagram: ## Regenerate agents/CHAT.diagram.md, a Mermaid sequence diagram of CHAT.md (usage: make chat_diagram [INCLUDE_BUILDS=1])
+	@python agents/tools/chat_diagram.py $(if $(INCLUDE_BUILDS),--include-builds)
 
 test: ## Run unit tests
 	@./agents/tools/mkf.py $(V) $@

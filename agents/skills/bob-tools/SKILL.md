@@ -1,13 +1,14 @@
 ---
 name: bob-tools
-description: Use when working in a BobProtocol project and you need to understand or run the project tool scripts in agents/tools, especially chat.py, mkf.py, setup_agent_links.py, and teardown_agent_links.py. This skill explains which commands to run, when to prefer Makefile wrappers, what each tool writes, and how to avoid flooding Codex context.
-triggers: ["agents/tools", "chat.py", "mkf.py", "setup_agent_links.py", "teardown_agent_links.py", "bob tools", "BobProtocol tools"]
+description: Use when working in a BobProtocol project and you need to understand or run the project tool scripts in agents/tools, especially chat.py, chat_diagram.py, mkf.py, setup_agent_links.py, and teardown_agent_links.py. This skill explains which commands to run, when to prefer Makefile wrappers, what each tool writes, and how to avoid flooding Codex context.
+triggers: ["agents/tools", "chat.py", "chat_diagram.py", "mkf.py", "setup_agent_links.py", "teardown_agent_links.py", "bob tools", "BobProtocol tools"]
 ---
 
 One-line summary: Use BobProtocol project tools through their stable command surfaces, usually `make`, and only call scripts directly for setup or debugging.
 
 TLDR:
-    Use `make chat MSG="..." PERSONA="..." CMD="..." TO="..."` for team log messages.
+    Use `make chat MSG="..." PERSONA="..." CMD="..." TO="..."` for team log messages — it also regenerates `agents/CHAT.diagram.md` (a Mermaid sequence diagram of the log) automatically.
+    Use `make chat_diagram` to regenerate the diagram on demand without posting a message.
     Use `make <target>` for project automation; `mkf.py` wraps most targets automatically and writes full output to `build/build.out`.
     Use `python agents/tools/setup_agent_links.py` after installing/updating BobProtocol so Claude, Codex, root instruction links, via MCP, and Codex MCP are configured.
     Use `python agents/tools/teardown_agent_links.py --dry-run` to inspect generated links before removing them.
@@ -18,7 +19,8 @@ TLDR:
 
 | Tool | Preferred command | Use for | Writes |
 |------|-------------------|---------|--------|
-| `agents/tools/chat.py` | `make chat MSG="..." PERSONA="..." CMD="..." TO="..."` | Append short structured messages to `agents/CHAT.md` | `agents/CHAT.md` |
+| `agents/tools/chat.py` | `make chat MSG="..." PERSONA="..." CMD="..." TO="..."` | Append short structured messages to `agents/CHAT.md` | `agents/CHAT.md`, `agents/CHAT.diagram.md` |
+| `agents/tools/chat_diagram.py` | `make chat_diagram [INCLUDE_BUILDS=1]` | Render `agents/CHAT.md` as a Mermaid sequence diagram, for humans following the conversation flow | `agents/CHAT.diagram.md` |
 | `agents/tools/mkf.py` | `make <target> [V=-v/-vv/-vvv]` | Capture build/test output and post build status | `build/build.out`, `agents/CHAT.md` |
 | `agents/tools/setup_agent_links.py` | `python agents/tools/setup_agent_links.py` | Create discovery links for Claude, Codex, root instruction files, delegate MCP setup to via, ensure the via index exists, register via with Codex MCP, and create missing project capabilities | `.claude/skills`, `$CODEX_HOME/skills`, root symlinks; `.mcp.json` via `via`; `.via/index.db`; Codex config via `codex mcp add`; `agents/PROJECT.md` when absent |
 | `agents/tools/teardown_agent_links.py` | `python agents/tools/teardown_agent_links.py --dry-run` | Remove discovery links created by setup and delegate MCP teardown to via/Codex | `.claude/skills`, `$CODEX_HOME/skills`, root symlinks; via may remove its own MCP config; Codex config via `codex mcp remove` |
@@ -52,6 +54,25 @@ Notes:
 - `TO` defaults to `all`.
 - Multiple `--to` flags are supported by the Python tool.
 - When `PERSONA=make` and `CMD=build`, `chat.py` overwrites the final chat entry if that entry is also a make build message.
+- Every successful post regenerates `agents/CHAT.diagram.md` as a best-effort side effect (a rendering failure prints a warning but never blocks the chat post).
+
+## chat_diagram.py
+
+`agents/CHAT.diagram.md` is a derived Mermaid `sequenceDiagram` view of `agents/CHAT.md` — one arrow per `Persona->recipient` message, grouped with a date `Note` whenever the day changes, with `make` build-status entries filtered out by default (they're noise for following the persona-to-persona conversation, not part of it). It's regenerated automatically by `chat.py`; it's a read-only artifact for humans — don't hand-edit it, and agents shouldn't parse it back for context (read `agents/CHAT.md` itself, per the `chat` skill).
+
+Regenerate on demand, e.g. after manually editing `CHAT.md` or archiving old messages:
+
+```bash
+make chat_diagram                  # skip build-status entries (default)
+make chat_diagram INCLUDE_BUILDS=1 # include them
+```
+
+Direct form, mainly for debugging or pointing at another project's log:
+
+```bash
+python agents/tools/chat_diagram.py --chat-file agents/CHAT.md --out agents/CHAT.diagram.md
+python agents/tools/chat_diagram.py --print   # stdout only, writes nothing
+```
 
 ## mkf.py
 

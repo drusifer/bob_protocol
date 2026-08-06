@@ -7,7 +7,9 @@ TLDR:
     CHAT.md communication log used by AI agents in the project. Each message is
     stamped with a timestamp, persona, command prefix, and optional recipient list.
     Key function: main() — parses arguments and appends a formatted message entry
-    to agents/CHAT.md, enforcing a 512-character message limit.
+    to agents/CHAT.md, enforcing a 512-character message limit. After each post it
+    also regenerates agents/CHAT.diagram.md (a Mermaid sequence diagram view of the
+    log) via chat_diagram.regenerate() — see chat_diagram.py.
     Role in the system: consumed by mkf.py (which calls it to post build status)
     and invoked directly by agents or developers to coordinate via the chat log.
 
@@ -18,6 +20,11 @@ import datetime
 import os
 import sys
 from pathlib import Path
+
+try:
+    from . import chat_diagram  # imported as agents.tools.chat
+except ImportError:
+    import chat_diagram  # run directly as a script
 
 
 def is_make_build(persona, cmd):
@@ -95,6 +102,12 @@ def main():
     )
     print(f"{action} {chat_file}:")
     print(formatted_line.strip())
+
+    diagram_file = Path(chat_file).with_name("CHAT.diagram.md")
+    try:
+        chat_diagram.regenerate(chat_file, diagram_file)
+    except Exception as exc:  # best-effort: never let diagram rendering block a chat post
+        print(f"Warning: could not regenerate {diagram_file}: {exc}")
 
 if __name__ == "__main__":
     main()

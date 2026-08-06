@@ -9,6 +9,8 @@ triggers: ["*chat", "*msg", "*chat log"]
 
 The `chat` skill posts structured messages to `agents/CHAT.md`, the shared team communication log. All personas use this to coordinate work and hand off tasks.
 
+Every post also regenerates `agents/CHAT.diagram.md` — a Mermaid sequence diagram view of the same log, for humans following the conversation flow. It's a derived file; don't hand-edit it or read it back into agent context. Regenerate on demand with `make chat_diagram` (see `bob-tools` skill).
+
 ## Usage
 
 ```bash

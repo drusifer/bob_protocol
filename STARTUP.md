@@ -1,4 +1,4 @@
-TL;DR: On startup, read CHAT.md for context, load your persona's state files, then wait for user direction. If resuming mid-task, check next_steps.md and continue from there.
+TL;DR: On startup, read CHAT.md for context, load your persona's state.md, then wait for user direction. If resuming mid-task, check its Next Steps section and continue from there.
 
 # BobProtocol: LLM Startup Instructions
 
@@ -15,15 +15,13 @@ If you were mid-task when context was lost:
 
 1. Read the bottom of `agents/CHAT.md` — find the last handoff message
 2. Identify which persona was active and what command was pending
-3. Load that persona's state files:
-   - `agents/[persona].docs/context.md`
-   - `agents/[persona].docs/current_task.md`
-   - `agents/[persona].docs/next_steps.md`
+3. Load that persona's state file:
+   - `agents/[persona].docs/state.md`
 4. Post a resume message:
    ```bash
    make chat MSG="Resuming <task> from last session." PERSONA="<Name>" CMD="resume"
    ```
-5. Continue from `next_steps.md` — do not restart from scratch
+5. Continue from the `## Next Steps` section of `state.md` — do not restart from scratch
 
 If `CHAT.md` has no clear handoff, ask the user: *"I'm resuming — what should I pick up?"*
 

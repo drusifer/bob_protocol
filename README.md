@@ -84,9 +84,7 @@ agents/
 ├── PROJECT.md.template      # Reference template for capability declarations
 ├── [persona].docs/          # Per-persona state and working memory
 │   ├── SKILL.md             # Persona definition + command interface
-│   ├── context.md           # Accumulated knowledge (state)
-│   ├── current_task.md      # Active work (state)
-│   └── next_steps.md        # Resume plan (state)
+│   └── state.md              # Context, current task, and resume plan (state)
 ├── skills/
 │   ├── bob-protocol/        # Core protocol (*chat routing, state management)
 │   ├── bloop/               # Bob Loop commands (*fix, *impl, *qa, *review, *plan sprint)
@@ -162,13 +160,13 @@ Each persona knows how to use `via` in the way that best fits their role (e.g. T
 State files in `agents/[persona].docs/` are the only memory that survives context clears and session restarts.
 
 Every persona follows the same protocol:
-- **ENTRY**: Read `CHAT.md` → load `context.md`, `current_task.md`, `next_steps.md`
-- **EXIT**: Write state files → post handoff to `CHAT.md` → then switch
+- **ENTRY**: Read `CHAT.md` → load `state.md`
+- **EXIT**: Write `state.md` → post handoff to `CHAT.md` → then switch
 
 If resuming after a context clear with no memory:
 1. Read the bottom of `agents/CHAT.md` to find the last handoff
-2. Load that persona's state files
-3. Resume from `next_steps.md`
+2. Load that persona's `state.md`
+3. Resume from its `## Next Steps` section
 
 See **[STARTUP.md](STARTUP.md)** for LLM startup instructions.
 See **[SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md)** for the full trigger/command reference.

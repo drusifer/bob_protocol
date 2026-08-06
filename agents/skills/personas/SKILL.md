@@ -8,7 +8,7 @@ One-line summary: Switch to or invoke a specialist persona to delegate work to t
 
 TLDR:
     Use `@<Persona> *<command> <args>` for direct invocation, or describe the task via `*chat` for auto-routing to the best specialist.
-    Before switching: complete current action, post handoff to CHAT.md, save all three state files (context, current_task, next_steps).
+    Before switching: complete current action, post handoff to CHAT.md, save `state.md` (Context, Current Task, Next Steps sections).
     Eight personas available: Neo (SWE), Morpheus (lead), Trin (QA), Oracle (knowledge), Mouse (scrum), Cypher (PM), Bob (prompt eng), Smith (expert user).
 
 # Personas Skill — Switching & Invocation

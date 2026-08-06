@@ -101,10 +101,10 @@ Common targets:
 | `make test-q` | Concise test run — quiet pytest with short tracebacks; **use this for quick feedback instead of piping make test** |
 | `make tldr` | Show TL;DR summaries from project files |
 | `make via_index` | Build the via symbol index |
-| `make install_bob TARGET=/path` | Install BobProtocol into a project |
-| `make update_bob TARGET=/path` | Update agents in a project |
-| `make pull_bob SRC=/path` | Pull updates from another BobProtocol project |
-| `make clean_bob` | Remove generated symlinks and reset state files |
+| `bobp install /path` | Install BobProtocol into a project (not a make target) |
+| `bobp update /path` | Update agents in a project (not a make target) |
+| `bobp pull /path` | Pull updates from another BobProtocol project (not a make target) |
+| `bobp clean` | Remove generated symlinks and reset state files (not a make target) |
 | `make dump-render-env` | Export current Render env vars to `.render-env-export.json` (requires `RENDER_API_KEY` + `RENDER_SERVICE_ID` in `.env`) |
 | `make push-key` | Push `FIELD_ENCRYPTION_KEY` from `.env` to Render — validates JSON before pushing, does not redeploy (requires `RENDER_API_KEY` + `RENDER_SERVICE_ID` in `.env`) |
 

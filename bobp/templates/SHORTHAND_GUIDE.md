@@ -166,9 +166,15 @@ make help                            # list all targets
 make tldr                            # TL;DR from all project files
 make chat MSG="..." PERSONA="..."    # post to CHAT.md
 make test V=-vvv                     # run tests with full output
-make diff_bob TARGET=<path>          # diff framework files with a project
-make update_bob TARGET=<path>        # push framework updates to a project
-make pull_bob SRC=<path>             # pull framework updates from a project
-make install_bob TARGET=<path>       # fresh install into a project
-make clean_bob                       # reset state files and symlinks
+```
+
+Installing/updating/pulling/diffing/cleaning a Bob Protocol install is done
+with the `bobp` CLI, not make:
+
+```bash
+bobp diff <path>          # diff framework files with a project
+bobp update <path>        # push framework updates to a project
+bobp pull <path>          # pull framework updates from a project
+bobp install <path>       # fresh install into a project
+bobp clean                # reset state files and symlinks (run inside the project)
 ```

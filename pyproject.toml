@@ -21,7 +21,7 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "build"]
 
 [project.scripts]
 bobp = "bobp.cli:main"

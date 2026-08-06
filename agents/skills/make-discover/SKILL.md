@@ -91,4 +91,4 @@ Bob installs a self-contained fragment at `agents/Makefile.bob`. The project Mak
 -include agents/Makefile.bob
 ```
 
-The `-include` (note the dash) means make silently ignores the file if missing — safe to commit before install runs. `agents/Makefile.bob` is updated automatically when `make update_bob TARGET=<path>` is run.
+The `-include` (note the dash) means make silently ignores the file if missing — safe to commit before install runs. `agents/Makefile.bob` is updated automatically when `bobp update <path>` is run.

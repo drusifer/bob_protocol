@@ -106,17 +106,27 @@ Makefile                     # Bob-managed; project targets in Makefile.prj
 
 ## Installing into a Project
 
+`bobp` (`pip install bobp`) is the CLI front-end for all of this — installing,
+updating, pulling, diffing, and cleaning a Bob Protocol install are all
+`bobp` subcommands, not `make` targets:
+
 ```bash
 # First install
-make install_bob TARGET=/path/to/your/project
+bobp install /path/to/your/project
+
+# Later, once installed
+bobp update /path/to/your/project    # refresh skills/templates, preserving state
+bobp pull /path/to/another/project   # pull framework updates from a peer project
+bobp diff /path/to/your/project      # compare the template against an install
+bobp clean                           # reset state files and remove symlinks (run inside the project)
 ```
 
 ### Makefile Integration
-`install_bob` and `update_bob` handle your existing `Makefile` surgically:
+`bobp install`/`bobp update` handle your existing `Makefile` surgically:
 1.  If a `Makefile` already exists, the bob-managed targets are installed as **`Makefile.bob`**.
 2.  `include Makefile.bob` is added to the top of your existing `Makefile`.
-3.  Bob-managed targets (`chat`, `update_bob`, etc.) are directly available via `make`.
-4.  Project targets (e.g. `make test`) are automatically routed through `mkf.py` for logging and output filtering if they are wrapped in `ifdef MKF_ACTIVE`.
+3.  Bob-managed targets (`chat`, `chat_diagram`, `tldr`, etc.) are directly available via `make`.
+4.  Project targets (e.g. `make test`) are automatically routed through `bobp mkf` for logging and output filtering if they are wrapped in `ifdef MKF_ACTIVE`.
 
 If no `Makefile` exists, one is created as the primary `Makefile`.
 
@@ -124,7 +134,7 @@ If no `Makefile` exists, one is created as the primary `Makefile`.
 
 1. Run skill link setup:
 ```bash
-python agents/tools/setup_agent_links.py
+bobp setup-agent-links
 ```
 
 2. Review project capabilities in `agents/PROJECT.md`. Setup creates this file when it is missing:
@@ -140,13 +150,9 @@ make help                        # list all targets
 make tldr                        # show TL;DR from all project files
 make chat MSG="..." PERSONA="..."  # post a message to CHAT.md
 make chat_diagram                # regenerate CHAT.diagram.md on demand
-make diff_bob TARGET=<path>      # diff framework files with a project
-make update_bob TARGET=<path>    # push framework updates to a project
-make pull_bob SRC=<path>         # pull framework updates from a project
-make clean_bob                   # reset state files and remove symlinks
 ```
 
-Build output is filtered through `mkf` — use `V=-vvv` for full output:
+Build output is filtered through `bobp mkf` — use `V=-vvv` for full output:
 ```bash
 make test V=-vvv
 ```
@@ -155,7 +161,7 @@ make test V=-vvv
 
 [`via`](https://github.com/drewpifer/via) is a Python codebase symbol index. When enabled in `agents/PROJECT.md`, personas use `via` for code navigation instead of reading files directly — saving significant context.
 
-Running `python agents/tools/setup_agent_links.py` installs the generic via MCP config with `via install mcp`, ensures the project has a `.via/index.db`, and, when Codex is installed, registers the same server with Codex using `codex mcp add via --env HOME=<project-root> -- <via> mcp serve --no-web <project-root>`.
+Running `bobp setup-agent-links` installs the generic via MCP config with `via install mcp`, ensures the project has a `.via/index.db`, and, when Codex is installed, registers the same server with Codex using `codex mcp add via --env HOME=<project-root> -- <via> mcp serve --no-web <project-root>`.
 
 Each persona knows how to use `via` in the way that best fits their role (e.g. Trin uses `--stale` for coverage gap detection, Morpheus uses `-oD` for architecture diagrams).
 

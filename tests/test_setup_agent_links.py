@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from agents.tools import setup_agent_links
+from bobp.tools import setup_agent_links
 
 
 class SetupAgentLinksTests(unittest.TestCase):

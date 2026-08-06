@@ -4,9 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from agents.tools import chat_diagram
-
-REPO_ROOT = Path(__file__).resolve().parent.parent
+from bobp.tools import chat_diagram
 
 SAMPLE_LOG = """# Chat Message Template:
 
@@ -100,20 +98,19 @@ class RegenerateTests(unittest.TestCase):
 
 
 class ChatPyIntegrationTests(unittest.TestCase):
-    """Runs the real chat.py CLI in an isolated temp project to verify the
-    post-write hook regenerates CHAT.diagram.md, without touching this repo's
-    actual agents/CHAT.md."""
+    """Runs the real installed `bobp.tools.chat` CLI in an isolated temp
+    project (cwd = tmp, containing agents/CHAT.md) to verify the post-write
+    hook regenerates CHAT.diagram.md, without touching this repo's actual
+    agents/CHAT.md. chat.py finds the project root by walking up from cwd,
+    so no script files need to be copied into the temp project."""
 
     def test_posting_a_message_regenerates_the_diagram(self):
         with tempfile.TemporaryDirectory() as tmp:
-            tools_dir = Path(tmp) / "agents" / "tools"
-            tools_dir.mkdir(parents=True)
-            for name in ("chat.py", "chat_diagram.py"):
-                (tools_dir / name).write_text((REPO_ROOT / "agents" / "tools" / name).read_text())
+            (Path(tmp) / "agents").mkdir(parents=True)
             (Path(tmp) / "agents" / "CHAT.md").write_text("# Chat Log\n")
 
             result = subprocess.run(
-                [sys.executable, str(tools_dir / "chat.py"), "Isolated test message",
+                [sys.executable, "-m", "bobp.tools.chat", "Isolated test message",
                  "--persona", "Trin", "--cmd", "qa test", "--to", "Morpheus"],
                 capture_output=True, text=True, cwd=tmp,
             )

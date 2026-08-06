@@ -22,9 +22,11 @@ import sys
 from pathlib import Path
 
 try:
-    from . import chat_diagram  # imported as agents.tools.chat
+    from . import chat_diagram  # imported as bobp.tools.chat
+    from ._common import find_project_root
 except ImportError:
     import chat_diagram  # run directly as a script
+    from _common import find_project_root
 
 
 def is_make_build(persona, cmd):
@@ -74,9 +76,9 @@ def main():
     
     args = parser.parse_args()
     
-    # Calculate path to CHAT.md (assuming script is in agents/tools/)
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    chat_file = os.path.abspath(os.path.join(script_dir, "..", "CHAT.md"))
+    # CHAT.md lives at <project_root>/agents/CHAT.md; project_root is found by
+    # walking up from cwd, not from this script's install location.
+    chat_file = str(find_project_root() / "agents" / "CHAT.md")
     
     timestamp = datetime.datetime.now().strftime("<small>%Y-%m-%d %H:%M:%S</small>")
 

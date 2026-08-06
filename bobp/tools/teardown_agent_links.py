@@ -19,17 +19,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-
-def find_project_root() -> Path:
-    """Find project root by looking for agents/ directory."""
-    script_dir = Path(__file__).resolve().parent
-    project_root = script_dir.parent.parent
-
-    if not (project_root / "agents").is_dir():
-        print(f"Error: Could not find agents/ directory from {project_root}")
-        sys.exit(1)
-
-    return project_root
+try:
+    from ._common import find_project_root
+except ImportError:
+    from _common import find_project_root
 
 
 def get_codex_home() -> Path:

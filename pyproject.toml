@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bobp"
+dynamic = ["version"]
+description = "CLI front-end for the Bob Protocol multi-persona AI development framework"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "Drew" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+bobp = "bobp.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/drusifer/bob_protocol"
+Repository = "https://github.com/drusifer/bob_protocol"
+
+[tool.setuptools.dynamic]
+version = { attr = "bobp.__version__" }
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["bobp*"]
+exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+bobp = ["templates/**/*", "tools/*.json"]

@@ -34,10 +34,10 @@ ANSI_ESCAPE = re.compile(r'\x1b\[[0-9;]*m')
 TAIL_LINES = 10
 CHAT_MAX = 256
 
-SCRIPT_DIR = Path(__file__).resolve().parent   # agents/tools/
-PROJECT_ROOT = SCRIPT_DIR.parent.parent        # project root
-BUILD_DIR = PROJECT_ROOT / 'build'
-CHAT_TOOL = PROJECT_ROOT / 'agents' / 'tools' / 'chat.py'
+try:
+    from ._common import find_project_root
+except ImportError:
+    from _common import find_project_root
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -100,13 +100,10 @@ def build_chat_message(target, exit_code, build_path, tail_lines):
     return (header + tail_text)[:CHAT_MAX]
 
 
-def post_chat(message):
-    if not CHAT_TOOL.exists():
-        print(f'[mkf] chat tool not found at {CHAT_TOOL}', file=sys.stderr)
-        return
+def post_chat(message, project_root):
     subprocess.run(
-        [sys.executable, str(CHAT_TOOL), message, '--persona', 'make', '--cmd', 'build'],
-        cwd=PROJECT_ROOT,
+        [sys.executable, '-m', 'bobp.tools.chat', message, '--persona', 'make', '--cmd', 'build'],
+        cwd=project_root,
     )
 
 
@@ -133,8 +130,10 @@ def parse_args(argv):
 def main():
     verbosity, target, extra_args = parse_args(sys.argv[1:])
 
-    BUILD_DIR.mkdir(exist_ok=True)
-    build_path = BUILD_DIR / 'build.out'
+    project_root = find_project_root()
+    build_dir = project_root / 'build'
+    build_dir.mkdir(exist_ok=True)
+    build_path = build_dir / 'build.out'
 
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     header = f'=== make {target} @ {timestamp} ===\n'
@@ -152,7 +151,7 @@ def main():
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            cwd=PROJECT_ROOT,
+            cwd=project_root,
             env=env,
         )
 
@@ -190,7 +189,7 @@ def main():
     print(f'=== exit {exit_code} ===\n')
 
     msg = build_chat_message(target, exit_code, build_path, tail_lines)
-    post_chat(msg)
+    post_chat(msg, project_root)
 
     sys.exit(exit_code)
 

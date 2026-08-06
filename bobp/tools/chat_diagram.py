@@ -18,6 +18,11 @@ import argparse
 import re
 import sys
 from collections import namedtuple
+
+try:
+    from ._common import find_project_root
+except ImportError:
+    from _common import find_project_root
 from pathlib import Path
 
 Entry = namedtuple("Entry", "ts persona to cmd body")
@@ -131,7 +136,7 @@ def render(chat_text, include_builds=False):
     diagram = build_diagram(parse_entries(chat_text), include_builds=include_builds)
     return (
         "# CHAT.md — Conversation Flow\n\n"
-        "Auto-generated from `agents/CHAT.md` by `agents/tools/chat_diagram.py`. "
+        "Auto-generated from `agents/CHAT.md` by `bobp chat-diagram`. "
         "Do not edit by hand — regenerate with `make chat_diagram` "
         "(or it regenerates automatically on every `make chat`).\n\n"
         f"```mermaid\n{diagram}\n```\n"
@@ -147,14 +152,16 @@ def regenerate(chat_file, diagram_file, include_builds=False):
 
 def main():
     parser = argparse.ArgumentParser(description="Render agents/CHAT.md as a Mermaid sequence diagram")
-    script_dir = Path(__file__).resolve().parent
-    default_chat = script_dir / ".." / "CHAT.md"
-    default_out = script_dir / ".." / "CHAT.diagram.md"
-    parser.add_argument("--chat-file", default=str(default_chat), help="Path to CHAT.md (default: agents/CHAT.md)")
-    parser.add_argument("--out", default=str(default_out), help="Output path (default: agents/CHAT.diagram.md)")
+    parser.add_argument("--chat-file", default=None, help="Path to CHAT.md (default: agents/CHAT.md)")
+    parser.add_argument("--out", default=None, help="Output path (default: agents/CHAT.diagram.md)")
     parser.add_argument("--include-builds", action="store_true", help="Include 'make' build-status entries")
     parser.add_argument("--print", dest="print_only", action="store_true", help="Print to stdout instead of writing a file")
     args = parser.parse_args()
+
+    if args.chat_file is None or args.out is None:
+        agents_dir = find_project_root() / "agents"
+        args.chat_file = args.chat_file or str(agents_dir / "CHAT.md")
+        args.out = args.out or str(agents_dir / "CHAT.diagram.md")
 
     chat_path = Path(args.chat_file)
     if not chat_path.is_file():

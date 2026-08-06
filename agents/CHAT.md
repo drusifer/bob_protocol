@@ -49,3 +49,18 @@ make[1]: Leaving directory '/home/drusifer/Projects/bob_protocol'
 Ran 4 tests in 0.002s
 
 OK
+
+---
+[<small>2026-08-06 12:52:46</small>] [**Tank**]->[**all**] *devops*:
+ bootstrap: packaged bobp as a pip-installable CLI, split real agents/ from bobp/templates/agents/
+
+---
+[<small>2026-08-06 13:15:23</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+
+📡 Installing Codex via MCP integration...
+✅ codex mcp add via (added)
+make[1]: Leaving directory '/home/drusifer/Projects/bob_protocol'
+Ran 15 tests in 0.030s
+
+OK

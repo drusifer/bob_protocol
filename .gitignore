@@ -16,3 +16,11 @@ __pycache__/
 Thumbs.db
 build/
 .via/
+
+# Bob Protocol / via — machine-local config and index, not portable
+.mcp.json
+
+# Python packaging artifacts
+dist/
+*.egg-info/
+.pytest_cache/

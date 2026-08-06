@@ -1,0 +1,5 @@
+include LICENSE
+include README.md
+graft bobp/templates
+include bobp/tools/trace_rules.json
+global-exclude __pycache__ *.pyc *.pyo

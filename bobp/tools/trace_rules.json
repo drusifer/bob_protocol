@@ -7,15 +7,15 @@
   },
   "AP-MAKE-BYPASS": {
     "description": "Bash runs pytest/ruff/pylint/mypy directly — bypasses make targets.",
-    "fix": "Always use make <target>. Never call test runners or linters directly. Output is captured to build/build.out by the Makefile."
+    "fix": "Always use `bobp make <target>`. Never call test runners or linters directly. Output is captured to build/build.out."
   },
   "AP-RAW-VENV": {
     "description": "Bash calls .venv/bin/<tool> directly — bypasses make targets and project tooling.",
-    "fix": "Use make <target> — never reference .venv/bin directly. If no make target exists for the tool, add one to Makefile.prj rather than calling .venv/bin."
+    "fix": "Use `bobp make <target>` — never reference .venv/bin directly. If no target exists for the tool, add one to this project's own Makefile rather than calling .venv/bin."
   },
   "AP-MAKE-PIPE": {
-    "description": "Bash pipes make output (e.g. `make test 2>&1 | tail -30`) — violates the make skill rule. mkf already captures output to build/build.out.",
-    "fix": "For test feedback: use `make test-q` (pytest -q --tb=short) — built-in concise output, no piping needed. For other targets: run `make <target>` then `tail -n 30 build/build.out`. Or use `make <target> V=-vv` to see failures live. NEVER pipe make output."
+    "description": "Bash pipes make output (e.g. `bobp make test 2>&1 | tail -30`) — violates the make skill rule. `bobp make` already captures output to build/build.out.",
+    "fix": "For test feedback: use `bobp make test-q` (pytest -q --tb=short) if the project has it — built-in concise output, no piping needed. For other targets: run `bobp make <target>` then `tail -n 30 build/build.out`. Or use `bobp make -vv <target>` to see failures live. NEVER pipe the output."
   },
   "AP-VIA-GREP": {
     "description": "Grep/Glob used for symbol, import, or function lookup when via is enabled.",

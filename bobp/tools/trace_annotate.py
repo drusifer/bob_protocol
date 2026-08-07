@@ -48,17 +48,17 @@ BUILTIN_RULES: dict[str, dict] = {
     },
     'AP-MAKE-BYPASS': {
         'description': 'Bash runs pytest/ruff/pylint/mypy directly — bypasses make targets.',
-        'fix': 'Always use make <target>. Output is captured to build/build.out by the Makefile.',
+        'fix': 'Always use `bobp make <target>`. Output is captured to build/build.out.',
         'color': '#ef4444',
     },
     'AP-RAW-VENV': {
         'description': 'Bash calls .venv/bin/<tool> directly.',
-        'fix': 'Use make <target> — never reference .venv/bin directly. If no make target exists, add one to Makefile.prj.',
+        'fix': 'Use `bobp make <target>` — never reference .venv/bin directly. If no target exists, add one to this project\'s own Makefile.',
         'color': '#dc2626',
     },
     'AP-MAKE-PIPE': {
-        'description': 'Bash pipes make output — mkf already captures to build/build.out.',
-        'fix': 'Run make <target>, then tail -n 30 build/build.out. Or use V=-vv to see failures live. Never pipe.',
+        'description': 'Bash pipes `bobp make` output — it already captures to build/build.out.',
+        'fix': 'Run `bobp make <target>`, then tail -n 30 build/build.out. Or use `bobp make -vv <target>` to see failures live. Never pipe.',
         'color': '#f97316',
     },
     'AP-VIA-GREP': {
@@ -129,20 +129,18 @@ MAKE_BYPASS_RE = re.compile(
     r'(?:^|\s|;|&&|\|\|)(?:\.venv/bin/|venv/bin/)?(pytest|ruff|pylint|mypy|black|isort|coverage|py\.test)\b',
     re.MULTILINE
 )
-# `make chat MSG="..."` commonly reports on tool results in prose (e.g. "pylint
+# `bobp chat "..."` commonly reports on tool results in prose (e.g. "pylint
 # 10/10"), which would otherwise false-trigger MAKE_BYPASS_RE on the tool name
 # appearing inside the quoted message rather than as an actual invocation.
-MAKE_CHAT_RE = re.compile(r'\bmake\s+chat\b')
+MAKE_CHAT_RE = re.compile(r'\bbobp\s+chat\b')
 QUOTED_STRING_RE = re.compile(r'"[^"]*"|\'[^\']*\'')
 VENV_RE = re.compile(r'(?:^|\s|;|&&|\|\|)(?:\.venv|venv)/bin/\w+')
-# Only flag `make <target> ... |` when <target> is actually routed through mkf.py
-# (captured to build/build.out, per the Makefile's interception layer). Targets
-# excluded from mkf capture (chat, help, install_bob, update_bob, pull_bob,
-# clean_bob) have no build.out equivalent to tail instead, so piping their
-# output isn't the anti-pattern this rule targets.
-MKF_EXCLUDED_TARGETS = {'help', 'chat', 'install_bob', 'update_bob', 'pull_bob', 'clean_bob'}
+# Only flag `bobp make <target> ... |` — that's the invocation that's already
+# captured to build/build.out, so piping it is redundant. Bare `make <target>`
+# (not routed through `bobp make`) isn't captured anywhere, so piping it isn't
+# this rule's target.
 MAKE_PIPE_RE = re.compile(
-    r'\bmake\b\s+(?:MKF_ACTIVE=\S+\s+)?(?P<target>[a-zA-Z_-]+)[^\n]*\|'
+    r'\bbobp\s+make\b\s+(?:-v{1,3}\s+)?(?P<target>[a-zA-Z_-]+)[^\n]*\|'
 )
 VIA_SYMBOL_GREP_RE = re.compile(
     r'\b(grep|rg)\b.*?(def |class |import |from |__init__|__call__|->|@\w+)',
@@ -158,8 +156,7 @@ def classify_bash(cmd: str) -> list[str]:
         flags.append('AP-MAKE-BYPASS')
     if VENV_RE.search(cmd):
         flags.append('AP-RAW-VENV')
-    pipe_match = MAKE_PIPE_RE.search(cmd)
-    if pipe_match and pipe_match.group('target') not in MKF_EXCLUDED_TARGETS:
+    if MAKE_PIPE_RE.search(cmd):
         flags.append('AP-MAKE-PIPE')
     if VIA_SYMBOL_GREP_RE.search(cmd):
         flags.append('AP-VIA-GREP')

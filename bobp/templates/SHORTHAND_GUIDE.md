@@ -159,13 +159,25 @@ Sprint close:
 
 ---
 
-## Make Targets
+## Coordination Commands
+
+These are `bobp` subcommands, not `make` targets — bob never installs or owns
+a `Makefile`:
 
 ```bash
-make help                            # list all targets
-make tldr                            # TL;DR from all project files
-make chat MSG="..." PERSONA="..."    # post to CHAT.md
-make test V=-vvv                     # run tests with full output
+bobp tldr                              # TL;DR from all project files
+bobp chat "..." --persona X --cmd Y    # post to CHAT.md
+bobp chat-diagram                      # regenerate CHAT.diagram.md
+```
+
+## Running Your Own Make Targets
+
+If your project has its own `Makefile`, run it through `bobp make` for output
+captured to `build/build.out` and a status post to CHAT.md:
+
+```bash
+bobp make test                       # captured, silent on pass
+bobp make -vvv test                  # full output live
 ```
 
 Installing/updating/pulling/diffing/cleaning a Bob Protocol install is done

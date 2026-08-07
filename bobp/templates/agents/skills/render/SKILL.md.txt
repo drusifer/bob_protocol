@@ -163,12 +163,12 @@ make dump-render-env → make diff-env → review output → make push-key → m
 
 When you need a new Render CLI operation:
 
-1. **Add it to `Makefile.prj`** (real recipe) and `Makefile` `else` block (mkf stub) — see the `make` skill
+1. **Add it as a normal target in this project's own `Makefile`** — no special block, no second file; see the `make` skill
 2. **Use `RENDER_SERVICE_ID`** from `.env` rather than hardcoding service IDs
-3. **Run `make validate-infra`** if the operation involves config changes to `render.yaml`
+3. **Run `bobp make validate-infra`** if the operation involves config changes to `render.yaml`
 4. **Document it here** in the Make Targets table above
 
-Never add a Render operation as a standalone script that isn't reachable via `make`.
+Never add a Render operation as a standalone script that isn't reachable via `bobp make`.
 
 ---
 

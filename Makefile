@@ -4,19 +4,30 @@
 # Everything for installing/updating/diffing the Bob Protocol into other
 # projects now lives in the `bobp` CLI (bobp install/update/pull/diff/clean) —
 # see bobp/templates/Makefile for what gets installed there.
+#
+# Always runs through the project .venv, never system/PATH python or pip.
+
+VENV := .venv
+PYTHON := $(VENV)/bin/python
+VENV_STAMP := $(VENV)/.install.stamp
 
 .PHONY: install test build clean help
 
-install: ## Install bobp in editable mode with dev dependencies
-	pip install -e ".[dev]"
+$(VENV_STAMP): pyproject.toml
+	python3 -m venv $(VENV)
+	$(PYTHON) -m pip install --upgrade pip
+	$(PYTHON) -m pip install -e ".[dev]"
+	touch $(VENV_STAMP)
 
-test: ## Run the test suite
-	pytest tests/ -q
+install: $(VENV_STAMP) ## Install bobp in editable mode with dev dependencies (into .venv)
 
-build: ## Build the sdist and wheel into dist/
-	python -m build
+test: $(VENV_STAMP) ## Run the test suite (via .venv)
+	$(PYTHON) -m pytest tests/ -q
 
-clean: ## Remove build artifacts
+build: $(VENV_STAMP) ## Build the sdist and wheel into dist/
+	$(PYTHON) -m build
+
+clean: ## Remove build artifacts (keeps .venv — use `rm -rf .venv` to drop it too)
 	rm -rf dist/ build/ *.egg-info
 
 help: ## Show available make targets

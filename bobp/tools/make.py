@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-mkf — make filter and build output router.
+bobp make — captured, chat-reporting wrapper around a project's own `make <target>`.
 
 TLDR:
-    Wraps `make <target>` invocations, capturing all stdout/stderr to
-    build/build.out while selectively echoing output to the terminal based on a
-    verbosity level (-v/-vv/-vvv). On completion it prints the last 10 lines of
-    the build log and posts a pass/fail status message to agents/CHAT.md via chat.py.
+    Wraps `make <target>` invocations in the host project's own Makefile
+    (bobp does not install or manage that Makefile), capturing all
+    stdout/stderr to build/build.out while selectively echoing output to
+    the terminal based on a verbosity level (-v/-vv/-vvv). On completion it
+    prints the last 10 lines of the build log and posts a pass/fail status
+    message to agents/CHAT.md via chat.py.
     Key functions: main() orchestrates the run; should_echo() controls terminal
     output filtering; build_chat_message() composes the status summary; post_chat()
     delegates to chat.py; parse_args() handles -v/-vv/-vvv verbosity flags;
@@ -15,11 +17,10 @@ TLDR:
     Role in the system: invoked by developers and agents instead of bare `make`;
     depends on chat.py for status reporting and writes to build/build.out for
     later inspection.
-    Usage: mkf [-v|-vv|-vvv] <target> [make-args...]
+    Usage: bobp make [-v|-vv|-vvv] <target> [make-args...]
 
 """
 
-import os
 import re
 import sys
 import datetime
@@ -144,15 +145,11 @@ def main():
         out_file.write(header)
         out_file.flush()
 
-        env = os.environ.copy()
-        env['MKF_ACTIVE'] = '1'
-
         proc = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             cwd=project_root,
-            env=env,
         )
 
         streams = {proc.stdout: False, proc.stderr: True}  # stream → is_stderr

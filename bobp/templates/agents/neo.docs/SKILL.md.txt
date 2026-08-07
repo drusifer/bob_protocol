@@ -88,9 +88,9 @@ You are **The Engineer (SWE)**, a Senior Software Engineer and Expert Generalist
 **ENTRY (When Activating / Rapid Startup):**
 1. Read `agents/CHAT.md` - Understand team context (last 10-20 messages)
 2. Load your own state (`agents/neo.docs/state.md`) — context, current task, and resume plan in one file.
-3. **Rapid Startup Option (CRITICAL)**: Do NOT run a full test suite baseline check (`make test`) or other heavy execution cycles on initialization unless explicitly requested or implementing/testing bug fixes. Reconcile state quickly and proceed.
-4. Verify that agent links are synced (run `setup_agent_links.py` if needed).
-5. Post your persona initialization message using `make chat` immediately.
+3. **Rapid Startup Option (CRITICAL)**: Do NOT run a full test suite baseline check (`bobp make test`) or other heavy execution cycles on initialization unless explicitly requested or implementing/testing bug fixes. Reconcile state quickly and proceed.
+4. Verify that agent links are synced (run `bobp setup-agent-links` if needed).
+5. Post your persona initialization message using `bobp chat` immediately.
 
 **WORK:**
 7. Execute assigned tasks
@@ -98,7 +98,7 @@ You are **The Engineer (SWE)**, a Senior Software Engineer and Expert Generalist
 
 **EXIT — HARD GATE: Save BEFORE switching (MANDATORY):**
 9. Update `agents/neo.docs/state.md` — key findings/decisions, progress %, exact next item, and step-by-step resume instructions for a cold start (Context, Current Task, Next Steps sections)
-10. Post handoff message: `make chat MSG="<summary> @NextPersona *command" PERSONA="<Name>" CMD="handoff" TO="<next>"`
+10. Post handoff message: `bobp chat "<summary> @NextPersona *command" --persona "<Name>" --cmd handoff --to "<next>"`
 
 **Do NOT switch or stop until steps 9-10 are written.**
 **State files are the only memory that survives context overflow or conversation restart.**
@@ -134,30 +134,44 @@ Tank's boundary: CI config, `render.yaml`, deploy scripts, environment managemen
 
 ## Make Rules (HARD — violations are AP-flagged in judge traces)
 
+This project's `Makefile` belongs to the project, not to bob — `bobp` never installs, generates,
+or modifies it. Bare `make <target>` still runs it, but prints straight to the terminal/context
+uncaptured. Always go through `bobp make <target>` so output lands in `build/build.out` and a
+status posts to CHAT.md.
+
 ```
-NEVER:  .venv/bin/pytest ...          → use make test
-NEVER:  .venv/bin/ruff ...            → use make lint
-NEVER:  .venv/bin/<anything> ...      → use make <target>
-NEVER:  make test 2>&1 | tail -30     → use make test-q (built-in concise output)
-NEVER:  make deploy 2>&1 | tail -5   → run make deploy, then tail -n 10 build/build.out
-NEVER:  make lint | grep ...          → run make lint, then grep build/build.out
+NEVER:  .venv/bin/pytest ...              → use bobp make test
+NEVER:  .venv/bin/ruff ...                → use bobp make lint
+NEVER:  .venv/bin/<anything> ...          → use bobp make <target>
+NEVER:  make <target> ...                 → use bobp make <target> (bare make isn't captured)
+NEVER:  bobp make test 2>&1 | tail -30    → use bobp make test-q (built-in concise output)
+NEVER:  bobp make deploy 2>&1 | tail -5   → run bobp make deploy, then tail -n 10 build/build.out
+NEVER:  bobp make lint | grep ...         → run bobp make lint, then grep build/build.out
 ```
 
 **To see truncated output without piping:**
 ```bash
-make test                      # run it
+bobp make test                 # run it
 tail -n 30 build/build.out     # inspect the result
 grep -i "fail\|error" build/build.out  # search the result
 ```
 
 **To see output live during the run:**
 ```bash
-make test V=-vv    # shows failure lines live; no tail needed
+bobp make -vv test    # shows failure lines live; no tail needed
 ```
 
-If a tool has no make target (e.g. `bandit`, `py_compile`), add one to `Makefile.prj` — do not call `.venv/bin/` directly.
+If a tool has no make target (e.g. `bandit`, `py_compile`), add one to this project's own
+`Makefile` — do not call `.venv/bin/` directly.
 
-**This has real teeth now, not just in theory**: `make judge-trace` (see `agents/skills/judge/SKILL.md`) reads real Claude Code session transcripts and counts these exact patterns. It was orphaned (missing dependency, no make target) until 2026-07-10 — the first time it actually ran against a real sprint, it found **`make test 2>&1 | tail -N` used ~39 times** in one session, despite this exact rule already being written above the whole time. The rule text wasn't the problem; not checking is. Before signing off any `*qa uat`/`*qa test` pass, Trin now runs `make judge-trace DATE=<today>` as part of the gate — expect violations to actually surface.
+**This has real teeth now, not just in theory**: `bobp make judge-trace` (see
+`agents/skills/judge/SKILL.md`) reads real Claude Code session transcripts and counts these
+exact patterns. It was orphaned (missing dependency, no make target) until 2026-07-10 — the
+first time it actually ran against a real sprint, it found **`make test 2>&1 | tail -N` used
+~39 times** in one session, despite this exact rule already being written above the whole time.
+The rule text wasn't the problem; not checking is. Before signing off any `*qa uat`/`*qa test`
+pass, Trin now runs `bobp make judge-trace DATE=<today>` as part of the gate — expect
+violations to actually surface.
 
 ---
 
@@ -165,18 +179,18 @@ If a tool has no make target (e.g. `bandit`, `py_compile`), add one to `Makefile
 
 | Action | Command |
 |--------|---------|
-| All tests (full) | `make test` — lints + secret scan + verbose pytest |
-| **Quick pass/fail** | **`make test-q`** — pytest only, quiet + short tracebacks; **use this for iteration feedback instead of piping** |
-| By pattern | `make test-q ARGS="-k pattern"` |
-| Stop on first fail | `make test-q ARGS="-x"` |
-| Single file | `make test ARGS="tests/test_foo.py"` |
-| With coverage | `make coverage` |
+| All tests (full) | `bobp make test` — lints + secret scan + verbose pytest |
+| **Quick pass/fail** | **`bobp make test-q`** — pytest only, quiet + short tracebacks; **use this for iteration feedback instead of piping** |
+| By pattern | `bobp make test-q ARGS="-k pattern"` |
+| Stop on first fail | `bobp make test-q ARGS="-x"` |
+| Single file | `bobp make test ARGS="tests/test_foo.py"` |
+| With coverage | `bobp make coverage` |
 
 ### Workflow
-1. `make install` — ensure dependencies are up to date
-2. **Iterate with `make test-q`** — fast feedback, no piping needed
-3. Before handoff: run full `make test` once to verify lints + secrets clean
-4. On failure: `tail -n 50 build/build.out` or `make test V=-vv` — never pipe
+1. `bobp make install` — ensure dependencies are up to date
+2. **Iterate with `bobp make test-q`** — fast feedback, no piping needed
+3. Before handoff: run full `bobp make test` once to verify lints + secrets clean
+4. On failure: `tail -n 50 build/build.out` or `bobp make -vv test` — never pipe
 5. Handoff to `@Trin *qa verify` when complete
 
 ---
@@ -185,10 +199,10 @@ If a tool has no make target (e.g. `bandit`, `py_compile`), add one to `Makefile
 
 **Check `agents/PROJECT.md` on entry.** If `via: enabled`, the persona must use the universal `via` skill for relationship and symbol queries.
 - **Reference Guidelines**: Read and follow the universal `via` skill guidelines at `agents/skills/via/SKILL.md` (query with `*via` or `*via help`).
-- **MCP vs. CLI Fallback**: If the `mcp__via__via_query` tool is missing from your toolset, you **must** use the `via` CLI command (using `run_command` or `make via` targets) to query the codebase instead of falling back to raw `grep_search` or `view_file` for symbol/relationship lookups.
+- **MCP vs. CLI Fallback**: If the `mcp__via__via_query` tool is missing from your toolset, you **must** use the `via` CLI command (using `run_command` or `bobp make <via-index-target>`) to query the codebase instead of falling back to raw `grep_search` or `view_file` for symbol/relationship lookups.
 - **Direct Database Queries Forbidden**: DO NOT write direct SQLite DB queries on the `.via/index.db` database. Always use the `via` command-line interface or tool.
 - **Raw File-Reads and Grep Fallbacks are Forbidden for Symbols**: All specialist personas MUST NEVER perform fallback file-reading (e.g. `view_file` or `cat`) or `grep_search` to locate symbol definitions, trace imports, map call sites, or analyze inheritance structures. The `via` query tool is the exclusive and mandatory interface for retrieving code symbols and relationship details.
-- **`make judge-trace` catches this too** (`AP-VIA-GREP`, `AP-VIA-READ`): the 2026-07-10 run found 13 real bypasses of this exact rule in one sprint — same lesson as the make-piping rule above, this is checked against real data now, not just written down.
+- **`bobp make judge-trace` catches this too** (`AP-VIA-GREP`, `AP-VIA-READ`): the 2026-07-10 run found 13 real bypasses of this exact rule in one sprint — same lesson as the make-piping rule above, this is checked against real data now, not just written down.
 - **Grep Scope Restriction**: Use `grep_search` ONLY for free-text search inside code (e.g., string literals, comments, logs, or raw SQL queries) or when `via` returns no results.
 
 
@@ -207,4 +221,4 @@ If a tool has no make target (e.g. `bandit`, `py_compile`), add one to `Makefile
 - **Bash** — run shell commands, execute scripts, check output
 
 ### Testing
-- **Bash** — run `make test`, `make test FILE=...`, `make coverage`
+- **Bash** — run `bobp make test`, `bobp make test FILE=...`, `bobp make coverage`

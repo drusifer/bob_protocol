@@ -17,7 +17,7 @@ Type `*help` for complete command reference with examples.
 - **[HELP.md](bob.docs/HELP.md)** - Quick reference for all 8 personas and commands
 
 ### Tools
-- **[tools/](tools/)** - Agent tooling scripts (`chat.py`, `mkf.py`, `setup_agent_links.py`)
+- **`bobp` CLI** - Agent tooling subcommands (`bobp chat`, `bobp make`, `bobp setup-agent-links`, …); run `bobp --help` for the full list
 
 ---
 
@@ -59,13 +59,13 @@ Located in `agents/templates/`:
 
 ---
 
-## Tools Directory
+## Tools
 
-**Location:** `agents/tools/`
+Shipped as `bobp` CLI subcommands, not project-local scripts:
 
-- `chat.py` - Post messages to CHAT.md
-- `mkf.py` - Build output filter (routes make output)
-- `setup_agent_links.py` - Create `.claude/skills/` symlinks (run once on setup)
+- `bobp chat` - Post messages to CHAT.md
+- `bobp make <target>` - Run this project's own `make <target>`, captured to build/build.out and posted to CHAT.md
+- `bobp setup-agent-links` - Create `.claude/skills/` symlinks (run once on setup)
 
 ---
 

@@ -10,8 +10,9 @@ TLDR:
     to agents/CHAT.md, enforcing a 512-character message limit. After each post it
     also regenerates agents/CHAT.diagram.md (a Mermaid sequence diagram view of the
     log) via chat_diagram.regenerate() — see chat_diagram.py.
-    Role in the system: consumed by mkf.py (which calls it to post build status)
-    and invoked directly by agents or developers to coordinate via the chat log.
+    Role in the system: consumed by make.py (bobp's `bobp make` wrapper, which
+    calls it to post build status) and invoked directly by agents or developers
+    to coordinate via the chat log.
 
 """
 
@@ -30,7 +31,7 @@ except ImportError:
 
 
 def is_make_build(persona, cmd):
-    """Return whether this message is mkf's build-status chat entry."""
+    """Return whether this message is bobp make's build-status chat entry."""
     return persona.lower() == "make" and cmd.lstrip("*").lower() == "build"
 
 

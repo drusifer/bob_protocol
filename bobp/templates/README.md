@@ -91,18 +91,20 @@ agents/
 │   ├── bob-protocol/        # Core protocol (*chat routing, state management)
 │   ├── bloop/               # Bob Loop commands (*fix, *impl, *qa, *review, *plan sprint)
 │   ├── sprint/              # Full sprint cycle
-│   ├── chat/                # make chat wrapper
-│   ├── make/                # Makefile targets
+│   ├── chat/                # bobp chat wrapper
+│   ├── make/                # bobp make wrapper — captures your project's own Makefile targets
 │   └── personas/            # Persona switching reference
 ├── templates/               # Document and state file templates
 └── tools/
     ├── chat.py              # Post to CHAT.md, regenerates CHAT.diagram.md
     ├── chat_diagram.py      # Render CHAT.md as a Mermaid sequence diagram
-    ├── mkf.py               # Build output filter (wraps make)
+    ├── make.py              # Build output filter (wraps your project's own `make`)
     └── setup_agent_links.py # Generate .claude/skills/ symlinks
 .claude/skills/              # Symlinks → SKILL.md files (auto-generated)
-Makefile                     # Bob-managed; project targets in Makefile.prj
 ```
+
+`bobp` never installs, generates, or modifies a `Makefile` — that stays entirely
+yours. See "Running Your Own Make Targets" below.
 
 ## Installing into a Project
 
@@ -121,15 +123,6 @@ bobp diff /path/to/your/project      # compare the template against an install
 bobp clean                           # reset state files and remove symlinks (run inside the project)
 ```
 
-### Makefile Integration
-`bobp install`/`bobp update` handle your existing `Makefile` surgically:
-1.  If a `Makefile` already exists, the bob-managed targets are installed as **`Makefile.bob`**.
-2.  `include Makefile.bob` is added to the top of your existing `Makefile`.
-3.  Bob-managed targets (`chat`, `chat_diagram`, `tldr`, etc.) are directly available via `make`.
-4.  Project targets (e.g. `make test`) are automatically routed through `bobp mkf` for logging and output filtering if they are wrapped in `ifdef MKF_ACTIVE`.
-
-If no `Makefile` exists, one is created as the primary `Makefile`.
-
 ## Project Setup (after install)
 
 1. Run skill link setup:
@@ -143,19 +136,28 @@ bobp setup-agent-links
 via: enabled   # personas will use via for code navigation
 ```
 
-## Make Targets
+## Team Coordination Commands
+
+These are `bobp` subcommands, not `make` targets — bob never touches your `Makefile`:
 
 ```bash
-make help                        # list all targets
-make tldr                        # show TL;DR from all project files
-make chat MSG="..." PERSONA="..."  # post a message to CHAT.md
-make chat_diagram                # regenerate CHAT.diagram.md on demand
+bobp tldr                             # show TL;DR from all project files
+bobp chat "..." --persona X --cmd Y   # post a message to CHAT.md
+bobp chat-diagram                     # regenerate CHAT.diagram.md on demand
 ```
 
-Build output is filtered through `bobp mkf` — use `V=-vvv` for full output:
+## Running Your Own Make Targets
+
+If your project has its own `Makefile` (test, lint, build — whatever you already
+use), run it through `bobp make` instead of bare `make` to get output captured to
+`build/build.out` and a pass/fail status posted to CHAT.md:
+
 ```bash
-make test V=-vvv
+bobp make test         # silent — exit code + 10-line tail on finish
+bobp make -vvv test    # full output live
 ```
+
+See the `make` skill for the full contract.
 
 ## Optional: via Integration
 

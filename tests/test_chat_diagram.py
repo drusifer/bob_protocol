@@ -1,10 +1,10 @@
-import subprocess
-import sys
+import os
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
-from bobp.tools import chat_diagram
+from bobp.tools import chat, chat_diagram
 
 SAMPLE_LOG = """# Chat Message Template:
 
@@ -98,24 +98,32 @@ class RegenerateTests(unittest.TestCase):
 
 
 class ChatPyIntegrationTests(unittest.TestCase):
-    """Runs the real installed `bobp.tools.chat` CLI in an isolated temp
+    """Runs the real `bobp.tools.chat` CLI in-process against an isolated temp
     project (cwd = tmp, containing agents/CHAT.md) to verify the post-write
     hook regenerates CHAT.diagram.md, without touching this repo's actual
-    agents/CHAT.md. chat.py finds the project root by walking up from cwd,
-    so no script files need to be copied into the temp project."""
+    agents/CHAT.md. chat.py finds the project root by walking up from cwd, so
+    no script files need to be copied into the temp project. Calls chat.main()
+    directly (patching sys.argv and cwd) instead of shelling out to
+    `sys.executable -m bobp.tools.chat` — that indirection bought nothing here
+    and broke on any interpreter that isn't the one bobp is installed into
+    (e.g. plain `pytest` on a system Python), since chat.py is an ordinary
+    importable module, not something that needs process isolation to test."""
 
     def test_posting_a_message_regenerates_the_diagram(self):
         with tempfile.TemporaryDirectory() as tmp:
             (Path(tmp) / "agents").mkdir(parents=True)
             (Path(tmp) / "agents" / "CHAT.md").write_text("# Chat Log\n")
 
-            result = subprocess.run(
-                [sys.executable, "-m", "bobp.tools.chat", "Isolated test message",
-                 "--persona", "Trin", "--cmd", "qa test", "--to", "Morpheus"],
-                capture_output=True, text=True, cwd=tmp,
-            )
+            argv = ["chat", "Isolated test message",
+                    "--persona", "Trin", "--cmd", "qa test", "--to", "Morpheus"]
+            cwd = os.getcwd()
+            os.chdir(tmp)
+            try:
+                with patch("sys.argv", argv):
+                    chat.main()
+            finally:
+                os.chdir(cwd)
 
-            self.assertEqual(result.returncode, 0, result.stderr)
             diagram = (Path(tmp) / "agents" / "CHAT.diagram.md").read_text()
             self.assertIn("Trin->>Morpheus:", diagram)
 

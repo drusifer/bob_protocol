@@ -61,25 +61,6 @@ def _regen_chat_diagram(agents_dir: Path) -> None:
     chat_diagram.regenerate(agents_dir / "CHAT.md", agents_dir / "CHAT.diagram.md")
 
 
-def _install_makefile(target: Path, tmpl: Path) -> None:
-    src_makefile = tmpl / "Makefile"
-    dst_makefile = target / "Makefile"
-    if dst_makefile.exists():
-        content = dst_makefile.read_text()
-        if "MKF_ACTIVE" in content:
-            shutil.copy2(src_makefile, dst_makefile)
-            print("  Updated: Makefile (bob-managed)")
-        else:
-            shutil.copy2(src_makefile, target / "Makefile.bob")
-            print("  Installed: Makefile.bob")
-            if "include Makefile.bob" not in content:
-                dst_makefile.write_text("include Makefile.bob\n" + content)
-                print("  Modified: Makefile (included Makefile.bob at top)")
-    else:
-        shutil.copy2(src_makefile, dst_makefile)
-        print("  Installed: Makefile (bob-managed)")
-
-
 def _run_setup_agent_links(target: Path) -> None:
     subprocess.run([sys.executable, "-m", "bobp.tools.setup_agent_links"], cwd=target)
 
@@ -121,8 +102,6 @@ def install(target: Path, force: bool = False) -> None:
     print(f"Installing BobProtocol into {target}...")
     shutil.copytree(tmpl / "agents", target / "agents", dirs_exist_ok=True)
     _restore_skill_extensions(target / "agents")
-    print("Installing Makefile...")
-    _install_makefile(target, tmpl)
     print("Setting up Claude skill links...")
     _run_setup_agent_links(target)
     print(f"\nDone. BobProtocol installed in {target}")
@@ -146,8 +125,6 @@ def update(target: Path) -> None:
     _ensure_chat_md(agents_dir, tmpl / "agents" / "templates" / "_template_CHAT.md")
     _regen_chat_diagram(agents_dir)
 
-    print("Updating Makefile...")
-    _install_makefile(target, tmpl)
     print("Updating Claude skill links...")
     _run_setup_agent_links(target)
     print(f"\nDone. BobProtocol updated in {target}")

@@ -17,11 +17,9 @@
   `ifdef MKF_ACTIVE` / `Makefile.prj` / `Makefile.bob` self-re-inclusion dance. Once that dance
   is deleted, `bobp make <target>` still works unchanged: it just shells out to `make <target>`
   and captures stdout/stderr — no coupling to the target Makefile's internals at all.
-- Found bob_protocol's own dev-environment gap (pre-existing, unrelated to this task): the
-  system `python`/`pytest` on this machine has no `bobp` installed, only the pipx venv at
-  `/home/drusifer/.local/share/pipx/venvs/bobp/bin/python` does (editable, pointing at this
-  repo). Use that interpreter for an accurate `pytest tests/ -q` run in this repo until the
-  system env is fixed — confirmed via `git stash` that this is not something my changes caused.
+- Initially misdiagnosed a test failure as "system python has no bobp installed, use the pipx
+  venv instead" — true as a workaround, but not the real root cause (see Follow-up fixes below,
+  where the actual bug and a proper fix were found).
 - `agents/skills/bob-tools/SKILL.md` (and neo.docs/SKILL.md's own Make Rules block) were stale
   in a second, unrelated way: they still described `agents/tools/*.py` as project-local scripts
   and `python agents/tools/setup_agent_links.py` invocations, from before bobp was packaged as
@@ -55,9 +53,10 @@
   "mkf-captured". Worth a dedicated pass if judge-trace is actually run as documented.
 
 ## Current Task
-**Status:** Complete, tested, not yet committed
+**Status:** Complete — committed and pushed
 **Assigned to:** Neo
 **Started:** 2026-08-06
+**Commit:** `6b36876` on `main` (pushed to `origin/main`, was `dfaf125`)
 
 ### Task Description
 Drop bob's ownership of installed-project Makefiles ("give the Makefile back to the host
@@ -82,10 +81,17 @@ itself stays untouched per explicit user instruction.
 - [x] Swept README.md, SHORTHAND_GUIDE.md (root + template), DOCUMENTATION_INDEX.md (root +
       template), render/judge/bob-tools SKILL.md (+ template .txt), and Neo's own SKILL.md
       (+ template .txt) for stale mkf/Makefile.prj/Makefile.bob/MKF_ACTIVE references
-- [x] Full test suite green: `26 passed` via the pipx venv's pytest
+- [x] Full test suite green: `26 passed` under plain `python3 -m pytest` (no venv workaround
+      needed after the follow-up fixes below)
 - [x] Smoke-tested `bobp make test` against bob_protocol's own (untouched) root Makefile —
       capture, tail, exit-code passthrough, and CHAT.md build-status replacement all work
       correctly end-to-end
+- [x] Fixed `tests/test_chat_diagram.py`'s chat integration test to call `chat.main()`
+      in-process instead of shelling out (see Follow-up fixes) — root-caused and fixed, not
+      worked around
+- [x] Root `Makefile` now creates/uses `.venv` for install/test/build, gated by a
+      `pyproject.toml`-keyed install stamp
+- [x] Committed (`6b36876`) and pushed to `origin/main`
 
 ### Blockers
 None
@@ -96,15 +102,13 @@ mid-task (see Recent Decisions), not something needing historical lookup.
 
 ## Next Steps
 ### Immediate Next Action
-Nothing pending from me. Changes are complete and tests pass but are NOT committed — user
-has not asked for a commit yet. If asked to commit: `git add` the files in `git status --short`
-(all intentional; nothing to exclude) and write a commit message covering both the
-`bobp make` rename and the Makefile-ownership handback.
+None. Task is fully closed out: implemented, tested, committed, pushed. Nothing queued for
+Neo right now — next session should read `agents/CHAT.md` for whatever comes in fresh.
 
 ### Waiting On
-User review/commit decision. Optionally worth a handoff to Trin (`*qa review`) given the
-breadth of the change (CLI rename + doc sweep across ~28 files), though the user only asked
-for implementation, not a QA pass — don't assume that's wanted without asking.
+Nothing from me. Optionally worth a `@Trin *qa review` given the breadth of the change (CLI
+rename + doc sweep across ~28 files, now live on `main`), but the user only asked for
+implementation + commit/push, not a QA pass — don't assume that's wanted without asking first.
 
 ### Planned Work
 - [ ] None currently queued. Two known-stale, out-of-scope items noted above under Important
@@ -112,4 +116,4 @@ for implementation, not a QA pass — don't assume that's wanted without asking.
       agents/tools-vs-bobp packaging staleness) if anyone wants to pick them up later.
 
 ---
-*Last updated: 2026-08-06 17:50*
+*Last updated: 2026-08-06 23:05*

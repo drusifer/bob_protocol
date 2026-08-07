@@ -80,3 +80,7 @@ OK
 .venv/bin/python -m pytest tests/ -q
 ..........................                                               [100%]
 26 passed in 0.60s
+
+---
+[<small>2026-08-06 23:01:43</small>] [**Neo**]->[**all**] *swe handoff*:
+ bobp make/Makefile-handback refactor complete: bobp install/update no longer touch a project's Makefile; renamed bobp mkf -> bobp make; make/make-discover/bob-tools/judge/render/neo skills updated. Also fixed a real subprocess-cwd bug in test_chat_diagram.py and added .venv to root Makefile. 26/26 tests pass, committed 6b36876, pushed to origin/main. Full detail in agents/neo.docs/state.md. Standing by — no active task.

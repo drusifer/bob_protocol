@@ -7,7 +7,8 @@ TLDR:
     presence of SKILL.md) and creates the platform-specific symlinks each AI
     tool expects: .claude/skills/<name>/ for Claude Code, $CODEX_HOME/skills/<name>/
     for Codex, AGENTS.md / GEMINI.md / .cursorrules / CHATGPT.md /
-    .github/copilot-instructions.md at the project root for other tools.
+    .github/copilot-instructions.md at the project root for other tools, plus
+    a .agents/ -> agents/ directory symlink for Gemini CLI's agent tool.
     Key functions: find_project_root() locates the repo root; find_persona_folders()
     discovers persona dirs; find_shared_skills() finds agents/skills/*/;
     setup_claude_skills() builds the .claude/skills/ tree; setup_codex_skills()
@@ -197,6 +198,12 @@ def setup_root_symlinks(project_root: Path, agents_dir: Path) -> int:
     copilot_link = github_dir / "copilot-instructions.md"
     if create_symlink(copilot_link, agents_md):
         print(f"  ✅ .github/copilot-instructions.md -> agents/AGENTS.md (GitHub Copilot)")
+        count += 1
+
+    # Gemini CLI's agent tool discovers personas via a top-level .agents/ dir
+    dot_agents_link = project_root / ".agents"
+    if create_symlink(dot_agents_link, agents_dir):
+        print(f"  ✅ .agents -> agents (Gemini CLI agent tool)")
         count += 1
 
     return count
@@ -524,7 +531,7 @@ def main():
     print("  • Claude Code (.claude/skills/)")
     print(f"  • OpenAI Codex ({get_codex_home() / 'skills'}/ and AGENTS.md)")
     print("  • Cursor, Copilot (AGENTS.md)")
-    print("  • Gemini CLI (GEMINI.md)")
+    print("  • Gemini CLI (GEMINI.md, .agents/)")
     if via_index_ok:
         print("  • via index (.via/index.db)")
     if via_ok:

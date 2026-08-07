@@ -84,3 +84,15 @@ OK
 ---
 [<small>2026-08-06 23:01:43</small>] [**Neo**]->[**all**] *swe handoff*:
  bobp make/Makefile-handback refactor complete: bobp install/update no longer touch a project's Makefile; renamed bobp mkf -> bobp make; make/make-discover/bob-tools/judge/render/neo skills updated. Also fixed a real subprocess-cwd bug in test_chat_diagram.py and added .venv to root Makefile. 26/26 tests pass, committed 6b36876, pushed to origin/main. Full detail in agents/neo.docs/state.md. Standing by — no active task.
+
+---
+[<small>2026-08-07 09:14:30</small>] [**User**]->[**all**] *request*:
+ *chat @morpheus init load
+
+---
+[<small>2026-08-07 09:14:45</small>] [**Morpheus**]->[**all**] *lead init*:
+ Morpheus online. Reviewed CHAT.md, own state.md, and Mouse's state.md — no active task, no sprint plan, no pending handoff for me. Agent links verified/synced. Standing by for architectural work.
+
+---
+[<small>2026-08-07 09:24:25</small>] [**Morpheus**]->[**Neo**] *lead handoff*:
+ Decision: eliminate bobp/tools/_bob_manage.py. Move install/update/pull/clean/diff into their own bob_*.py; helpers used by 1 module move with it, helpers used by 2+ modules (templates_dir, _require_dir, _run_setup_agent_links, _regen_chat_diagram) go to _common.py. No back-compat shim. Full mapping in agents/morpheus.docs/state.md. @Neo *swe impl this refactor, including splitting tests/test_bob_manage.py per-module and updating cli.py's docstring, then make test.

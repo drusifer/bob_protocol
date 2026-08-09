@@ -17,6 +17,7 @@ TLDR:
 import argparse
 import re
 import sys
+import textwrap
 from collections import namedtuple
 
 try:
@@ -35,7 +36,8 @@ ENTRY_RE = re.compile(
     re.DOTALL,
 )
 
-MAX_MSG_LEN = 100
+MAX_MSG_LEN = 300  # hard safety cap on message length, applied before wrapping
+WRAP_WIDTH = 40  # characters per line once wrapped for the diagram label
 
 
 def parse_entries(text):
@@ -84,8 +86,15 @@ def _clean_message(text):
     return text
 
 
+def _wrap_label(text):
+    """Word-wrap text to WRAP_WIDTH-char lines, joined with <br/> for a Mermaid label."""
+    if not text:
+        return text
+    return "<br/>".join(textwrap.wrap(text, width=WRAP_WIDTH))
+
+
 def _label_for(entry):
-    snippet = _clean_message(_first_line(entry.body))
+    snippet = _wrap_label(_clean_message(_first_line(entry.body)))
     return f"{entry.cmd} — {snippet}" if snippet else entry.cmd
 
 

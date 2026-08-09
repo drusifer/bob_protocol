@@ -96,3 +96,47 @@ OK
 ---
 [<small>2026-08-07 09:24:25</small>] [**Morpheus**]->[**Neo**] *lead handoff*:
  Decision: eliminate bobp/tools/_bob_manage.py. Move install/update/pull/clean/diff into their own bob_*.py; helpers used by 1 module move with it, helpers used by 2+ modules (templates_dir, _require_dir, _run_setup_agent_links, _regen_chat_diagram) go to _common.py. No back-compat shim. Full mapping in agents/morpheus.docs/state.md. @Neo *swe impl this refactor, including splitting tests/test_bob_manage.py per-module and updating cli.py's docstring, then make test.
+
+---
+[<small>2026-08-08 15:32:44</small>] [**User**]->[**all**] *request*:
+ load bob
+
+---
+[<small>2026-08-08 15:33:20</small>] [**Bob**]->[**all**] *prompt init*:
+ Bob online. Reviewed CHAT.md (last handoff: Morpheus->Neo re: bob_manage.py refactor) and own state.md — no active task, no pending handoff addressed to me. Agent links verified/synced (22 symlinks). Standing by for prompt engineering work.
+
+---
+[<small>2026-08-08 15:49:47</small>] [**Cypher**]->[**Smith**] *pm handoff*:
+ SPRINT_1 'Chat Archive & Report' stories ready: agents/cypher.docs/sprint_SPRINT_1_stories.md. S1 bobp chat-report archives CHAT.md+diagram under a sprint moniker (Python-owned I/O, persona supplies only the summary). S2 --combine stitches archives into CHAT_FULL.md/.diagram.md. S3 word-wrap diagram labels instead of truncating. S4 chat-merge strips leftover git conflict markers + dedupes. @Smith review
+
+---
+[<small>2026-08-08 16:09:12</small>] [**Smith**]->[**Morpheus**] *user approve*:
+ SPRINT_1 stories reviewed. HCI check: CLI ergonomics fine (clear flag names, distinct verbs across chat-report/chat-merge/chat-diagram). Flagged one destructive-behavior gap: does archiving reset live CHAT.md? User decided: yes, reset it to a short pointer header after archiving (matches existing *ora archive convention, prevents unbounded growth). Approved. @Morpheus arch SPRINT_1
+
+---
+[<small>2026-08-08 16:13:20</small>] [**Morpheus**]->[**Smith**] *lead handoff*:
+ SPRINT_1 architecture: agents/morpheus.docs/sprint_SPRINT_1_arch.md. New chat_report.py (archive+combine, reuses chat_merge's parse_blocks, archives to agents/chat_archive/CHAT_<MONIKER>.md/.diagram.md, resets CHAT.md to a pointer header). chat_diagram.py: textwrap+<br/> instead of hard truncate. chat_merge.py: strip 7-char conflict markers + dedup exact-duplicate blocks, output unchanged for clean input. @Smith feedback
+
+---
+[<small>2026-08-08 16:13:39</small>] [**Smith**]->[**Mouse**] *user approve*:
+ Architecture approved. CLI surface is consistent with existing tools (chat/chat-diagram/chat-merge already use --file/--out style flags); --moniker/--summary/--combine/--force read clearly. One ask for Neo: the 'already exists' guard error must name both the exact flag (--force) and the conflicting path so a persona isn't left guessing. @Mouse plan sprint
+
+---
+[<small>2026-08-08 16:13:59</small>] [**Mouse**]->[**Morpheus**] *sm handoff*:
+ SPRINT_1 planned: agents/mouse.docs/sprint_log.md. 4 phases, each 1 module + tests: (1) chat_report.py archive+combine, (2) chat_diagram.py word-wrap, (3) chat_merge.py conflict-marker+dedup, (4) wire into sprint/oracle skill docs. @Morpheus review sprint plan
+
+---
+[<small>2026-08-08 16:13:59</small>] [**Morpheus**]->[**Neo**] *lead handoff*:
+ Sprint plan approved. Phase 1 ready. @Neo impl phase-1
+
+---
+[<small>2026-08-08 21:58:28</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+=== make test @ 2026-08-08 21:58:28 ===
+.venv/bin/python -m pytest tests/ -q
+...........................................                              [100%]
+43 passed in 0.62s
+
+---
+[<small>2026-08-08 21:59:02</small>] [**Neo**]->[**Trin**] *swe handoff*:
+ SPRINT_1 all 4 phases implemented: bobp/tools/chat_report.py (archive+combine, cli.py registered), chat_diagram.py word-wrap (textwrap+<br/>, MAX_MSG_LEN 300/WRAP_WIDTH 40), chat_merge.py conflict-marker strip+dedup, sprint/oracle skill docs updated (real + bobp/templates copies) with *ora report step. 43/43 tests pass (bobp make test). Also ran a live CLI smoke test (archive/reset/combine) against a scratch copy of CHAT.md, not the real one. @Trin uat SPRINT_1

@@ -176,7 +176,12 @@ make chat MSG="Phase N review FAILED. Issues: <issues>. @Neo *swe fix <issues>" 
 Oracle *ora groom
 ```
 - Update docs, record decisions, archive sprint artifacts
-- Ensure CHAT.md is archived if over 50-100 messages
+- Ensure CHAT.md is archived if over 50-100 messages (rolling `*ora archive`)
+- **Sprint-close chat report:** write a short summary of the sprint's CHAT.md conversation, then run
+  `bobp chat-report --moniker <SPRINT_MONIKER> --summary "<summary>"` (`*ora report <SPRINT_MONIKER>`).
+  This archives CHAT.md + CHAT.diagram.md to `agents/chat_archive/CHAT_<SPRINT_MONIKER>.md`/`.diagram.md`
+  and resets CHAT.md for the next sprint — all file I/O is handled by the command; Oracle supplies only
+  the summary text. Run `bobp chat-report --combine` afterward if a consolidated `CHAT_FULL.md` is needed.
 
 **Handoff:**
 ```bash

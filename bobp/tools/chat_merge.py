@@ -27,6 +27,36 @@ TS_FULL_RE = re.compile(r'^(\[<small>)([\d]{4}-[\d]{2}-[\d]{2} [\d]{2}:[\d]{2}:[
 TS_DATE_RE = re.compile(r'^(\[<small>)([\d]{4}-[\d]{2}-[\d]{2})(</small>\])')
 BLOCK_SEP = '\n---\n'
 
+# Git conflict markers are exactly 7 repeated chars; <<<<<<< and >>>>>>> carry
+# a trailing ref/branch label, ======= and the diff3 base marker ||||||| don't.
+CONFLICT_MARKER_RE = re.compile(r'^(?:<{7} .*|\|{7} .*|={7}|>{7} .*)$', re.MULTILINE)
+
+
+def strip_conflict_markers(text: str) -> tuple[str, int]:
+    """Remove git conflict-marker lines, keeping both sides' content intact.
+    Returns (clean_text, markers_removed)."""
+    clean, count = CONFLICT_MARKER_RE.subn('', text)
+    if count:
+        # Collapse the blank-line runs left behind by removed marker lines.
+        clean = re.sub(r'\n{3,}', '\n\n', clean)
+    return clean, count
+
+
+def dedup_blocks(blocks: list[str]) -> tuple[list[str], int]:
+    """Drop blocks that exactly duplicate an earlier block (first occurrence wins).
+    A bad conflict resolution commonly leaves the same entry on both sides."""
+    seen = set()
+    deduped = []
+    dupes = 0
+    for b in blocks:
+        key = b.strip()
+        if key in seen:
+            dupes += 1
+            continue
+        seen.add(key)
+        deduped.append(b)
+    return deduped, dupes
+
 
 def parse_blocks(text: str) -> tuple[str, list[str]]:
     """Return (header, [block, ...]) where each block starts with its timestamp line."""
@@ -132,11 +162,14 @@ def rewrite_ts(block: str, assigned: datetime) -> str:
 
 def merge(path: Path, dry_run: bool = False) -> None:
     text = path.read_text()
+    text, marker_count = strip_conflict_markers(text)
     header, blocks = parse_blocks(text)
 
     if not blocks:
         print('No message blocks found.')
         return
+
+    blocks, dupe_count = dedup_blocks(blocks)
 
     assigned = interpolate(blocks)
 
@@ -168,13 +201,15 @@ def merge(path: Path, dry_run: bool = False) -> None:
             elif orig_i is not None and orig_i != new_i:
                 changes += 1
                 print(f'  [reordered {orig_i}→{new_i}] {b.split(chr(10))[0][:70]}')
-        print(f'{len(blocks)} blocks · {inferred_count} timestamps inferred · {changes} reordered')
+        print(f'{len(blocks)} blocks · {inferred_count} timestamps inferred · {changes} reordered '
+              f'· {marker_count} conflict markers stripped · {dupe_count} duplicates removed')
     else:
         bak = path.with_suffix('.md.bak')
         shutil.copy2(path, bak)
         path.write_text(output)
         inferred_count = sum(1 for _, b in assigned if block_ts(b)[1])
-        print(f'Merged {len(rewritten)} blocks ({inferred_count} timestamps inferred).')
+        print(f'Merged {len(rewritten)} blocks ({inferred_count} timestamps inferred, '
+              f'{marker_count} conflict markers stripped, {dupe_count} duplicates removed).')
         print(f'Backup: {bak}')
         print(f'Output: {path}')
 

@@ -58,12 +58,21 @@ class BuildDiagramTests(unittest.TestCase):
         self.assertIn("Neo->>Trin:", diagram)
         self.assertIn("Neo->>Morpheus:", diagram)
 
-    def test_long_message_is_truncated(self):
+    def test_long_message_is_wrapped_not_truncated(self):
         entries = chat_diagram.parse_entries(SAMPLE_LOG)
         label = chat_diagram._label_for(entries[1])
         snippet = label.split(" — ", 1)[-1]
-        self.assertLessEqual(len(snippet), chat_diagram.MAX_MSG_LEN)
-        self.assertTrue(snippet.endswith("…"))
+        self.assertIn("<br/>", snippet)
+        self.assertNotIn("…", snippet)
+        for line in snippet.split("<br/>"):
+            self.assertLessEqual(len(line), chat_diagram.WRAP_WIDTH)
+
+    def test_message_beyond_safety_cap_is_still_truncated(self):
+        huge_body = "word " * 200  # well beyond MAX_MSG_LEN
+        entry = chat_diagram.Entry(ts="2026-04-12 12:00:00", persona="Neo", to="Trin", cmd="swe fix", body=huge_body)
+        label = chat_diagram._label_for(entry)
+        snippet = label.split(" — ", 1)[-1]
+        self.assertIn("…", snippet)
 
     def test_date_change_emits_note(self):
         entries = chat_diagram.parse_entries(SAMPLE_LOG)

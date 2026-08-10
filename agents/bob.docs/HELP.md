@@ -133,7 +133,7 @@ Cypher *pm launch <sprint>
 
 **EXIT (mandatory before switching):**
 1. Update `state.md` (Context, Current Task, Next Steps sections)
-2. `make chat MSG="<handoff>" PERSONA="<Name>" CMD="handoff" TO="<next>"`
+2. `bobp chat "<handoff>" --persona <Name> --cmd handoff --to <next>`
 
 ---
 
@@ -148,7 +148,7 @@ Fail once → stop, consult Oracle, retry with new approach.
 
 ```bash
 make help    # list all targets
-make chat    # post to CHAT.md
+bobp chat     # post to CHAT.md
 make tldr    # show TL;DR from all files
 ```
 

@@ -120,7 +120,7 @@ make test   # confirm no regressions
 - Move the top **75%** of the `CHAT.md` history into this archive.
 - Replace the moved content in `CHAT.md` with a concise summary of the archived conversation.
 - **MANDATORY:** Include a link to the new archive file at the very beginning of `CHAT.md` (or following existing archive links).
-- After editing `CHAT.md` directly (not through `make chat`), run `make chat_diagram` to refresh the derived `agents/CHAT.diagram.md` view — it does not update itself on manual edits.
+- After editing `CHAT.md` directly (not through `bobp chat`), run `bobp chat-diagram` to refresh the derived `agents/CHAT.diagram.md` view — it does not update itself on manual edits.
 
 ### 7. Sprint Chat Report (*ora report)
 **Trigger:** `*ora report <MONIKER>`
@@ -169,7 +169,7 @@ make test   # confirm no regressions
 2. Load your own state (`agents/oracle.docs/state.md`) — context, current task, and resume plan in one file.
 3. **Rapid Startup Option (CRITICAL)**: Do NOT run a full test suite baseline check (`make test`) or other heavy execution cycles on initialization unless explicitly requested or implementing/testing bug fixes. Reconcile state quickly and proceed.
 4. Verify that agent links are synced (run `setup_agent_links.py` if needed).
-5. Post your persona initialization message using `make chat` immediately.
+5. Post your persona initialization message using `bobp chat` immediately.
 
 **WORK:**
 7. Execute assigned tasks
@@ -177,7 +177,7 @@ make test   # confirm no regressions
 
 **EXIT — HARD GATE: Save BEFORE switching (MANDATORY):**
 9. Update `agents/oracle.docs/state.md` — knowledge organization notes, progress %, exact next item, and step-by-step resume instructions for a cold start (Context, Current Task, Next Steps sections)
-10. Post handoff message: `make chat MSG="<summary> @NextPersona *command" PERSONA="<Name>" CMD="handoff" TO="<next>"`
+10. Post handoff message: `bobp chat "<summary> @NextPersona *command" --persona <Name> --cmd handoff --to <next>`
 
 **Do NOT switch or stop until steps 9-10 are written.**
 **State files are the only memory that survives context overflow or conversation restart.**

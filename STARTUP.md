@@ -19,7 +19,7 @@ If you were mid-task when context was lost:
    - `agents/[persona].docs/state.md`
 4. Post a resume message:
    ```bash
-   make chat MSG="Resuming <task> from last session." PERSONA="<Name>" CMD="resume"
+   bobp chat "Resuming <task> from last session." --persona <Name> --cmd resume
    ```
 5. Continue from the `## Next Steps` section of `state.md` — do not restart from scratch
 
@@ -63,7 +63,7 @@ If `CHAT.md` has no clear handoff, ask the user: *"I'm resuming — what should 
 ```bash
 make help                          # list all targets
 make tldr                          # TL;DR from all project files
-make chat MSG="..." PERSONA="..."  # post to CHAT.md
+bobp chat "..." --persona ... --cmd ... --to ...  # post to CHAT.md
 make test V=-vvv                   # run tests (full output)
 ```
 

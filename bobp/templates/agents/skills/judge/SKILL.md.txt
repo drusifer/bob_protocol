@@ -42,7 +42,7 @@ Trin *qa judge <target>
 
 ### Handoff:
 ```bash
-make chat MSG="[target] run complete. @Smith *user feedback judge <target>" PERSONA="Trin" CMD="qa handoff" TO="Smith"
+bobp chat "[target] run complete. @Smith *user feedback judge <target>" --persona Trin --cmd "qa handoff" --to Smith
 ```
 
 ---
@@ -75,17 +75,17 @@ Smith *user feedback judge <target>
 
 ### Handoff (Bugs Found or TES < 90 with code/script issues):
 ```bash
-make chat MSG="Score: [TES]. Bugs cataloged in bugs.md. @Neo *swe fix judge <target>" PERSONA="Smith" CMD="user feedback" TO="Neo"
+bobp chat "Score: [TES]. Bugs cataloged in bugs.md. @Neo *swe fix judge <target>" --persona Smith --cmd "user feedback" --to Neo
 ```
 
 ### Handoff (No Bugs but TES < 90 with usage/query/prompt issues):
 ```bash
-make chat MSG="Score: [TES]. Sub-optimal patterns. @Bob *prompt update judge <target>" PERSONA="Smith" CMD="user feedback" TO="Bob"
+bobp chat "Score: [TES]. Sub-optimal patterns. @Bob *prompt update judge <target>" --persona Smith --cmd "user feedback" --to Bob
 ```
 
 ### Handoff (TES >= 90 & No Bugs):
 ```bash
-make chat MSG="Optimal score [TES] reached! No bugs. @Trin *qa done" PERSONA="Smith" CMD="user feedback" TO="Trin"
+bobp chat "Optimal score [TES] reached! No bugs. @Trin *qa done" --persona Smith --cmd "user feedback" --to Trin
 ```
 
 ---
@@ -100,7 +100,7 @@ Neo *swe fix judge <target>
 
 ### Handoff:
 ```bash
-make chat MSG="Bugs resolved and test suite verified green. @Bob *prompt update judge <target>" PERSONA="Neo" CMD="swe handoff" TO="Bob"
+bobp chat "Bugs resolved and test suite verified green. @Bob *prompt update judge <target>" --persona Neo --cmd "swe handoff" --to Bob
 ```
 
 ---
@@ -116,7 +116,7 @@ Bob *prompt update judge <target>
 
 ### Handoff:
 ```bash
-make chat MSG="Agent prompts and target skill updated. @Trin *qa verify judge <target>" PERSONA="Bob" CMD="prompt update" TO="Trin"
+bobp chat "Agent prompts and target skill updated. @Trin *qa verify judge <target>" --persona Bob --cmd "prompt update" --to Trin
 ```
 
 ---
@@ -132,10 +132,10 @@ Trin *qa verify judge <target>
 
 ### Handoff (Trigger Next Scoring Iteration):
 ```bash
-make chat MSG="New run complete and trace generated. @Smith *user feedback judge <target>" PERSONA="Trin" CMD="qa verify" TO="Smith"
+bobp chat "New run complete and trace generated. @Smith *user feedback judge <target>" --persona Trin --cmd "qa verify" --to Smith
 ```
 
 ### Handoff (Loop Complete - TES >= 90):
 ```bash
-make chat MSG="Verification complete. Optimal score reached and loop closed successfully." PERSONA="Trin" CMD="qa done" TO="all"
+bobp chat "Verification complete. Optimal score reached and loop closed successfully." --persona Trin --cmd "qa done" --to all
 ```

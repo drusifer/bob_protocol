@@ -109,7 +109,7 @@ For a **large, growing reference doc** (not `state.md` itself — those stay sma
 ### ENTRY (When Activating / Rapid Startup)
 1. Read `agents/CHAT.md` — last 10-20 messages
 2. Load `agents/[persona].docs/state.md`
-3. **Rapid Startup Option (CRITICAL)**: Do NOT run a full test suite baseline check (`make test`) or other heavy execution cycles on initialization unless explicitly requested or implementing/testing bug fixes. Reconcile state quickly and proceed.
+3. **Rapid Startup Option (CRITICAL)**: Do NOT run a full test suite baseline check (`bobp make test`) or other heavy execution cycles on initialization unless explicitly requested or implementing/testing bug fixes. Reconcile state quickly and proceed.
 4. Verify that agent links are synced (run `setup_agent_links.py` if needed).
 5. Post your persona initialization message using `bobp chat` immediately.
 6. If `agents/PROJECT.md` exists — read it for project capabilities

@@ -119,6 +119,7 @@ def update(target: Path) -> None:
         docs_dir = agents_dir / skill_txt.parent.name
         docs_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy2(skill_txt, docs_dir / "SKILL.md")
+    _restore_skill_extensions(agents_dir)
 
     print("Ensuring agent state files are initialised...")
     _write_missing_state_files(agents_dir, tmpl / "agents" / "templates" / "_template_state.md")

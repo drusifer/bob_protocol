@@ -44,21 +44,21 @@ When acting as a specific persona, **load their specific instructions** from the
 
 ## Operational Guidelines
 
-1. **Automation First (Makefile)**: **Always use `make` for project tasks.**
-   - ✅ Use `make <target>` for testing, linting, building, and deployment.
-   - ❌ Do not manually construct complex shell commands (e.g., `pytest`, `eslint`).
-   - 🔍 Run `make help` to discover available project automation.
+1. **Automation First (Makefile & bobp)**: **Always use `bobp make` for project tasks.**
+   - ✅ Use `bobp make <target>` for testing, linting, building, and deployment.
+   - ❌ Do not manually construct complex shell commands (e.g., `pytest`, `eslint`) or invoke bare `make`.
+   - 🔍 Run `bobp make help` to discover available project automation.
    - 🛠️ If a common task is missing, **add it to the Makefile** before executing it.
 
 2. **Bounded Testing (CRITICAL)**: **Do not run tests for code that has not changed since the last run.**
-   - ❌ Never execute full test suites (`make test`) repeatedly without making code modifications.
+   - ❌ Never execute full test suites (`bobp make test`) repeatedly without making code modifications.
    - ✅ Only run tests to validate recent code changes or bug fixes.
    - 📋 Use the task board (`task.md`) and persona state files for tracking sprint/task progress instead of triggering test suite execution.
 
 3. **Strict Symbol Lookup & CLI Fallback (CRITICAL)**: **Always query symbol definitions via VIA.**
    - ❌ Never use `grep_search` or `view_file` to find class, function, method, global, or import definitions.
    - ✅ Always use `via` first to locate symbol definitions and analyze relationships.
-   - 🛠️ If the `mcp__via__via_query` MCP tool is missing from your toolset but `via` is enabled, you **must** use the `via` CLI command (using `run_command` or `make via` targets) to run your queries.
+   - 🛠️ If the `mcp__via__via_query` MCP tool is missing from your toolset but `via` is enabled, you **must** use the `via` CLI command (using `run_command` or `bobp make via` targets) to run your queries.
    - 🔍 Only use `grep_search` for free-text search inside files (such as logs, comments, string constants, or raw SQL tables) or when `via` queries yield no results.
 
 1. **Persistence**: **Load/Save state files EVERY switch** - this is non-negotiable

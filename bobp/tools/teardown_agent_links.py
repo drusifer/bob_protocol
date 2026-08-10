@@ -108,9 +108,13 @@ def remove_root_symlinks(project_root: Path, dry_run: bool) -> int:
     print("\n📁 Tearing down root symlinks...")
 
     count = 0
-    for link_name in ("AGENTS.md", "GEMINI.md", ".cursorrules", "CHATGPT.md"):
+    for link_name in ("AGENTS.md", "AGENT.md", "GEMINI.md", ".cursorrules", "CHATGPT.md"):
         if unlink_owned_symlink(project_root / link_name, project_root, dry_run):
             count += 1
+
+    agents_agent_link = project_root / "agents" / "AGENT.md"
+    if unlink_owned_symlink(agents_agent_link, project_root, dry_run):
+        count += 1
 
     copilot_link = project_root / ".github" / "copilot-instructions.md"
     if unlink_owned_symlink(copilot_link, project_root, dry_run):

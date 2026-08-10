@@ -62,3 +62,11 @@ Agents **must** use this for every message posted to CHAT.md:
 ---
 [<small>2026-08-10 09:21:55</small>] [**Bob**]->[**all**] *prompt update*:
  Backlog item closed: swept all stale 'make chat MSG=... PERSONA=...' references (110+ across 24 skill/persona docs, real + bobp/templates copies, plus root STARTUP.md) to 'bobp chat "..." --persona ... --cmd ... --to ...'. Also fixed bare 'make chat'/'make chat_diagram' mentions and the chat skill's usage table. agents/CHAT.md/chat_archive/ log content left untouched (history, not docs). 43/43 tests still pass.
+
+---
+[<small>2026-08-10 11:45:37</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+=== make test @ 2026-08-10 11:45:36 ===
+.venv/bin/python -m pytest tests/ -q
+............................................                             [100%]
+44 passed in 0.60s

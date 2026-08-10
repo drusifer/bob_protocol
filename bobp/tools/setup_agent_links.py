@@ -179,8 +179,16 @@ def setup_root_symlinks(project_root: Path, agents_dir: Path) -> int:
         return 0
 
     count = 0
+
+    # Singular alias inside agents/ -> agents/AGENT.md -> AGENTS.md
+    agents_agent_md_link = agents_dir / "AGENT.md"
+    if create_symlink(agents_agent_md_link, agents_md):
+        print("  ✅ agents/AGENT.md -> agents/AGENTS.md (Singular alias)")
+        count += 1
+
     links = [
         ("AGENTS.md", "OpenAI/Codex/Standard"),
+        ("AGENT.md", "OpenAI/Codex (Singular alias)"),
         ("GEMINI.md", "Gemini CLI"),
         (".cursorrules", "Cursor AI"),
         ("CHATGPT.md", "ChatGPT Projects (Copy-Paste)"),

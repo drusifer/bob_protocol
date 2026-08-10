@@ -88,6 +88,8 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual(state_file.read_text(), "## Current Task\nreal in-progress work\n")
             self.assertEqual(chat_file.read_text(), "real chat history\n")
             self.assertIn("Senior Software Engineer", skill_file.read_text())  # refreshed from template
+            self.assertTrue((target / "agents" / "skills" / "make" / "SKILL.md").is_file())
+            self.assertFalse(list((target / "agents").rglob("*.txt")))
 
     def test_update_initialises_state_when_missing(self):
         with tempfile.TemporaryDirectory() as tmp:

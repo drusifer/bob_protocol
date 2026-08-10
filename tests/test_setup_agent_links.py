@@ -110,6 +110,28 @@ class SetupAgentLinksTests(unittest.TestCase):
             ["-m", "via", "mcp", "serve", "--no-web", str(project_root)],
         )
 
+    def test_setup_root_symlinks_creates_agent_md_and_agents_md_links(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project_root = Path(tmp)
+            agents_dir = project_root / "agents"
+            agents_dir.mkdir()
+            agents_md = agents_dir / "AGENTS.md"
+            agents_md.write_text("# Master Agent Instructions\n")
+
+            setup_agent_links.setup_root_symlinks(project_root, agents_dir)
+
+            root_agents_link = project_root / "AGENTS.md"
+            root_agent_link = project_root / "AGENT.md"
+            agents_agent_link = agents_dir / "AGENT.md"
+
+            self.assertTrue(root_agents_link.is_symlink())
+            self.assertTrue(root_agent_link.is_symlink())
+            self.assertTrue(agents_agent_link.is_symlink())
+
+            self.assertEqual(root_agents_link.resolve(), agents_md.resolve())
+            self.assertEqual(root_agent_link.resolve(), agents_md.resolve())
+            self.assertEqual(agents_agent_link.resolve(), agents_md.resolve())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -98,6 +98,20 @@ def _label_for(entry):
     return f"{entry.cmd} — {snippet}" if snippet else entry.cmd
 
 
+def _quote_label(label):
+    """Wrap a Mermaid sequence-diagram message label in double quotes.
+
+    Chat message text is free-form and routinely contains punctuation Mermaid's
+    unquoted message grammar treats as meaningful — a semicolon anywhere in the
+    text (e.g. "...consistency); new US-14...") gets parsed as a statement
+    terminator and breaks the whole diagram. Quoting is Mermaid's documented
+    fix for arbitrary text; any literal double quote in the label is escaped
+    with Mermaid's `#quot;` HTML-entity syntax so it can't end the quote early.
+    """
+    escaped = label.replace('"', "#quot;")
+    return f'"{escaped}"'
+
+
 def build_diagram(entries, include_builds=False):
     """Render the parsed entries as a Mermaid sequenceDiagram body (no code fence)."""
     filtered = [e for e in entries if include_builds or not _is_build_status(e)]
@@ -131,7 +145,7 @@ def build_diagram(entries, include_builds=False):
             last_date = date
 
         from_id = participant_ids[_display_name(e.persona)]
-        label = _label_for(e)
+        label = _quote_label(_label_for(e))
         recipients = [r.strip() for r in e.to.split(",")]
         for recipient in recipients:
             to_id = participant_ids[_display_name(recipient)]

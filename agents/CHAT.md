@@ -64,9 +64,13 @@ Agents **must** use this for every message posted to CHAT.md:
  Backlog item closed: swept all stale 'make chat MSG=... PERSONA=...' references (110+ across 24 skill/persona docs, real + bobp/templates copies, plus root STARTUP.md) to 'bobp chat "..." --persona ... --cmd ... --to ...'. Also fixed bare 'make chat'/'make chat_diagram' mentions and the chat skill's usage table. agents/CHAT.md/chat_archive/ log content left untouched (history, not docs). 43/43 tests still pass.
 
 ---
-[<small>2026-08-10 11:45:37</small>] [**make**]->[**all**] *build*:
+[<small>2026-08-10 11:47:43</small>] [**make**]->[**all**] *build*:
  Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
-=== make test @ 2026-08-10 11:45:36 ===
+=== make test @ 2026-08-10 11:47:42 ===
 .venv/bin/python -m pytest tests/ -q
 ............................................                             [100%]
-44 passed in 0.60s
+44 passed in 0.59s
+
+---
+[<small>2026-08-12 00:06:28</small>] [**Bob**]->[**all**] *prompt fix*:
+ Fixed chat_diagram.py: message labels were emitted unquoted, so a literal semicolon in chat text got parsed as a Mermaid statement terminator and broke rendering on GitHub. Added _quote_label() (wraps in double quotes, escapes literal quotes as #quot;), applied only at the line-138 emission point. 2 new regression tests, 46/46 pass. Found via a downstream project (tetris) reporting a GitHub render error.

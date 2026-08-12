@@ -84,6 +84,28 @@ class BuildDiagramTests(unittest.TestCase):
         diagram = chat_diagram.build_diagram([])
         self.assertTrue(diagram.startswith("sequenceDiagram"))
 
+    def test_message_with_semicolon_is_quoted(self):
+        # A bare semicolon in an unquoted Mermaid sequence-diagram message is
+        # parsed as a statement terminator and breaks the diagram (regression:
+        # real chat messages like "...consistency); new US-14..." did this).
+        entry = chat_diagram.Entry(
+            ts="2026-04-12 12:00:00", persona="Neo", to="Trin", cmd="swe fix",
+            body="quit (keybinding consistency); new US-14 requires window-close",
+        )
+        diagram = chat_diagram.build_diagram([entry])
+        self.assertIn('Neo->>Trin: "swe fix', diagram)
+        line = next(l for l in diagram.splitlines() if "Neo->>Trin:" in l)
+        self.assertTrue(line.rstrip().endswith('"'))
+
+    def test_message_with_literal_quote_is_escaped_not_broken(self):
+        entry = chat_diagram.Entry(
+            ts="2026-04-12 12:00:00", persona="Neo", to="Trin", cmd="swe fix",
+            body='the flag is called "--mode"',
+        )
+        diagram = chat_diagram.build_diagram([entry])
+        self.assertNotIn('"--mode"', diagram)  # raw quotes would end the label early
+        self.assertIn("#quot;--mode#quot;", diagram)
+
 
 class RenderTests(unittest.TestCase):
     def test_render_wraps_diagram_in_mermaid_fence(self):

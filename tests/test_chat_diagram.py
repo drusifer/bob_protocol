@@ -58,9 +58,14 @@ class BuildDiagramTests(unittest.TestCase):
         self.assertIn("Neo->>Trin:", diagram)
         self.assertIn("Neo->>Morpheus:", diagram)
 
-    def test_long_message_is_wrapped_not_truncated(self):
-        entries = chat_diagram.parse_entries(SAMPLE_LOG)
-        label = chat_diagram._label_for(entries[1])
+    def test_moderately_long_message_is_wrapped_not_truncated(self):
+        # Under MAX_MSG_LEN but well over WRAP_WIDTH, so this checks the
+        # narrow-column wrapping itself, independent of the truncation cap.
+        entry = chat_diagram.Entry(
+            ts="2026-04-12 12:00:00", persona="Neo", to="Trin", cmd="swe fix",
+            body="Investigating a startup failure in the picker module.",
+        )
+        label = chat_diagram._label_for(entry)
         snippet = label.split(" — ", 1)[-1]
         self.assertIn("<br/>", snippet)
         self.assertNotIn("…", snippet)
@@ -82,7 +87,8 @@ class BuildDiagramTests(unittest.TestCase):
 
     def test_empty_log_still_renders_a_valid_diagram(self):
         diagram = chat_diagram.build_diagram([])
-        self.assertTrue(diagram.startswith("sequenceDiagram"))
+        self.assertIn(chat_diagram.INIT_DIRECTIVE, diagram)
+        self.assertIn("sequenceDiagram", diagram)
 
     def test_message_with_semicolon_is_quoted(self):
         # A bare semicolon in an unquoted Mermaid sequence-diagram message is

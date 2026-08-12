@@ -36,8 +36,10 @@ ENTRY_RE = re.compile(
     re.DOTALL,
 )
 
-MAX_MSG_LEN = 300  # hard safety cap on message length, applied before wrapping
-WRAP_WIDTH = 40  # characters per line once wrapped for the diagram label
+MAX_MSG_LEN = 140  # hard safety cap on message length, applied before wrapping
+WRAP_WIDTH = 18  # characters per line once wrapped — narrow on purpose, so
+# messages stack into tall narrow columns (readable at a bigger font, less
+# horizontal sprawl across N participants) instead of wide paragraph blocks
 
 
 def parse_entries(text):
@@ -121,12 +123,15 @@ def _quote_label(label):
     return f'"{escaped}"'
 
 
+INIT_DIRECTIVE = '%%{init: {"themeVariables": {"fontSize": "20px"}}}%%'
+
+
 def build_diagram(entries, include_builds=False):
     """Render the parsed entries as a Mermaid sequenceDiagram body (no code fence)."""
     filtered = [e for e in entries if include_builds or not _is_build_status(e)]
 
     if not filtered:
-        return "sequenceDiagram\n    Note over Team: No conversation entries yet."
+        return f"{INIT_DIRECTIVE}\nsequenceDiagram\n    Note over Team: No conversation entries yet."
 
     participant_ids = {}
     order = []
@@ -137,7 +142,7 @@ def build_diagram(entries, include_builds=False):
                 participant_ids[display] = _sanitize_id(display)
                 order.append(display)
 
-    lines = ["sequenceDiagram", "    autonumber"]
+    lines = [INIT_DIRECTIVE, "sequenceDiagram", "    autonumber"]
     for display in order:
         pid = participant_ids[display]
         if pid == display:

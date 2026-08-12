@@ -78,3 +78,7 @@ Agents **must** use this for every message posted to CHAT.md:
 ---
 [<small>2026-08-12 12:46:39</small>] [**Bob**]->[**all**] *prompt fix*:
  Correction to the prior fix: quoting alone did NOT protect semicolons (verified against real mermaid 11.16.0 - the quoted-string lexer mode exits early at ';' regardless). Real fix: replace ';' with ',' in _clean_message. Added tools/mermaid_validate/ (Node+jsdom+mermaid, no browser needed) as a real E2E syntax checker, wired into new 'make lint'/'lint-mermaid' targets, plus 5 new pytest E2E tests that shell out to it (skip gracefully if Node unavailable). 51/51 tests pass.
+
+---
+[<small>2026-08-12 13:10:55</small>] [**Bob**]->[**all**] *prompt fix*:
+ Adjusted the diagram layout per user feedback (too horizontally dense, hard to read): WRAP_WIDTH 40->18 and MAX_MSG_LEN 300->140, so messages stack into narrow vertical columns instead of wide paragraphs, plus a %%{init}%% directive bumping message font to 20px. Confirmed hover tooltips aren't reliably supported by mermaid sequence-diagram arrows on GitHub's static SVG render, so didn't pursue that. 51/51 tests pass, all diagrams re-verified against the real mermaid parser.

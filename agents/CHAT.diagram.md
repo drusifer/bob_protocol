@@ -3,6 +3,7 @@
 Auto-generated from `agents/CHAT.md` by `bobp chat-diagram`. Do not edit by hand — regenerate with `make chat_diagram` (or it regenerates automatically on every `make chat`).
 
 ```mermaid
+%%{init: {"themeVariables": {"fontSize": "20px"}}}%%
 sequenceDiagram
     autonumber
     participant Oracle
@@ -13,16 +14,17 @@ sequenceDiagram
     participant Trin
     participant Bob
     Note over Oracle,Bob: 📅 2026-08-09
-    Oracle->>Smith: "ora handoff — Sprint SPRINT_1 groomed and archived:<br/>agents/chat_archive/CHAT_SPRINT_1.md +<br/>.diagram.md. Live CHAT.md reset to<br/>pointer header (first post-reset entry).<br/>Docs updated: sprint/SKILL.md Step 7,<br/>oracle.docs/SKILL.md *ora report<br/>(+bobp/templates copies). @Smith test<br/>SPRINT_1"
-    Smith->>All: "user approve — User testing PASSED end-to-end: archived<br/>real CHAT.md to<br/>CHAT_SPRINT_1.md/.diagram.md, verified<br/>reset+pointer, verified --combine<br/>produces CHAT_FULL.md/.diagram.md, and<br/>confirmed the diagram now shows full<br/>wrapped messages (no more mid-sentence<br/><br/>truncation). 43/43 tests. @all<br/>sprint retro"
-    Neo->>Cypher: "retro — Neo retro: chat_report.py went in<br/>cleanly, reused chat_merge's<br/>parse_blocks rather than duplicating.<br/>Friction: hit the stale 'make chat<br/>MSG=...' syntax across skill docs<br/>immediately on cold start (make chat no<br/>longer exists in this repo since the<br/>Makefile-handback commit) - backlog<br/>item."
-    Trin->>Cypher: "retro — Trin retro: good test coverage added<br/>(43/43), no regressions. Suggest a<br/>follow-up: test_bob_manage.py etc are<br/>fine, but chat-merge had zero tests<br/>before this sprint despite doing<br/>nontrivial timestamp interpolation -<br/>worth a coverage sweep of other<br/>bobp/tools modules."
-    Oracle->>Cypher: "retro — Oracle retro: *ora report is now<br/>documented in both the real and template<br/>SKILL.md copies, so new bobp-installed<br/>projects get this feature too. Docs<br/>stayed in sync this sprint."
-    Cypher->>Cypher: "retro — Backlog: (1) sweep all<br/>agents/*.docs/SKILL.md +<br/>skills/*/SKILL.md for stale 'make chat<br/>MSG=... PERSONA=...' examples, replace<br/>with 'bobp chat ... --persona ... --cmd<br/>... --to ...'. (2) add test coverage for<br/>chat.py/make.py beyond the one<br/>integration test. Both discovered during<br/>SPRINT_1, neither bl…"
-    Cypher->>All: "pm launch — SPRINT_1 'Chat Archive & Report'<br/>complete. Shipped: bobp chat-report<br/>(archive+combine), word-wrapped diagram<br/>labels, chat-merge conflict-marker<br/>cleanup, sprint-close workflow docs.<br/>Live-tested against the real CHAT.md.<br/>Backlog opened for next sprint: stale<br/>make-chat syntax sweep, bobp/tools test<br/>co…"
+    Oracle->>Smith: "ora handoff — Sprint SPRINT_1<br/>groomed and<br/>archived: agents/c<br/>hat_archive/CHAT_S<br/>PRINT_1.md +<br/>.diagram.md. Live<br/>CHAT.md reset to<br/>pointer header<br/>(first post-…"
+    Smith->>All: "user approve — User testing<br/>PASSED end-to-end:<br/>archived real<br/>CHAT.md to CHAT_SP<br/>RINT_1.md/.diagram<br/>.md, verified<br/>reset+pointer,<br/>verified --combine<br/>produces…"
+    Neo->>Cypher: "retro — Neo retro:<br/>chat_report.py<br/>went in cleanly,<br/>reused<br/>chat_merge's<br/>parse_blocks<br/>rather than<br/>duplicating.<br/>Friction: hit the<br/>stale 'make chat<br/>MSG…"
+    Trin->>Cypher: "retro — Trin retro: good<br/>test coverage<br/>added (43/43), no<br/>regressions.<br/>Suggest a follow-<br/>up:<br/>test_bob_manage.py<br/>etc are fine, but<br/>chat-merge had<br/>zero…"
+    Oracle->>Cypher: "retro — Oracle retro: *ora<br/>report is now<br/>documented in both<br/>the real and<br/>template SKILL.md<br/>copies, so new<br/>bobp-installed<br/>projects get this<br/>feature…"
+    Cypher->>Cypher: "retro — Backlog: (1) sweep<br/>all agents/*.docs/<br/>SKILL.md +<br/>skills/*/SKILL.md<br/>for stale 'make<br/>chat MSG=...<br/>PERSONA=...'<br/>examples, replace<br/>with 'bobp ch…"
+    Cypher->>All: "pm launch — SPRINT_1 'Chat<br/>Archive & Report'<br/>complete. Shipped:<br/>bobp chat-report<br/>(archive+combine),<br/>word-wrapped<br/>diagram labels,<br/>chat-merge<br/>conflict-ma…"
     Note over Oracle,Bob: 📅 2026-08-10
-    Bob->>All: "prompt update — Backlog item closed: swept all stale<br/>'make chat MSG=... PERSONA=...'<br/>references (110+ across 24 skill/persona<br/>docs, real + bobp/templates copies, plus<br/>root STARTUP.md) to 'bobp chat #quot;...#quot;<br/>--persona ... --cmd ... --to ...'. Also<br/>fixed bare 'make chat'/'make<br/>chat_diagram' mentions and the chat<br/>skill'…"
+    Bob->>All: "prompt update — Backlog item<br/>closed: swept all<br/>stale 'make chat<br/>MSG=...<br/>PERSONA=...'<br/>references (110+<br/>across 24<br/>skill/persona<br/>docs, real +<br/>bobp/templates c…"
     Note over Oracle,Bob: 📅 2026-08-12
-    Bob->>All: "prompt fix — Fixed chat_diagram.py: message labels<br/>were emitted unquoted, so a literal<br/>semicolon in chat text got parsed as a<br/>Mermaid statement terminator and broke<br/>rendering on GitHub. Added<br/>_quote_label() (wraps in double quotes,<br/>escapes literal quotes as #quot,),<br/>applied only at the line-138 emission<br/>point.…"
-    Bob->>All: "prompt fix — Correction to the prior fix: quoting<br/>alone did NOT protect semicolons<br/>(verified against real mermaid 11.16.0 -<br/>the quoted-string lexer mode exits early<br/>at ',' regardless). Real fix: replace<br/>',' with ',' in _clean_message. Added<br/>tools/mermaid_validate/<br/>(Node+jsdom+mermaid, no browser needed)<br/>as a re…"
+    Bob->>All: "prompt fix — Fixed<br/>chat_diagram.py:<br/>message labels<br/>were emitted<br/>unquoted, so a<br/>literal semicolon<br/>in chat text got<br/>parsed as a<br/>Mermaid statement<br/>terminat…"
+    Bob->>All: "prompt fix — Correction to the<br/>prior fix: quoting<br/>alone did NOT<br/>protect semicolons<br/>(verified against<br/>real mermaid<br/>11.16.0 - the<br/>quoted-string<br/>lexer mode…"
+    Bob->>All: "prompt fix — Adjusted the<br/>diagram layout per<br/>user feedback (too<br/>horizontally<br/>dense, hard to<br/>read): WRAP_WIDTH<br/>40->18 and<br/>MAX_MSG_LEN<br/>300->140, so<br/>messag…"
 ```

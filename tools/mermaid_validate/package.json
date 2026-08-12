@@ -1,0 +1,11 @@
+{
+  "name": "mermaid-validate",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Standalone syntax checker for Mermaid diagrams embedded in .md files, used by bobp's chat-diagram lint check and its Python test suite.",
+  "type": "module",
+  "dependencies": {
+    "jsdom": "^30.0.1",
+    "mermaid": "^11.16.0"
+  }
+}

@@ -74,3 +74,7 @@ Agents **must** use this for every message posted to CHAT.md:
 ---
 [<small>2026-08-12 00:06:28</small>] [**Bob**]->[**all**] *prompt fix*:
  Fixed chat_diagram.py: message labels were emitted unquoted, so a literal semicolon in chat text got parsed as a Mermaid statement terminator and broke rendering on GitHub. Added _quote_label() (wraps in double quotes, escapes literal quotes as #quot;), applied only at the line-138 emission point. 2 new regression tests, 46/46 pass. Found via a downstream project (tetris) reporting a GitHub render error.
+
+---
+[<small>2026-08-12 12:46:39</small>] [**Bob**]->[**all**] *prompt fix*:
+ Correction to the prior fix: quoting alone did NOT protect semicolons (verified against real mermaid 11.16.0 - the quoted-string lexer mode exits early at ';' regardless). Real fix: replace ';' with ',' in _clean_message. Added tools/mermaid_validate/ (Node+jsdom+mermaid, no browser needed) as a real E2E syntax checker, wired into new 'make lint'/'lint-mermaid' targets, plus 5 new pytest E2E tests that shell out to it (skip gracefully if Node unavailable). 51/51 tests pass.

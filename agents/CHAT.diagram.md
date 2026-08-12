@@ -23,5 +23,6 @@ sequenceDiagram
     Note over Oracle,Bob: 📅 2026-08-10
     Bob->>All: "prompt update — Backlog item closed: swept all stale<br/>'make chat MSG=... PERSONA=...'<br/>references (110+ across 24 skill/persona<br/>docs, real + bobp/templates copies, plus<br/>root STARTUP.md) to 'bobp chat #quot;...#quot;<br/>--persona ... --cmd ... --to ...'. Also<br/>fixed bare 'make chat'/'make<br/>chat_diagram' mentions and the chat<br/>skill'…"
     Note over Oracle,Bob: 📅 2026-08-12
-    Bob->>All: "prompt fix — Fixed chat_diagram.py: message labels<br/>were emitted unquoted, so a literal<br/>semicolon in chat text got parsed as a<br/>Mermaid statement terminator and broke<br/>rendering on GitHub. Added<br/>_quote_label() (wraps in double quotes,<br/>escapes literal quotes as #quot;),<br/>applied only at the line-138 emission<br/>point.…"
+    Bob->>All: "prompt fix — Fixed chat_diagram.py: message labels<br/>were emitted unquoted, so a literal<br/>semicolon in chat text got parsed as a<br/>Mermaid statement terminator and broke<br/>rendering on GitHub. Added<br/>_quote_label() (wraps in double quotes,<br/>escapes literal quotes as #quot,),<br/>applied only at the line-138 emission<br/>point.…"
+    Bob->>All: "prompt fix — Correction to the prior fix: quoting<br/>alone did NOT protect semicolons<br/>(verified against real mermaid 11.16.0 -<br/>the quoted-string lexer mode exits early<br/>at ',' regardless). Real fix: replace<br/>',' with ',' in _clean_message. Added<br/>tools/mermaid_validate/<br/>(Node+jsdom+mermaid, no browser needed)<br/>as a re…"
 ```

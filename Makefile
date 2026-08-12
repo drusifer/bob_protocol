@@ -11,7 +11,11 @@ VENV := .venv
 PYTHON := $(VENV)/bin/python
 VENV_STAMP := $(VENV)/.install.stamp
 
-.PHONY: install system-install test build clean help
+MERMAID_DIR := tools/mermaid_validate
+MERMAID_STAMP := $(MERMAID_DIR)/node_modules/.install.stamp
+MERMAID_DIAGRAMS := $(shell find agents -name '*.diagram.md' 2>/dev/null)
+
+.PHONY: install system-install test lint lint-mermaid build clean help
 
 $(VENV_STAMP): pyproject.toml
 	python3 -m venv $(VENV)
@@ -19,14 +23,23 @@ $(VENV_STAMP): pyproject.toml
 	$(PYTHON) -m pip install -e ".[dev]"
 	touch $(VENV_STAMP)
 
+$(MERMAID_STAMP): $(MERMAID_DIR)/package.json
+	cd $(MERMAID_DIR) && npm install
+	touch $(MERMAID_STAMP)
+
 install: $(VENV_STAMP) ## Install bobp in editable mode with dev dependencies (into .venv)
 	$(PYTHON) -m pip install -e ".[dev]"
 
 system-install: ## Install bobp globally using pipx (editable mode)
 	pipx install --editable . --force
 
-test: $(VENV_STAMP) ## Run the test suite (via .venv)
+test: $(VENV_STAMP) ## Run the test suite (via .venv). Mermaid E2E tests auto-skip if Node isn't set up — run `make lint` for those.
 	$(PYTHON) -m pytest tests/ -q
+
+lint: lint-mermaid ## Run all lint checks
+
+lint-mermaid: $(MERMAID_STAMP) ## Syntax-check every ```mermaid fence in agents/*.diagram.md against mermaid's real parser
+	node $(MERMAID_DIR)/validate.mjs $(MERMAID_DIAGRAMS)
 
 build: $(VENV_STAMP) ## Build the sdist and wheel into dist/
 	$(PYTHON) -m build

@@ -81,6 +81,15 @@ def _first_line(body):
 
 def _clean_message(text):
     text = re.sub(r"\s+", " ", text).strip()
+    # Mermaid's sequence-diagram lexer treats a bare `;` as a statement
+    # terminator even inside a quoted message (verified against mermaid
+    # 11.16.0 directly: quoting does NOT protect a semicolon — the lexer's
+    # quoted-string mode exits early at `;`, and everything after it,
+    # including a later `<br/>`, gets mis-tokenized against the *unquoted*
+    # grammar). Chat messages routinely contain semicolons mid-sentence
+    # (e.g. "...consistency); new US-14..."), so replace them outright
+    # rather than relying on quoting to protect them.
+    text = text.replace(";", ",")
     if len(text) > MAX_MSG_LEN:
         text = text[: MAX_MSG_LEN - 1].rstrip() + "…"
     return text
@@ -101,12 +110,12 @@ def _label_for(entry):
 def _quote_label(label):
     """Wrap a Mermaid sequence-diagram message label in double quotes.
 
-    Chat message text is free-form and routinely contains punctuation Mermaid's
-    unquoted message grammar treats as meaningful — a semicolon anywhere in the
-    text (e.g. "...consistency); new US-14...") gets parsed as a statement
-    terminator and breaks the whole diagram. Quoting is Mermaid's documented
-    fix for arbitrary text; any literal double quote in the label is escaped
-    with Mermaid's `#quot;` HTML-entity syntax so it can't end the quote early.
+    Defense-in-depth for arbitrary punctuation in free-form chat text beyond
+    the one character confirmed to actually need active handling (`;` —
+    replaced with `,` in `_clean_message`, since quoting alone does not
+    protect it; see that function's comment). Any literal double quote in the
+    label is escaped with Mermaid's `#quot;` HTML-entity syntax so it can't
+    end the quote early.
     """
     escaped = label.replace('"', "#quot;")
     return f'"{escaped}"'

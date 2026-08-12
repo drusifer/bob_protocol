@@ -24,3 +24,7 @@ build/
 dist/
 *.egg-info/
 .pytest_cache/
+
+# Node deps for tools/mermaid_validate/ (installed via `make lint`)
+node_modules/
+package-lock.json

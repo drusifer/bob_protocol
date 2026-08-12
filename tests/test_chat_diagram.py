@@ -65,19 +65,31 @@ class BuildDiagramTests(unittest.TestCase):
             ts="2026-04-12 12:00:00", persona="Neo", to="Trin", cmd="swe fix",
             body="Investigating a startup failure in the picker module.",
         )
-        label = chat_diagram._label_for(entry)
-        snippet = label.split(" — ", 1)[-1]
-        self.assertIn("<br/>", snippet)
-        self.assertNotIn("…", snippet)
-        for line in snippet.split("<br/>"):
+        note_text = chat_diagram._note_text_for(entry)
+        self.assertIn("<br/>", note_text)
+        self.assertNotIn("…", note_text)
+        for line in note_text.split("<br/>"):
             self.assertLessEqual(len(line), chat_diagram.WRAP_WIDTH)
 
     def test_message_beyond_safety_cap_is_still_truncated(self):
         huge_body = "word " * 200  # well beyond MAX_MSG_LEN
         entry = chat_diagram.Entry(ts="2026-04-12 12:00:00", persona="Neo", to="Trin", cmd="swe fix", body=huge_body)
-        label = chat_diagram._label_for(entry)
-        snippet = label.split(" — ", 1)[-1]
-        self.assertIn("…", snippet)
+        note_text = chat_diagram._note_text_for(entry)
+        self.assertIn("…", note_text)
+
+    def test_message_body_renders_as_a_note_not_an_arrow_label(self):
+        """The arrow itself should carry only the short cmd — the full
+        message snippet belongs in a Note, which gets its own font-size
+        config and isn't crammed against the thin arrow line."""
+        entry = chat_diagram.Entry(
+            ts="2026-04-12 12:00:00", persona="Neo", to="Trin", cmd="swe fix",
+            body="Investigating a startup failure.",
+        )
+        diagram = chat_diagram.build_diagram([entry])
+        arrow_line = next(l for l in diagram.splitlines() if "Neo->>Trin:" in l)
+        self.assertEqual(arrow_line.strip(), 'Neo->>Trin: "swe fix"')
+        self.assertIn("Note over Neo,Trin:", diagram)
+        self.assertIn("Investigating", diagram)
 
     def test_date_change_emits_note(self):
         entries = chat_diagram.parse_entries(SAMPLE_LOG)
@@ -110,7 +122,9 @@ class BuildDiagramTests(unittest.TestCase):
         )
         diagram = chat_diagram.build_diagram([entry])
         self.assertNotIn('"--mode"', diagram)  # raw quotes would end the label early
-        self.assertIn("#quot;--mode#quot;", diagram)
+        # narrow wrapping may insert a <br/> inside the escaped run, so check
+        # both entity escapes landed rather than the exact unwrapped substring
+        self.assertEqual(diagram.count("#quot;"), 2)
 
 
 class RenderTests(unittest.TestCase):

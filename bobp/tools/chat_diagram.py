@@ -37,9 +37,10 @@ ENTRY_RE = re.compile(
 )
 
 MAX_MSG_LEN = 140  # hard safety cap on message length, applied before wrapping
-WRAP_WIDTH = 18  # characters per line once wrapped — narrow on purpose, so
-# messages stack into tall narrow columns (readable at a bigger font, less
-# horizontal sprawl across N participants) instead of wide paragraph blocks
+WRAP_WIDTH = 24  # characters per line once wrapped. Message text now renders
+# in a Note box (see build_diagram) rather than crammed against the arrow
+# line, so it has more room than an inline label would — narrow enough to
+# stay a compact vertical column, wide enough not to be needlessly tall.
 
 
 def parse_entries(text):
@@ -104,9 +105,9 @@ def _wrap_label(text):
     return "<br/>".join(textwrap.wrap(text, width=WRAP_WIDTH))
 
 
-def _label_for(entry):
-    snippet = _wrap_label(_clean_message(_first_line(entry.body)))
-    return f"{entry.cmd} — {snippet}" if snippet else entry.cmd
+def _note_text_for(entry):
+    """The message body (no cmd prefix) for the Note under an entry's arrow."""
+    return _wrap_label(_clean_message(_first_line(entry.body)))
 
 
 def _quote_label(label):
@@ -123,7 +124,16 @@ def _quote_label(label):
     return f'"{escaped}"'
 
 
-INIT_DIRECTIVE = '%%{init: {"themeVariables": {"fontSize": "20px"}}}%%'
+# themeVariables.fontSize alone does not reliably control sequence-diagram
+# message/note text (verified visually — bumping it did nothing on GitHub's
+# render). Mermaid's sequence diagrams have their own dedicated font-size
+# keys under the `sequence` config block; those are the ones that actually
+# apply to arrow labels, actor names, and Note text respectively.
+INIT_DIRECTIVE = (
+    '%%{init: {"sequence": {'
+    '"messageFontSize": 14, "noteFontSize": 18, "actorFontSize": 14'
+    "}}}%%"
+)
 
 
 def build_diagram(entries, include_builds=False):
@@ -159,11 +169,18 @@ def build_diagram(entries, include_builds=False):
             last_date = date
 
         from_id = participant_ids[_display_name(e.persona)]
-        label = _quote_label(_label_for(e))
+        cmd_label = _quote_label(e.cmd)
+        note_text = _note_text_for(e)
         recipients = [r.strip() for r in e.to.split(",")]
         for recipient in recipients:
             to_id = participant_ids[_display_name(recipient)]
-            lines.append(f"    {from_id}->>{to_id}: {label}")
+            # Keep the arrow label short (just the command) — it's rendered
+            # right against the thin arrow line with little room. The full
+            # message snippet goes in a Note underneath instead, which gets
+            # its own box with far more room and its own (bigger) font size.
+            lines.append(f"    {from_id}->>{to_id}: {cmd_label}")
+            if note_text:
+                lines.append(f"    Note over {from_id},{to_id}: {_quote_label(note_text)}")
 
     return "\n".join(lines)
 

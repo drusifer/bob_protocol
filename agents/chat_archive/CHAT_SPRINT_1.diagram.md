@@ -5,7 +5,7 @@
 Sprint SPRINT_1 (Chat Archive & Report). Built bobp chat-report: archives CHAT.md+CHAT.diagram.md under a sprint moniker to agents/chat_archive/, resets CHAT.md to a pointer header, and --combine stitches all archives into CHAT_FULL.md/.diagram.md. Word-wrapped chat_diagram.py message labels (textwrap+<br/>, 40-char lines, 300-char safety cap) instead of hard-truncating at 100 chars. Taught chat_merge.py to strip leftover git conflict markers and dedupe exact-duplicate blocks. Wired the new *ora report step into the sprint-close workflow and Oracle's SKILL.md (real + bobp/templates copies). 43/43 tests passing.
 
 ```mermaid
-%%{init: {"themeVariables": {"fontSize": "20px"}}}%%
+%%{init: {"sequence": {"messageFontSize": 14, "noteFontSize": 18, "actorFontSize": 14}}}%%
 sequenceDiagram
     autonumber
     participant Neo
@@ -20,29 +20,50 @@ sequenceDiagram
     participant Smith
     participant Mouse
     Note over Neo,Mouse: 📅 2026-04-12
-    Neo->>Oracle: "swe fix — Investigating<br/>Codex MCP startup<br/>failure for via ha<br/>ndshake/initialize<br/>response. @Oracle<br/>*ora ask What<br/>prior setup<br/>pattern or known<br/>via MCP i…"
-    Neo->>All: "swe fix — Root cause found:<br/>via MCP exits<br/>before initialize<br/>because<br/>.via/index.db is<br/>missing. Switching<br/>to TDD: add<br/>failing setup<br/>test, then patch<br/>se…"
-    Neo->>Trin: "handoff — via MCP fix<br/>complete: indexed<br/>project, updated<br/>Codex via MCP to<br/>HOME=project +<br/>--no-web, hardened<br/>setup/.mcp.json,<br/>tests pass.<br/>Summary: age…"
+    Neo->>Oracle: "swe fix"
+    Note over Neo,Oracle: "Investigating Codex MCP<br/>startup failure for via<br/>handshake/initialize<br/>response. @Oracle *ora<br/>ask What prior setup<br/>pattern or known via MCP<br/>i…"
+    Neo->>All: "swe fix"
+    Note over Neo,All: "Root cause found: via<br/>MCP exits before<br/>initialize because<br/>.via/index.db is<br/>missing. Switching to<br/>TDD: add failing setup<br/>test, then patch se…"
+    Neo->>Trin: "handoff"
+    Note over Neo,Trin: "via MCP fix complete:<br/>indexed project, updated<br/>Codex via MCP to<br/>HOME=project + --no-web,<br/>hardened<br/>setup/.mcp.json, tests<br/>pass. Summary: age…"
     Note over Neo,Mouse: 📅 2026-08-06
-    Tank->>All: "devops — bootstrap:<br/>packaged bobp as a<br/>pip-installable<br/>CLI, split real<br/>agents/ from bobp/<br/>templates/agents/"
-    User->>All: "request — *chat @neo init<br/>load"
-    Neo->>All: "swe init — Neo online. No<br/>active task in<br/>state.md, no<br/>sprint plan from<br/>Mouse, no pending<br/>handoff addressed<br/>to me in CHAT.md.<br/>Standing by for<br/>assignmen…"
-    Neo->>All: "swe handoff — bobp<br/>make/Makefile-<br/>handback refactor<br/>complete: bobp<br/>install/update no<br/>longer touch a<br/>project's<br/>Makefile, renamed<br/>bobp mkf -> bobp<br/>make, mak…"
+    Tank->>All: "devops"
+    Note over Tank,All: "bootstrap: packaged bobp<br/>as a pip-installable<br/>CLI, split real agents/<br/>from<br/>bobp/templates/agents/"
+    User->>All: "request"
+    Note over User,All: "*chat @neo init load"
+    Neo->>All: "swe init"
+    Note over Neo,All: "Neo online. No active<br/>task in state.md, no<br/>sprint plan from Mouse,<br/>no pending handoff<br/>addressed to me in<br/>CHAT.md. Standing by for<br/>assignmen…"
+    Neo->>All: "swe handoff"
+    Note over Neo,All: "bobp make/Makefile-<br/>handback refactor<br/>complete: bobp<br/>install/update no longer<br/>touch a project's<br/>Makefile, renamed bobp<br/>mkf -> bobp make, mak…"
     Note over Neo,Mouse: 📅 2026-08-07
-    User->>All: "request — *chat @morpheus<br/>init load"
-    Morpheus->>All: "lead init — Morpheus online.<br/>Reviewed CHAT.md,<br/>own state.md, and<br/>Mouse's state.md —<br/>no active task, no<br/>sprint plan, no<br/>pending handoff<br/>for me. Agent li…"
-    Morpheus->>Neo: "lead handoff — Decision:<br/>eliminate bobp/too<br/>ls/_bob_manage.py.<br/>Move install/updat<br/>e/pull/clean/diff<br/>into their own<br/>bob_*.py, helpers<br/>used by 1 module<br/>move w…"
+    User->>All: "request"
+    Note over User,All: "*chat @morpheus init<br/>load"
+    Morpheus->>All: "lead init"
+    Note over Morpheus,All: "Morpheus online.<br/>Reviewed CHAT.md, own<br/>state.md, and Mouse's<br/>state.md — no active<br/>task, no sprint plan, no<br/>pending handoff for me.<br/>Agent li…"
+    Morpheus->>Neo: "lead handoff"
+    Note over Morpheus,Neo: "Decision: eliminate bobp<br/>/tools/_bob_manage.py.<br/>Move install/update/pull<br/>/clean/diff into their<br/>own bob_*.py, helpers<br/>used by 1 module move w…"
     Note over Neo,Mouse: 📅 2026-08-08
-    User->>All: "request — load bob"
-    Bob->>All: "prompt init — Bob online.<br/>Reviewed CHAT.md<br/>(last handoff:<br/>Morpheus->Neo re:<br/>bob_manage.py<br/>refactor) and own<br/>state.md — no<br/>active task, no<br/>pending handoff…"
-    Cypher->>Smith: "pm handoff — SPRINT_1 'Chat<br/>Archive & Report'<br/>stories ready: age<br/>nts/cypher.docs/sp<br/>rint_SPRINT_1_stor<br/>ies.md. S1 bobp<br/>chat-report<br/>archives<br/>CHAT.md+diagram…"
-    Smith->>Morpheus: "user approve — SPRINT_1 stories<br/>reviewed. HCI<br/>check: CLI<br/>ergonomics fine<br/>(clear flag names,<br/>distinct verbs<br/>across chat-<br/>report/chat-<br/>merge/chat-<br/>diagram). Fl…"
-    Morpheus->>Smith: "lead handoff — SPRINT_1<br/>architecture: agen<br/>ts/morpheus.docs/s<br/>print_SPRINT_1_arc<br/>h.md. New<br/>chat_report.py<br/>(archive+combine,<br/>reuses<br/>chat_merge's<br/>parse_blocks,…"
-    Smith->>Mouse: "user approve — Architecture<br/>approved. CLI<br/>surface is<br/>consistent with<br/>existing tools<br/>(chat/chat-<br/>diagram/chat-merge<br/>already use<br/>--file/--out style<br/>flags), -…"
-    Mouse->>Morpheus: "sm handoff — SPRINT_1 planned:<br/>agents/mouse.docs/<br/>sprint_log.md. 4<br/>phases, each 1<br/>module + tests:<br/>(1) chat_report.py<br/>archive+combine,<br/>(2)<br/>chat_diagram.py…"
-    Morpheus->>Neo: "lead handoff — Sprint plan<br/>approved. Phase 1<br/>ready. @Neo impl<br/>phase-1"
-    Neo->>Trin: "swe handoff — SPRINT_1 all 4<br/>phases<br/>implemented: bobp/<br/>tools/chat_report.<br/>py<br/>(archive+combine,<br/>cli.py<br/>registered),<br/>chat_diagram.py<br/>word-wrap<br/>(textwrap+<br/…"
+    User->>All: "request"
+    Note over User,All: "load bob"
+    Bob->>All: "prompt init"
+    Note over Bob,All: "Bob online. Reviewed<br/>CHAT.md (last handoff:<br/>Morpheus->Neo re:<br/>bob_manage.py refactor)<br/>and own state.md — no<br/>active task, no pending<br/>handoff…"
+    Cypher->>Smith: "pm handoff"
+    Note over Cypher,Smith: "SPRINT_1 'Chat Archive &<br/>Report' stories ready: a<br/>gents/cypher.docs/sprint<br/>_SPRINT_1_stories.md. S1<br/>bobp chat-report<br/>archives<br/>CHAT.md+diagram…"
+    Smith->>Morpheus: "user approve"
+    Note over Smith,Morpheus: "SPRINT_1 stories<br/>reviewed. HCI check: CLI<br/>ergonomics fine (clear<br/>flag names, distinct<br/>verbs across chat-<br/>report/chat-merge/chat-<br/>diagram). Fl…"
+    Morpheus->>Smith: "lead handoff"
+    Note over Morpheus,Smith: "SPRINT_1 architecture: a<br/>gents/morpheus.docs/spri<br/>nt_SPRINT_1_arch.md. New<br/>chat_report.py<br/>(archive+combine, reuses<br/>chat_merge's<br/>parse_blocks,…"
+    Smith->>Mouse: "user approve"
+    Note over Smith,Mouse: "Architecture approved.<br/>CLI surface is<br/>consistent with existing<br/>tools (chat/chat-<br/>diagram/chat-merge<br/>already use --file/--out<br/>style flags), -…"
+    Mouse->>Morpheus: "sm handoff"
+    Note over Mouse,Morpheus: "SPRINT_1 planned: agents<br/>/mouse.docs/sprint_log.m<br/>d. 4 phases, each 1<br/>module + tests: (1)<br/>chat_report.py<br/>archive+combine, (2)<br/>chat_diagram.py…"
+    Morpheus->>Neo: "lead handoff"
+    Note over Morpheus,Neo: "Sprint plan approved.<br/>Phase 1 ready. @Neo impl<br/>phase-1"
+    Neo->>Trin: "swe handoff"
+    Note over Neo,Trin: "SPRINT_1 all 4 phases<br/>implemented: bobp/tools/<br/>chat_report.py<br/>(archive+combine, cli.py<br/>registered),<br/>chat_diagram.py word-<br/>wrap (textwrap+<br/…"
     Note over Neo,Mouse: 📅 2026-08-09
-    Trin->>Morpheus: "qa handoff — UAT SPRINT_1<br/>PASSED: agents/tri<br/>n.docs/sprint_SPRI<br/>NT_1_uat.md. All<br/>S1-S4 acceptance<br/>criteria verified<br/>against live CLI +<br/>unit tests, error<br/>p…"
-    Morpheus->>Oracle: "lead handoff — Code review<br/>SPRINT_1 PASSED.<br/>Reviewed<br/>chat_report.py,<br/>chat_diagram.py,<br/>chat_merge.py<br/>diffs: natural-<br/>sort key is type-<br/>safe (alternating<br/>str/…"
+    Trin->>Morpheus: "qa handoff"
+    Note over Trin,Morpheus: "UAT SPRINT_1 PASSED: age<br/>nts/trin.docs/sprint_SPR<br/>INT_1_uat.md. All S1-S4<br/>acceptance criteria<br/>verified against live<br/>CLI + unit tests, error<br/>p…"
+    Morpheus->>Oracle: "lead handoff"
+    Note over Morpheus,Oracle: "Code review SPRINT_1<br/>PASSED. Reviewed<br/>chat_report.py,<br/>chat_diagram.py,<br/>chat_merge.py diffs:<br/>natural-sort key is<br/>type-safe (alternating<br/>str/…"
 ```

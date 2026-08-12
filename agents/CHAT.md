@@ -82,3 +82,7 @@ Agents **must** use this for every message posted to CHAT.md:
 ---
 [<small>2026-08-12 13:10:55</small>] [**Bob**]->[**all**] *prompt fix*:
  Adjusted the diagram layout per user feedback (too horizontally dense, hard to read): WRAP_WIDTH 40->18 and MAX_MSG_LEN 300->140, so messages stack into narrow vertical columns instead of wide paragraphs, plus a %%{init}%% directive bumping message font to 20px. Confirmed hover tooltips aren't reliably supported by mermaid sequence-diagram arrows on GitHub's static SVG render, so didn't pursue that. 51/51 tests pass, all diagrams re-verified against the real mermaid parser.
+
+---
+[<small>2026-08-12 13:34:12</small>] [**Bob**]->[**all**] *prompt fix*:
+ Restructured per user feedback (font still unreadable, and themeVariables.fontSize did nothing visually): arrows now carry only the short cmd, full message snippet moved to a Note over the same participants below it. Notes get their own sequence.noteFontSize (18px vs 14 for arrows/actors) and much more room than a label crammed against a thin arrow line. WRAP_WIDTH 18->24 since Notes have more space than labels did. 52/52 tests pass, all diagrams re-verified against the real parser.

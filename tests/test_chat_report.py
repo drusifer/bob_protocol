@@ -1,8 +1,19 @@
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from bobp.tools import chat_report
+
+NODE_AVAILABLE = (
+    shutil.which("node") is not None
+    and (chat_report.MERMAID_RENDER_DIR / "node_modules").is_dir()
+)
+SKIP_REASON = (
+    "node not on PATH" if shutil.which("node") is None
+    else f"{chat_report.MERMAID_RENDER_DIR / 'node_modules'} missing — run `npm install` there"
+)
 
 SAMPLE_LOG = """# Chat Message Template:
 
@@ -127,6 +138,61 @@ class CombineTests(unittest.TestCase):
             second = out_md.read_text()
 
             self.assertEqual(first, second)
+
+
+class SvgFallbackTests(unittest.TestCase):
+    """These must pass with or without Node installed — svg=True is meant to
+    degrade gracefully, never break the archive operation."""
+
+    def test_svg_true_falls_back_to_fence_when_node_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            chat_file, diagram_file, archive_dir = _write_project(tmp)
+
+            with patch("shutil.which", return_value=None):
+                archive_md, archive_diagram = chat_report.archive(
+                    chat_file, diagram_file, archive_dir, "SPRINT_1", "No Node available.", svg=True)
+
+            diagram_text = archive_diagram.read_text()
+            self.assertIn("```mermaid", diagram_text)
+            self.assertNotIn(".svg", diagram_text)
+
+    def test_render_svg_returns_false_when_node_missing(self):
+        with patch("shutil.which", return_value=None):
+            ok = chat_report.render_svg("sequenceDiagram\n    A->>B: hi\n", Path("/tmp/unused.svg"))
+        self.assertFalse(ok)
+
+
+@unittest.skipUnless(NODE_AVAILABLE, SKIP_REASON)
+class SvgRenderTests(unittest.TestCase):
+    """Exercises the real render path (actual Node + mermaid-cli + a real
+    Chrome) — skipped, not failed, where that isn't set up."""
+
+    def test_svg_true_produces_a_real_svg_and_embeds_it_as_an_image(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            chat_file, diagram_file, archive_dir = _write_project(tmp)
+
+            archive_md, archive_diagram = chat_report.archive(
+                chat_file, diagram_file, archive_dir, "SPRINT_1", "Rendered for real.", svg=True)
+
+            archive_svg = archive_dir / "CHAT_SPRINT_1.svg"
+            self.assertTrue(archive_svg.exists(), "expected a real .svg file to be written")
+            self.assertGreater(archive_svg.stat().st_size, 0)
+            svg_content = archive_svg.read_text()
+            self.assertIn("<svg", svg_content)
+
+            diagram_text = archive_diagram.read_text()
+            self.assertIn("![CHAT_SPRINT_1 diagram](CHAT_SPRINT_1.svg)", diagram_text)
+            self.assertNotIn("```mermaid", diagram_text)
+
+    def test_combine_passes_through_svg_image_reference_unchanged(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            chat_file, diagram_file, archive_dir = _write_project(tmp)
+            chat_report.archive(chat_file, diagram_file, archive_dir, "SPRINT_1", "Only sprint.", svg=True)
+
+            out_md, out_diagram = chat_report.combine(
+                archive_dir, archive_dir / "CHAT_FULL.md", archive_dir / "CHAT_FULL.diagram.md")
+
+            self.assertIn("![CHAT_SPRINT_1 diagram](CHAT_SPRINT_1.svg)", out_diagram.read_text())
 
 
 if __name__ == "__main__":

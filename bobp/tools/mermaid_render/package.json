@@ -1,0 +1,10 @@
+{
+  "name": "mermaid-render",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Renders a Mermaid diagram to a standalone SVG via a real browser (mermaid-cli/Puppeteer). Used by bobp chat-report --svg so archived diagrams can be embedded as plain markdown images instead of a live ```mermaid fence GitHub's embedded renderer doesn't always handle correctly.",
+  "type": "module",
+  "dependencies": {
+    "@mermaid-js/mermaid-cli": "^11.6.0"
+  }
+}

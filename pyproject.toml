@@ -41,4 +41,4 @@ include = ["bobp*"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
-bobp = ["templates/**/*", "tools/*.json"]
+bobp = ["templates/**/*", "tools/*.json", "tools/mermaid_render/*.json", "tools/mermaid_render/*.mjs"]

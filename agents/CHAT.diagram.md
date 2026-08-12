@@ -42,4 +42,6 @@ sequenceDiagram
     Note right of Bob: "Restructured per user<br/>feedback (font still<br/>unreadable, and<br/>themeVariables.fontSize<br/>did nothing visually):<br/>arrows now carry only<br/>the short c…"
     Smith->>Neo: "user approve"
     Note right of Smith: "Implemented per user<br/>approval: per-message<br/>notes switched from Note<br/>over A,B to Note right<br/>of A. Verified fix<br/>against mermaid's<br/>renderer so…"
+    Bob->>All: "prompt feature"
+    Note right of Bob: "Added bobp chat-report<br/>--svg: renders the<br/>archive to a standalone<br/>.svg (real Chrome via<br/>mermaid-cli, new<br/>tools/mermaid_render/)<br/>and embeds…"
 ```

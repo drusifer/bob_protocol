@@ -88,8 +88,33 @@ class BuildDiagramTests(unittest.TestCase):
         diagram = chat_diagram.build_diagram([entry])
         arrow_line = next(l for l in diagram.splitlines() if "Neo->>Trin:" in l)
         self.assertEqual(arrow_line.strip(), 'Neo->>Trin: "swe fix"')
-        self.assertIn("Note over Neo,Trin:", diagram)
+        self.assertIn("Note right of Neo:", diagram)
         self.assertIn("Investigating", diagram)
+
+    def test_note_is_anchored_to_sender_not_spanning_the_recipient(self):
+        """Regression: `Note over A,B` sizes its box as the literal
+        x-distance between A and B (verified in mermaid's own renderer
+        source), so with many participants declared between a non-adjacent
+        sender/recipient pair, it renders far wider than intended — directly
+        undermining the "narrow" redesign. `Note right of <sender>` is
+        anchored to the sender alone, independent of how far the recipient
+        is, so it must never reference the recipient's id."""
+        # Force Cypher and Bob to be non-adjacent by routing other entries
+        # between them first, mirroring a real multi-persona log.
+        entries = [
+            chat_diagram.Entry(ts="2026-04-12 11:00:00", persona="Cypher", to="Smith", cmd="pm handoff", body="a"),
+            chat_diagram.Entry(ts="2026-04-12 11:05:00", persona="Smith", to="Morpheus", cmd="user approve", body="b"),
+            chat_diagram.Entry(ts="2026-04-12 12:00:00", persona="Cypher", to="Bob", cmd="pm handoff", body="broadcast message"),
+        ]
+        diagram = chat_diagram.build_diagram(entries)
+        note_line = next(l for l in diagram.splitlines() if "broadcast message" in l)
+        self.assertIn("Note right of Cypher:", note_line)
+        # The date-divider note legitimately still spans the full width
+        # (Note over first,last) — only per-message notes must avoid it.
+        message_note_lines = [l for l in diagram.splitlines() if '"a"' in l or '"b"' in l or "broadcast message" in l]
+        self.assertTrue(message_note_lines)
+        for line in message_note_lines:
+            self.assertNotIn("Note over", line)
 
     def test_date_change_emits_note(self):
         entries = chat_diagram.parse_entries(SAMPLE_LOG)

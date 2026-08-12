@@ -178,9 +178,19 @@ def build_diagram(entries, include_builds=False):
             # right against the thin arrow line with little room. The full
             # message snippet goes in a Note underneath instead, which gets
             # its own box with far more room and its own (bigger) font size.
+            #
+            # `Note right of {from_id}` (not `Note over {from_id},{to_id}`) —
+            # verified against mermaid's own renderer source that `Note over`
+            # sizes its box as the literal x-distance between the two named
+            # participants, so it spans every lane in between them. With 10+
+            # participants and frequent broadcasts (`Cypher->>All`), that
+            # produced near-full-diagram-width notes for any non-adjacent
+            # pair — exactly the sprawl this redesign was meant to fix.
+            # `Note right of` is anchored to the sender alone and sized from
+            # the wrapped text, independent of how far the recipient is.
             lines.append(f"    {from_id}->>{to_id}: {cmd_label}")
             if note_text:
-                lines.append(f"    Note over {from_id},{to_id}: {_quote_label(note_text)}")
+                lines.append(f"    Note right of {from_id}: {_quote_label(note_text)}")
 
     return "\n".join(lines)
 

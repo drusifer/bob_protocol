@@ -3,13 +3,18 @@
 Setup Agent Discovery Links — creates symlinks so AI tools can find agent personas.
 
 TLDR:
-    Scans agents/<name>/ directories for persona folders (identified by the
-    presence of SKILL.md) and creates the platform-specific symlinks each AI
+    Converts older projects whose persona folders are agents/<name>.docs/ to
+    the current agents/<name>/ layout, then scans agents/<name>/ directories
+    for persona folders (identified by the presence of SKILL.md) and creates
+    the platform-specific symlinks each AI
     tool expects: .claude/skills/<name>/ for Claude Code, $CODEX_HOME/skills/<name>/
     for Codex, AGENTS.md / GEMINI.md / .cursorrules / CHATGPT.md /
     .github/copilot-instructions.md at the project root for other tools, plus
     a .agents/ -> agents/ directory symlink for Gemini CLI's agent tool.
-    Key functions: find_project_root() locates the repo root; find_persona_dirs()
+    Key functions: find_project_root() locates the repo root;
+    migrate_legacy_layout() renames agents/<name>.docs/ -> agents/<name>/ and
+    updates the path references in the project's agent docs (this module is
+    the only place that knows the old layout); find_persona_dirs()
     discovers persona dirs; find_shared_skills() finds agents/skills/*/;
     setup_claude_skills() builds the .claude/skills/ tree; setup_codex_skills()
     builds the Codex skill links; setup_root_symlinks() creates root-level links;
@@ -27,6 +32,7 @@ TLDR:
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -36,6 +42,119 @@ try:
     from ._common import find_persona_dirs, find_project_root
 except ImportError:
     from _common import find_persona_dirs, find_project_root
+
+
+# The pre-agents/<name>/ layout. Nothing outside this module knows about it.
+LEGACY_PERSONA_SUFFIX = ".docs"
+# Generic stand-ins the docs use for "any persona", e.g. agents/[persona].docs/
+LEGACY_REF_PLACEHOLDERS = ("[persona]", "<persona>", "<name>", "<agent>", "agent", "*")
+# Chat logs are history, not instructions — leave the paths they mention alone.
+REWRITE_SKIP_NAMES = {"CHAT.md", "CHAT.diagram.md"}
+REWRITE_SKIP_DIRS = {"chat_archive"}
+REWRITE_SUFFIXES = {".md", ".txt", ".template"}
+
+
+def migrate_persona_folders(agents_dir: Path) -> list[str]:
+    """Rename legacy agents/<name>.docs/ folders to agents/<name>/.
+
+    If agents/<name>/ already exists the legacy folder's files are moved into
+    it without overwriting anything; a legacy folder left with conflicting
+    files is kept and reported. Returns the persona names that were migrated.
+    """
+    migrated = []
+
+    for legacy in sorted(agents_dir.glob(f"*{LEGACY_PERSONA_SUFFIX}")):
+        if not legacy.is_dir() or legacy.is_symlink():
+            continue
+        name = legacy.name.removesuffix(LEGACY_PERSONA_SUFFIX)
+        if not name:
+            continue
+        target = agents_dir / name
+
+        if not target.exists():
+            legacy.rename(target)
+            print(f"  ✅ agents/{legacy.name}/ -> agents/{name}/")
+            migrated.append(name)
+            continue
+
+        if not target.is_dir():
+            print(f"  ⚠️  Skipping agents/{legacy.name}/ - agents/{name} exists and is not a directory")
+            continue
+
+        conflicts = 0
+        for item in sorted(legacy.rglob("*")):
+            if item.is_dir():
+                continue
+            dest = target / item.relative_to(legacy)
+            if dest.exists():
+                conflicts += 1
+                continue
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            item.rename(dest)
+        if conflicts:
+            print(
+                f"  ⚠️  agents/{legacy.name}/ kept - {conflicts} file(s) already exist in "
+                f"agents/{name}/; merge them by hand"
+            )
+        else:
+            shutil.rmtree(legacy)
+            print(f"  ✅ agents/{legacy.name}/ merged into agents/{name}/")
+        migrated.append(name)
+
+    return migrated
+
+
+def rewrite_legacy_refs(agents_dir: Path, persona_names: list[str]) -> int:
+    """Rewrite `<name>.docs` path references in agent docs to `<name>`.
+
+    Only the given persona names and the generic placeholders are rewritten, so
+    unrelated text that happens to end in .docs is left alone. Returns the
+    number of files changed.
+    """
+    tokens = "|".join(re.escape(t) for t in (*persona_names, *LEGACY_REF_PLACEHOLDERS))
+    # "their `.docs/` folder" style prose has no name in front of the suffix.
+    pattern = re.compile(rf"(?<![\w.-])({tokens})\.docs\b|(?<=`)\.docs/(?=`)")
+
+    def replace(match: re.Match) -> str:
+        return match.group(1) if match.group(1) else "<name>/"
+
+    changed = 0
+    for path in sorted(agents_dir.rglob("*")):
+        if path.is_symlink() or not path.is_file() or path.suffix not in REWRITE_SUFFIXES:
+            continue
+        if path.name in REWRITE_SKIP_NAMES:
+            continue
+        if REWRITE_SKIP_DIRS & set(path.relative_to(agents_dir).parts[:-1]):
+            continue
+        try:
+            text = path.read_text()
+        except (OSError, UnicodeDecodeError):
+            continue
+        new_text = pattern.sub(replace, text)
+        if new_text != text:
+            path.write_text(new_text)
+            changed += 1
+
+    return changed
+
+
+def migrate_legacy_layout(agents_dir: Path) -> list[str]:
+    """Convert an older agents/<name>.docs/ project to agents/<name>/ in place.
+
+    A no-op (and silent) on a project already on the current layout. Returns
+    the persona names that were migrated.
+    """
+    if not any(agents_dir.glob(f"*{LEGACY_PERSONA_SUFFIX}")):
+        return []
+
+    print("\n📁 Converting persona folders to agents/<name>/...")
+    migrated = migrate_persona_folders(agents_dir)
+    if migrated:
+        names = sorted({name for name, _ in find_persona_dirs(agents_dir)} | set(migrated))
+        rewritten = rewrite_legacy_refs(agents_dir, names)
+        if rewritten:
+            print(f"  ✅ Updated persona folder references in {rewritten} file(s)")
+    return migrated
 
 
 def find_shared_skills(agents_dir: Path) -> list[tuple[str, Path]]:
@@ -482,6 +601,9 @@ def main():
     agents_dir = project_root / "agents"
     print(f"\nProject root: {project_root}")
     print(f"Agents dir: {agents_dir}")
+
+    # Convert an older agents/<name>.docs/ project before discovering personas
+    migrate_legacy_layout(agents_dir)
 
     # Find persona folders
     personas = find_persona_dirs(agents_dir)

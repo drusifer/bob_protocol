@@ -2,118 +2,77 @@
 
 ## Context
 ### Recent Decisions
-- User decided: drop bob-owned Makefile management from `bobp install`/`update` entirely — the
-  host project's `Makefile` is now 100% its own, untouched by bob. `bobp` only wraps whatever
-  `make <target>` the host already defines, via a renamed `bobp make` subcommand (was `bobp mkf`).
-- User explicitly kept bob_protocol's own root `Makefile` (install/test/build/clean for building
-  the bobp package itself) — that one was NOT touched, per direct instruction mid-task.
-- Accepted tradeoff: bare `make <target>` in a project now runs uncaptured/unposted straight to
-  the terminal. There is no more auto-intercept safety net for agents who forget `bobp make`.
-  The `make` skill's "NEVER bare `make`" rule is now the only thing enforcing capture.
+- User decided: persona folders are `agents/<name>/`, not `agents/<name>.docs/`. Applies to this
+  repo's `agents/` tree and to the packaged templates, so new installs get the new layout.
+- User decided: every tool and doc refers only to the new layout, with one exception —
+  `bobp setup-agent-links` must convert older `.docs`-style projects to it. I first misread
+  "no back compat" as "remove the conversion too" and pushed that in `bd660c3`; the user
+  corrected it and the conversion is restored (`setup_agent_links.migrate_legacy_layout()`,
+  the only code that knows the old layout). `bobp update` calls it before refreshing files.
+- User asked for `setup-agent-links` to handle `.claude/skills` being a whole-directory symlink
+  into `agents/`: it now replaces that link with a real directory before linking.
 
 ### Key Findings
-- `bobp mkf` (now `bobp make`) never actually needed the `MKF_ACTIVE` env var for its own
-  capture logic — that var was only consumed by the *installed* Makefile's own
-  `ifdef MKF_ACTIVE` / `Makefile.prj` / `Makefile.bob` self-re-inclusion dance. Once that dance
-  is deleted, `bobp make <target>` still works unchanged: it just shells out to `make <target>`
-  and captures stdout/stderr — no coupling to the target Makefile's internals at all.
-- Initially misdiagnosed a test failure as "system python has no bobp installed, use the pipx
-  venv instead" — true as a workaround, but not the real root cause (see Follow-up fixes below,
-  where the actual bug and a proper fix were found).
-- `agents/skills/bob-tools/SKILL.md` (and neo/SKILL.md's own Make Rules block) were stale
-  in a second, unrelated way: they still described `agents/tools/*.py` as project-local scripts
-  and `python agents/tools/setup_agent_links.py` invocations, from before bobp was packaged as
-  a CLI (commit 4523a99). Rewrote both to the current `bobp <subcommand>` reality while in there
-  for the make cleanup — same root confusion, adjacent cause.
-
-### Follow-up fixes (same session, user-directed)
-- User caught two real bugs while reviewing the test failure I'd called "pre-existing/
-  environment-only": (1) `tests/test_chat_diagram.py`'s `ChatPyIntegrationTests` shelled out via
-  `subprocess.run([sys.executable, "-m", "bobp.tools.chat", ...], cwd=tmp)` — the *actual* root
-  cause wasn't "system python lacks bobp", it was that `cwd=tmp` broke the accidental
-  cwd-added-to-sys.path trick that let `bobp` import at all in this not-really-installed dev
-  checkout. User's instinct ("it's a python module, we can just use it") was right — rewrote the
-  test to call `chat.main()` in-process (`os.chdir` + `patch("sys.argv", ...)`) instead of
-  spawning a subprocess. Now passes under plain `python3 -m pytest`, no venv workaround needed.
-  Root Makefile's `install`/`test`/`build` now depend on a `$(VENV_STAMP)` file
-  (`.venv/.install.stamp`, keyed on `pyproject.toml`) and run everything through
-  `.venv/bin/python` — never bare `pip`/`pytest`/`python` off PATH. Verified: fresh `make test`
-  creates `.venv` and installs, a second run skips reinstall (stamp works), `make build` and
-  `bobp make test` (the full wrapped path) both work end-to-end.
+- A persona is any folder directly under `agents/` holding a `SKILL.md`
+  (`_common.find_persona_dirs()`); `skills/`, `templates/`, `chat_archive/` have none at that
+  level, so they are not picked up. Template personas are found by `*/SKILL.md.txt`.
+- `tests/test_bob_manage.py::test_install_via_the_real_cli` runs the real `setup_agent_links`.
+  Before this session it wrote to the developer's real `~/.codex` — one run repointed the
+  skill links and the Codex `via` MCP server at a deleted temp dir. It now sets a throwaway
+  `CODEX_HOME`. Repaired by re-running `bobp setup-agent-links` here.
+- In this repo `.claude/skills` used to be a symlink to `agents/skills`; it is now a real
+  directory with 22 links (9 personas, 13 shared skills).
 
 ### Important Notes
-- Left `agents/skills/render/SKILL.md`'s many generic `make deploy`/`make logs`/etc. mentions
-  mostly as-is beyond the one clearly-broken `Makefile.prj`/mkf-stub line — deciding which of
-  those should become `bobp make X` (captured) vs. stay bare `make X` (streaming/interactive,
-  e.g. `make logs`) is a judgment call belonging to whoever owns that project-specific skill,
-  not a mechanical rename. Flagged here in case Morpheus/Tank want to revisit.
-- `agents/skills/judge/SKILL.md`'s `make judge-trace` / `trace_annotate.py` invocation model
-  has its own pre-existing packaging staleness (same `agents/tools/*.py` vs `bobp <subcommand>`
-  issue) that I did NOT fully fix — only touched the one line that directly referenced
-  "mkf-captured". Worth a dedicated pass if judge-trace is actually run as documented.
+- An older `.docs`-style project is converted by `bobp setup-agent-links` or `bobp update`:
+  folders renamed, path references in agent docs rewritten. `pull`, `clean`, `diff` do not
+  convert — run setup first in such a project.
+- `CHAT.md`, `CHAT.diagram.md` and `chat_archive/` deliberately keep the old `.docs` paths as
+  history.
+- Still open from the 2026-08-06 make cleanup: `agents/skills/render/SKILL.md` has generic
+  `make X` mentions that may want `bobp make X`; `agents/skills/judge/SKILL.md`'s
+  `make judge-trace` / `trace_annotate.py` invocation model is stale. Neither was touched.
 
 ## Current Task
-**Status:** Complete — committed and pushed
+**Status:** Conversion restored and tested (55 passed, 7 skipped) — committed and pushed to `main` (follow-up to `bd660c3`)
 **Assigned to:** Neo
-**Started:** 2026-08-06
-**Commit:** `6b36876` on `main` (pushed to `origin/main`, was `dfaf125`)
+**Started:** 2026-10-12
+**Commit:** `bd660c3` on `main` (pushed to `origin/main`, was `85d7953`)
 
 ### Task Description
-Drop bob's ownership of installed-project Makefiles ("give the Makefile back to the host
-project") and make `bobp make <target>` the supported way to run project make targets with
-output capture (`build/build.out`) + CHAT.md status posting. Root `Makefile` for bob_protocol
-itself stays untouched per explicit user instruction.
+Move persona folders from `agents/<name>.docs/` to `agents/<name>/` across the tools, this
+repo and the packaged templates, with the tools supporting only the new layout.
 
 ### Progress
-- [x] Renamed `bobp mkf` subcommand to `bobp make` (`bobp/cli.py`, `bobp/tools/mkf.py` ->
-      `bobp/tools/make.py`); dropped the now-unused `MKF_ACTIVE` env var
-- [x] Removed `_install_makefile()` and its call sites from `bobp/tools/_bob_manage.py`
-      (`install()`/`update()` no longer touch a target project's Makefile at all)
-- [x] Deleted `bobp/templates/Makefile` — nothing left to install
-- [x] Fixed `tests/test_bob_manage.py` (removed the MKF_ACTIVE-in-installed-Makefile test,
-      added a test asserting install() does NOT create one)
-- [x] Rewrote `make` + `make-discover` skills (live + template `.txt` copies) for the new
-      model: no Makefile.prj/Makefile.bob/ifdef split, `bobp make [-v|-vv|-vvv] <target>`
-      (flag comes before target — different calling convention than the old `V=` make var)
-- [x] Updated judge anti-pattern text (`trace_annotate.py` BUILTIN_RULES + `trace_rules.json`
-      + the `MAKE_PIPE_RE`/`MAKE_CHAT_RE` regexes) to reference `bobp make`/`bobp chat`
-      instead of bare `make`
-- [x] Swept README.md, SHORTHAND_GUIDE.md (root + template), DOCUMENTATION_INDEX.md (root +
-      template), render/judge/bob-tools SKILL.md (+ template .txt), and Neo's own SKILL.md
-      (+ template .txt) for stale mkf/Makefile.prj/Makefile.bob/MKF_ACTIVE references
-- [x] Full test suite green: `26 passed` under plain `python3 -m pytest` (no venv workaround
-      needed after the follow-up fixes below)
-- [x] Smoke-tested `bobp make test` against bob_protocol's own (untouched) root Makefile —
-      capture, tail, exit-code passthrough, and CHAT.md build-status replacement all work
-      correctly end-to-end
-- [x] Fixed `tests/test_chat_diagram.py`'s chat integration test to call `chat.main()`
-      in-process instead of shelling out (see Follow-up fixes) — root-caused and fixed, not
-      worked around
-- [x] Root `Makefile` now creates/uses `.venv` for install/test/build, gated by a
-      `pyproject.toml`-keyed install stamp
-- [x] Committed (`6b36876`) and pushed to `origin/main`
+- [x] `git mv` of all nine persona folders in `agents/` and `bobp/templates/agents/`
+- [x] Path references updated in agent docs, skills, templates and root `STARTUP.md`
+- [x] `setup_agent_links`, `_bob_manage` (install/update/pull/clean/diff) and `trace_annotate`
+      resolve personas via `find_persona_dirs()`; no legacy handling
+- [x] `setup-agent-links` replaces a `.claude/skills` directory link into `agents/`
+- [x] Integration test isolated with a throwaway `CODEX_HOME`
+- [x] Stale `setup_agent_links.py` invocations in SKILL files replaced with
+      `bobp setup-agent-links`; `agents/tools/` subtree dropped from the template README
+- [x] Tests green: 52 passed, 7 skipped (`bobp make test`)
+- [x] Committed (`bd660c3`) and pushed to `origin/main`
 
 ### Blockers
 None
 
 ### Oracle Consultations
-None — this was a direct user-directed refactor with the design confirmed by the user
-mid-task (see Recent Decisions), not something needing historical lookup.
+None — direct user-directed refactor.
 
 ## Next Steps
 ### Immediate Next Action
-None. Task is fully closed out: implemented, tested, committed, pushed. Nothing queued for
-Neo right now — next session should read `agents/CHAT.md` for whatever comes in fresh.
+None. Next session should read `agents/CHAT.md` for whatever comes in fresh.
 
 ### Waiting On
-Nothing from me. Optionally worth a `@Trin *qa review` given the breadth of the change (CLI
-rename + doc sweep across ~28 files, now live on `main`), but the user only asked for
-implementation + commit/push, not a QA pass — don't assume that's wanted without asking first.
+- User: whether to delete the `persona-folder-layout` branch (local and `origin`); it points
+  at the same commit as `main`.
+- Codex skill links on this machine currently point at bob_protocol; re-run
+  `bobp setup-agent-links` in whichever project should own them.
 
 ### Planned Work
-- [ ] None currently queued. Two known-stale, out-of-scope items noted above under Important
-      Notes (render skill's make-vs-bobp-make judgment calls; judge skill's
-      agents/tools-vs-bobp packaging staleness) if anyone wants to pick them up later.
+- [ ] None queued.
 
 ---
-*Last updated: 2026-08-06 23:05*
+*Last updated: 2026-10-12 20:44*

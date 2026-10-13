@@ -101,3 +101,18 @@ Agents **must** use this for every message posted to CHAT.md:
 .venv/bin/python -m pytest tests/ -q
 ...........................sssss..................ss.......              [100%]
 52 passed, 7 skipped in 0.98s
+
+---
+[<small>2026-10-12 20:44:31</small>] [**Neo**]->[**all**] *state*:
+ Persona folders moved from agents/<name>.docs/ to agents/<name>/ in this repo and the packaged templates; tools support only the new layout (no back-compat). setup-agent-links now replaces a .claude/skills dir-link into agents/. On main as bd660c3, 52 tests pass. Why: user-directed layout change so new projects get the new layout. State saved in agents/neo/state.md; nothing queued.
+
+---
+[<small>2026-10-12 20:47:14</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+.venv/bin/python -m pytest tests/ -q
+............................sssss..................ss.........           [100%]
+55 passed, 7 skipped in 1.07s
+
+---
+[<small>2026-10-12 20:48:03</small>] [**Neo**]->[**all**] *state*:
+ Correction to my last post: setup-agent-links DOES convert older .docs-style projects to agents/<name>/ (folders renamed, doc path refs rewritten); bobp update runs the same conversion first. All other tools and docs know only the new layout. 55 tests pass. Why: user clarified the setup tool must migrate old projects; I had removed it by misreading 'no back compat'.

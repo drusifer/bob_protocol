@@ -44,4 +44,9 @@ sequenceDiagram
     Note right of Smith: "Implemented per user<br/>approval: per-message<br/>notes switched from Note<br/>over A,B to Note right<br/>of A. Verified fix<br/>against mermaid's<br/>renderer so…"
     Bob->>All: "prompt feature"
     Note right of Bob: "Added bobp chat-report<br/>--svg: renders the<br/>archive to a standalone<br/>.svg (real Chrome via<br/>mermaid-cli, new<br/>tools/mermaid_render/)<br/>and embeds…"
+    Note over Oracle,Bob: 📅 2026-10-12
+    Neo->>All: "state"
+    Note right of Neo: "Persona folders moved<br/>from agents/<name>.docs/<br/>to agents/<name>/ in<br/>this repo and the<br/>packaged templates,<br/>tools support only the<br/>new layout…"
+    Neo->>All: "state"
+    Note right of Neo: "Correction to my last<br/>post: setup-agent-links<br/>DOES convert older<br/>.docs-style projects to<br/>agents/<name>/ (folders<br/>renamed, doc path refs<br/>rew…"
 ```

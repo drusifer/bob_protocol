@@ -170,6 +170,56 @@ class SetupAgentLinksTests(unittest.TestCase):
             # nothing was written into the agents/ tree itself
             self.assertEqual([p.name for p in (agents_dir / "skills").iterdir()], ["chat"])
 
+    def _make_persona(self, agents_dir: Path, folder: str, skill: str = "---\nname: x\n---\n") -> Path:
+        persona = agents_dir / folder
+        persona.mkdir(parents=True)
+        (persona / "SKILL.md").write_text(skill)
+        return persona
+
+    def test_migrate_legacy_layout_renames_folders_and_rewrites_refs(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            agents_dir = Path(tmp) / "agents"
+            neo = self._make_persona(agents_dir, "neo.docs")
+            (neo / "state.md").write_text("see agents/neo.docs/notes.md\n")
+            doc = agents_dir / "AGENTS.md"
+            doc.write_text(
+                "Load `agents/[persona].docs/state.md` and `agents/neo.docs/SKILL.md`.\n"
+                "See agents/*.docs/ and their `.docs/` folder; export to google.docs too.\n"
+            )
+            chat = agents_dir / "CHAT.md"
+            chat.write_text("wrote agents/neo.docs/summary.md\n")
+
+            migrated = setup_agent_links.migrate_legacy_layout(agents_dir)
+
+            self.assertEqual(migrated, ["neo"])
+            self.assertFalse((agents_dir / "neo.docs").exists())
+            self.assertEqual(
+                (agents_dir / "neo" / "state.md").read_text(), "see agents/neo/notes.md\n"
+            )
+            self.assertEqual(
+                doc.read_text(),
+                "Load `agents/[persona]/state.md` and `agents/neo/SKILL.md`.\n"
+                "See agents/*/ and their `<name>/` folder; export to google.docs too.\n",
+            )
+            # chat logs are history and keep the old paths
+            self.assertEqual(chat.read_text(), "wrote agents/neo.docs/summary.md\n")
+            # already-converted project: nothing to do
+            self.assertEqual(setup_agent_links.migrate_legacy_layout(agents_dir), [])
+
+    def test_migrate_persona_folders_merges_without_overwriting(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            agents_dir = Path(tmp) / "agents"
+            self._make_persona(agents_dir, "neo", skill="current\n")
+            legacy = self._make_persona(agents_dir, "neo.docs", skill="legacy\n")
+            (legacy / "notes.md").write_text("only in legacy\n")
+
+            setup_agent_links.migrate_persona_folders(agents_dir)
+
+            self.assertEqual((agents_dir / "neo" / "SKILL.md").read_text(), "current\n")
+            self.assertEqual((agents_dir / "neo" / "notes.md").read_text(), "only in legacy\n")
+            # the conflicting SKILL.md is kept for a manual merge, not deleted
+            self.assertEqual((legacy / "SKILL.md").read_text(), "legacy\n")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -22,6 +22,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from . import setup_agent_links
 from ._common import find_persona_dirs, find_project_root
 
 
@@ -121,6 +122,10 @@ def update(target: Path) -> None:
     tmpl = templates_dir()
     agents_dir = target / "agents"
     print(f"Updating BobProtocol in {target}...")
+    if agents_dir.is_dir():
+        # Convert an older-layout project first, so the refreshed persona files
+        # below land in its existing (renamed) folders instead of beside them.
+        setup_agent_links.migrate_legacy_layout(agents_dir)
     shutil.copytree(tmpl / "agents" / "skills", agents_dir / "skills", dirs_exist_ok=True)
     shutil.copytree(tmpl / "agents" / "templates", agents_dir / "templates", dirs_exist_ok=True)
     for name, skill_txt in _template_personas(tmpl):

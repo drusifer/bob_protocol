@@ -105,6 +105,26 @@ class UpdateTests(unittest.TestCase):
             self.assertTrue(state_file.exists())
 
 
+    def test_update_converts_an_older_docs_layout_project_in_place(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            _install(target)
+            agents_dir = target / "agents"
+            for skill in sorted(agents_dir.glob("*/SKILL.md")):
+                skill.parent.rename(agents_dir / f"{skill.parent.name}.docs")
+            (agents_dir / "neo.docs" / "state.md").write_text("real in-progress work\n")
+            (agents_dir / "neo.docs" / "SKILL.md").write_text("stale\n")
+
+            with patch.object(_bob_manage, "_run_setup_agent_links"), redirect_stdout(io.StringIO()):
+                _bob_manage.update(target)
+
+            self.assertFalse(list(agents_dir.glob("*.docs")))
+            self.assertEqual(
+                (agents_dir / "neo" / "state.md").read_text(), "real in-progress work\n"
+            )
+            self.assertIn("Senior Software Engineer", (agents_dir / "neo" / "SKILL.md").read_text())
+
+
 class PullTests(unittest.TestCase):
     def test_pull_copies_only_files_already_present_at_destination(self):
         with tempfile.TemporaryDirectory() as src_tmp, tempfile.TemporaryDirectory() as dst_tmp:

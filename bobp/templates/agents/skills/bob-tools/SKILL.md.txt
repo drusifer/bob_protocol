@@ -90,6 +90,8 @@ Run this from the project root after setup or skill changes:
 bobp setup-agent-links
 ```
 
+It first converts an older project to the current layout: persona folders with the old `.docs`-suffixed names are renamed to `agents/<name>/` and the path references in the project's agent docs are updated to match (chat logs are left as history). `bobp update` runs the same conversion before refreshing files.
+
 It discovers:
 - personas from `agents/<name>/SKILL.md` (any folder directly under `agents/` that holds a `SKILL.md`)
 - shared skills from `agents/skills/*/SKILL.md`

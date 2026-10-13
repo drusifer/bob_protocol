@@ -8,6 +8,8 @@ TLDR:
     ship as installed package modules under bobp/tools/, __file__ points
     into site-packages instead, so cwd-based discovery is the only option
     that works both in editable dev installs and real installs.
+    find_persona_dirs() lists the persona folders, agents/<name>/, identified
+    by the SKILL.md they hold.
 """
 
 import sys
@@ -22,3 +24,12 @@ def find_project_root(start: "Path | None" = None) -> Path:
             return candidate
     print(f"Error: Could not find agents/ directory from {current}", file=sys.stderr)
     sys.exit(1)
+
+
+def find_persona_dirs(agents_dir: Path) -> list[tuple[str, Path]]:
+    """Find persona folders: agents/<name>/ directories holding a SKILL.md."""
+    personas = []
+    for item in sorted(agents_dir.iterdir()):
+        if item.is_dir() and (item / "SKILL.md").exists():
+            personas.append((item.name, item))
+    return personas

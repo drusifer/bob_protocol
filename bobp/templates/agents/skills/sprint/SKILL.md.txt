@@ -89,7 +89,7 @@ bobp chat "*user reject REASON: <reason> | FIX: <fix>. @Morpheus revise arch." -
 Mouse *sm plan sprint
 ```
 - Break sprint into phases of **1-3 tasks each** (no larger — context overflow risk)
-- Record phases in `agents/mouse.docs/sprint_log.md`
+- Record phases in `agents/mouse/sprint_log.md`
 - Hand off to Morpheus for plan review
 
 **Handoff:**

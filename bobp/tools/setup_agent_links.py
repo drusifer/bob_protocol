@@ -3,13 +3,13 @@
 Setup Agent Discovery Links — creates symlinks so AI tools can find agent personas.
 
 TLDR:
-    Scans agents/*.docs/ directories for persona folders (identified by the
+    Scans agents/<name>/ directories for persona folders (identified by the
     presence of SKILL.md) and creates the platform-specific symlinks each AI
     tool expects: .claude/skills/<name>/ for Claude Code, $CODEX_HOME/skills/<name>/
     for Codex, AGENTS.md / GEMINI.md / .cursorrules / CHATGPT.md /
     .github/copilot-instructions.md at the project root for other tools, plus
     a .agents/ -> agents/ directory symlink for Gemini CLI's agent tool.
-    Key functions: find_project_root() locates the repo root; find_persona_folders()
+    Key functions: find_project_root() locates the repo root; find_persona_dirs()
     discovers persona dirs; find_shared_skills() finds agents/skills/*/;
     setup_claude_skills() builds the .claude/skills/ tree; setup_codex_skills()
     builds the Codex skill links; setup_root_symlinks() creates root-level links;
@@ -20,7 +20,7 @@ TLDR:
     ensure_gitignore_entries() idempotently adds .mcp.json and .via/ to
     .gitignore (both are machine-local and must never be committed).
     Role in the system: a one-time setup script run from the project root; depends
-    on agents/*.docs/SKILL.md files existing and produces the discovery artifacts
+    on agents/<name>/SKILL.md files existing and produces the discovery artifacts
     consumed by Claude Code, OpenAI Codex, Cursor, Gemini CLI, and GitHub Copilot.
 
 """
@@ -33,24 +33,9 @@ import sys
 from pathlib import Path
 
 try:
-    from ._common import find_project_root
+    from ._common import find_persona_dirs, find_project_root
 except ImportError:
-    from _common import find_project_root
-
-
-def find_persona_folders(agents_dir: Path) -> list[tuple[str, Path]]:
-    """Find all persona folders (*.docs directories with SKILL.md files)."""
-    personas = []
-
-    for item in agents_dir.iterdir():
-        if item.is_dir() and item.name.endswith(".docs"):
-            # Look for SKILL.md file
-            skill_md = item / "SKILL.md"
-            if skill_md.exists():
-                persona_name = item.name.replace(".docs", "")
-                personas.append((persona_name, item))
-
-    return personas
+    from _common import find_persona_dirs, find_project_root
 
 
 def find_shared_skills(agents_dir: Path) -> list[tuple[str, Path]]:
@@ -111,13 +96,22 @@ def setup_claude_skills(project_root: Path, personas: list, shared_skills: list)
     print("\n📁 Setting up Claude Skills (.claude/skills/)...")
 
     skills_dir = project_root / ".claude" / "skills"
+    agents_dir = (project_root / "agents").resolve()
+    if skills_dir.is_symlink() and skills_dir.resolve().is_relative_to(agents_dir):
+        # A whole-directory link (e.g. .claude/skills -> agents/skills) would make the
+        # persona links below land inside agents/ itself, where they show up as
+        # untracked files and get rediscovered as shared skills. Swap it for a real
+        # directory; every skill it exposed is re-linked individually below.
+        target = skills_dir.resolve().relative_to(project_root.resolve())
+        skills_dir.unlink()
+        print(f"  ℹ️  Replaced .claude/skills -> {target} link with a real directory")
     skills_dir.mkdir(parents=True, exist_ok=True)
 
     count = 0
 
-    # Persona skills (agents/*.docs/)
+    # Persona skills (agents/<name>/)
     for persona_name, persona_dir in personas:
-        # Create symlink: .claude/skills/<name>/ -> agents/<name>.docs/
+        # Create symlink: .claude/skills/<name>/ -> agents/<name>/
         skill_link = skills_dir / persona_name
         if create_symlink(skill_link, persona_dir):
             print(f"  ✅ {skill_link.relative_to(project_root)} -> {persona_dir.relative_to(project_root)}")
@@ -417,7 +411,7 @@ Follow the repository instructions in `AGENTS.md` and persona state files.
 ## Key Artifacts
 - `agents/CHAT.md` — Team communication log
 - `agents/AGENTS.md` — Shared agent instructions
-- `agents/*.docs/` — Persona state and instructions
+- `agents/<name>/` — Persona state and instructions
 
 ## Notes
 Update this file when project capabilities change.
@@ -490,10 +484,10 @@ def main():
     print(f"Agents dir: {agents_dir}")
 
     # Find persona folders
-    personas = find_persona_folders(agents_dir)
+    personas = find_persona_dirs(agents_dir)
     if not personas:
         print("\n❌ No persona folders found!")
-        print("   Expected: agents/<name>.docs/SKILL.md")
+        print("   Expected: agents/<name>/SKILL.md")
         sys.exit(1)
 
     print(f"\nFound {len(personas)} personas:")

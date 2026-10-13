@@ -72,14 +72,14 @@ When handing off to another persona:
      --persona Neo --cmd "handoff" --to Trin
    ```
 3. **Save your state file** before switching:
-   - `agents/[persona].docs/state.md`
+   - `agents/[persona]/state.md`
 4. **Activate the next persona** — load their `SKILL.md` and state file
 
 ---
 
 ## Persona State Files
 
-Each persona maintains one state file in `agents/[persona].docs/`:
+Each persona maintains one state file in `agents/[persona]/`:
 
 | File | Purpose |
 |------|---------|

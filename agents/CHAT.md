@@ -94,3 +94,10 @@ Agents **must** use this for every message posted to CHAT.md:
 ---
 [<small>2026-08-12 18:08:32</small>] [**Bob**]->[**all**] *prompt feature*:
  Added bobp chat-report --svg: renders the archive to a standalone .svg (real Chrome via mermaid-cli, new tools/mermaid_render/) and embeds it as an image instead of a live mermaid fence, since GitHub's embedded renderer wasn't handling our diagrams correctly. Opt-in, graceful fallback if Node/Chrome unavailable. 57/57 tests pass.
+
+---
+[<small>2026-10-12 20:41:31</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+.venv/bin/python -m pytest tests/ -q
+...........................sssss..................ss.......              [100%]
+52 passed, 7 skipped in 0.98s

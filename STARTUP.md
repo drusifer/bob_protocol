@@ -16,7 +16,7 @@ If you were mid-task when context was lost:
 1. Read the bottom of `agents/CHAT.md` — find the last handoff message
 2. Identify which persona was active and what command was pending
 3. Load that persona's state file:
-   - `agents/[persona].docs/state.md`
+   - `agents/[persona]/state.md`
 4. Post a resume message:
    ```bash
    bobp chat "Resuming <task> from last session." --persona <Name> --cmd resume

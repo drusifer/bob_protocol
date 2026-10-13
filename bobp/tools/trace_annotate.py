@@ -9,7 +9,7 @@ Usage:
 
 Defaults:
     --date      yesterday
-    --out       agents/trin.docs/judge_tool_trace.html  (or .md if --format md)
+    --out       agents/trin/judge_tool_trace.html  (or .md if --format md)
     --format    html
     --rules     agents/tools/trace_rules.json   (auto-loaded if present)
     --project   auto-detected from CWD
@@ -579,7 +579,7 @@ def main():
         out_path = Path(args.out)
     else:
         ext = 'html' if args.format == 'html' else 'md'
-        out_path = Path(f'agents/trin.docs/judge_tool_trace.{ext}')
+        out_path = Path(f'agents/trin/judge_tool_trace.{ext}')
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Build session data

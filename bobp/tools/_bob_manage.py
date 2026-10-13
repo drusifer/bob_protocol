@@ -22,7 +22,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from ._common import find_project_root
+from ._common import find_persona_dirs, find_project_root
 
 
 def templates_dir() -> Path:
@@ -43,8 +43,8 @@ def _restore_skill_extensions(agents_dir: Path) -> None:
 
 
 def _write_missing_state_files(agents_dir: Path, template_state: Path) -> None:
-    for docs_dir in agents_dir.glob("*.docs"):
-        state_file = docs_dir / "state.md"
+    for _, persona_dir in find_persona_dirs(agents_dir):
+        state_file = persona_dir / "state.md"
         if not state_file.exists():
             shutil.copy2(template_state, state_file)
 
@@ -63,6 +63,14 @@ def _regen_chat_diagram(agents_dir: Path) -> None:
 
 def _run_setup_agent_links(target: Path) -> None:
     subprocess.run([sys.executable, "-m", "bobp.tools.setup_agent_links"], cwd=target)
+
+
+def _template_personas(tmpl: Path) -> list[tuple[str, Path]]:
+    """(persona name, template SKILL.md.txt) for every persona the templates ship."""
+    return [
+        (skill_txt.parent.name, skill_txt)
+        for skill_txt in sorted((tmpl / "agents").glob("*/SKILL.md.txt"))
+    ]
 
 
 def _merge_existing(src: Path, dst: Path) -> None:
@@ -115,10 +123,10 @@ def update(target: Path) -> None:
     print(f"Updating BobProtocol in {target}...")
     shutil.copytree(tmpl / "agents" / "skills", agents_dir / "skills", dirs_exist_ok=True)
     shutil.copytree(tmpl / "agents" / "templates", agents_dir / "templates", dirs_exist_ok=True)
-    for skill_txt in (tmpl / "agents").glob("*.docs/SKILL.md.txt"):
-        docs_dir = agents_dir / skill_txt.parent.name
-        docs_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(skill_txt, docs_dir / "SKILL.md")
+    for name, skill_txt in _template_personas(tmpl):
+        persona_dir = agents_dir / name
+        persona_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(skill_txt, persona_dir / "SKILL.md")
     _restore_skill_extensions(agents_dir)
 
     print("Ensuring agent state files are initialised...")
@@ -138,10 +146,10 @@ def pull(src: Path) -> None:
     print(f"Pulling BobProtocol updates from {src}...")
     _merge_existing(src / "agents" / "skills", agents_dir / "skills")
     _merge_existing(src / "agents" / "templates", agents_dir / "templates")
-    for docs_dir in agents_dir.glob("*.docs"):
-        src_skill = src / "agents" / docs_dir.name / "SKILL.md"
+    for name, persona_dir in find_persona_dirs(agents_dir):
+        src_skill = src / "agents" / name / "SKILL.md"
         if src_skill.exists():
-            shutil.copy2(src_skill, docs_dir / "SKILL.md")
+            shutil.copy2(src_skill, persona_dir / "SKILL.md")
     print(f"\nDone. BobProtocol pulled from {src}")
 
 
@@ -154,8 +162,8 @@ def clean() -> None:
     )
     print("Resetting agent state files to templates...")
     template_state = agents_dir / "templates" / "_template_state.md"
-    for docs_dir in agents_dir.glob("*.docs"):
-        shutil.copy2(template_state, docs_dir / "state.md")
+    for _, persona_dir in find_persona_dirs(agents_dir):
+        shutil.copy2(template_state, persona_dir / "state.md")
     shutil.copy2(agents_dir / "templates" / "_template_CHAT.md", agents_dir / "CHAT.md")
     _regen_chat_diagram(agents_dir)
     print("Done. Environment cleaned and state reset.")
@@ -173,12 +181,11 @@ def diff(target: Path) -> None:
             _diff_trees(src_dir, dst_dir)
         else:
             print(f"Only in template: agents/{name}/")
-    for skill_txt in (tmpl / "agents").glob("*.docs/SKILL.md.txt"):
-        docs_name = skill_txt.parent.name
-        tgt_file = target / "agents" / docs_name / "SKILL.md"
+    for name, skill_txt in _template_personas(tmpl):
+        tgt_file = target / "agents" / name / "SKILL.md"
         if tgt_file.is_file():
             if skill_txt.read_bytes() != tgt_file.read_bytes():
-                print(f"Files differ: agents/{docs_name}/SKILL.md")
+                print(f"Files differ: agents/{name}/SKILL.md")
         else:
-            print(f"Only in template: agents/{docs_name}/SKILL.md")
+            print(f"Only in template: agents/{name}/SKILL.md")
     print("\nDone.")

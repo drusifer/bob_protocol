@@ -132,6 +132,44 @@ class SetupAgentLinksTests(unittest.TestCase):
             self.assertEqual(root_agent_link.resolve(), agents_md.resolve())
             self.assertEqual(agents_agent_link.resolve(), agents_md.resolve())
 
+    def test_find_persona_dirs_finds_agent_folders_with_a_skill_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            agents_dir = Path(tmp) / "agents"
+            for folder in ("neo", "trin", "templates", "skills/chat"):
+                (agents_dir / folder).mkdir(parents=True)
+            for folder in ("neo", "trin", "skills/chat"):
+                (agents_dir / folder / "SKILL.md").write_text("---\nname: x\n---\n")
+
+            personas = setup_agent_links.find_persona_dirs(agents_dir)
+
+        self.assertEqual(personas, [("neo", agents_dir / "neo"), ("trin", agents_dir / "trin")])
+
+    def test_setup_claude_skills_replaces_a_skills_dir_link_into_agents(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project_root = Path(tmp)
+            agents_dir = project_root / "agents"
+            for folder in ("neo", "skills/chat"):
+                (agents_dir / folder).mkdir(parents=True)
+                (agents_dir / folder / "SKILL.md").write_text("---\nname: x\n---\n")
+            (project_root / ".claude").mkdir()
+            skills_link = project_root / ".claude" / "skills"
+            skills_link.symlink_to("../agents/skills")
+
+            count = setup_agent_links.setup_claude_skills(
+                project_root,
+                setup_agent_links.find_persona_dirs(agents_dir),
+                setup_agent_links.find_shared_skills(agents_dir),
+            )
+
+            self.assertEqual(count, 2)
+            self.assertFalse(skills_link.is_symlink())
+            self.assertEqual((skills_link / "neo").resolve(), (agents_dir / "neo").resolve())
+            self.assertEqual(
+                (skills_link / "chat").resolve(), (agents_dir / "skills" / "chat").resolve()
+            )
+            # nothing was written into the agents/ tree itself
+            self.assertEqual([p.name for p in (agents_dir / "skills").iterdir()], ["chat"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -33,10 +33,10 @@ When executing `*judge <target>`, the loop evaluates the specified target (e.g.,
 ```
 Trin *qa judge <target>
 ```
-- **Required tool — `bobp make judge-trace [DATE=YYYY-MM-DD] [FORMAT=html|md]`**: this runs `agents/tools/trace_annotate.py`, which parses the **real Claude Code JSONL session transcripts** (`~/.claude/projects/<slug>/*.jsonl`) for the given date and programmatically flags anti-patterns (`AP-SKILL-RELOAD`, `AP-MAKE-BYPASS`, `AP-RAW-VENV`, `AP-MAKE-PIPE`, `AP-VIA-GREP`, `AP-VIA-READ`, `AP-DUP-READ`) via `agents/tools/trace_rules.json`. This is ground truth — actual tool-call events, not a prose summary. Output defaults to `agents/trin.docs/judge_tool_trace.{html,md}`.
+- **Required tool — `bobp make judge-trace [DATE=YYYY-MM-DD] [FORMAT=html|md]`**: this runs `agents/tools/trace_annotate.py`, which parses the **real Claude Code JSONL session transcripts** (`~/.claude/projects/<slug>/*.jsonl`) for the given date and programmatically flags anti-patterns (`AP-SKILL-RELOAD`, `AP-MAKE-BYPASS`, `AP-RAW-VENV`, `AP-MAKE-PIPE`, `AP-VIA-GREP`, `AP-VIA-READ`, `AP-DUP-READ`) via `agents/tools/trace_rules.json`. This is ground truth — actual tool-call events, not a prose summary. Output defaults to `agents/trin/judge_tool_trace.{html,md}`.
 - **Do not hand-reconstruct a trace from `agents/CHAT.md` instead.** CHAT.md only contains what personas chose to summarize about their own work — it cannot show tool-call-level behavior (redundant invocations, piping, raw venv calls, via-bypasses) and produces a systematically over-optimistic trace. `bobp make judge-trace` is the only source of truth for tool/skill-use judging; CHAT.md and persona `state.md` files remain the source of truth for *process/protocol* adherence (chain sequencing, gate compliance, handoffs) — the two are complementary, not interchangeable.
 - **Manual review is still required after running the tool**: read the raw flags before scoring — the rule regexes are heuristics and can both over-flag (e.g. a `make <target> | tail` where the invocation wasn't actually via `bobp make`, so there's no build.out capture to be redundant with) and under-flag. Note any flag you're overriding and why in the trace report, per-flag, not as a blanket dismissal.
-- Trin writes the analysis (raw counts + manual-review verdict per flag type + any additional scenario coverage the tool can't see) to `agents/trin.docs/judge_<target>_trace.md`.
+- Trin writes the analysis (raw counts + manual-review verdict per flag type + any additional scenario coverage the tool can't see) to `agents/trin/judge_<target>_trace.md`.
 - **Trin's constraints**: Ensure that the target is exercised in realistic conditions representing typical developer/agent workflow.
 - **Live vs. completed sessions**: `bobp make judge-trace` scores the JSONL transcript as it exists *right now*. If the `*judge` loop is run inside the same live session it's evaluating, every subsequent step of the loop (reading the trace, editing files, re-running the tool) appends more tool calls to that same transcript — the call/flag counts will keep growing across iterations, and a fresh Smith TES score at each iteration is not comparing like-for-like. Prefer running `*judge` on a session that has already ended. If run mid-session anyway, treat iteration 1's score as the baseline for defect-finding only, verify specific fixes by checking whether the specific previously-flagged entries are now absent (not by chasing a fresh 90+ on an ever-growing trace), and defer a real numeric re-score to the next `*judge` invocation on a completed session.
 
@@ -63,9 +63,9 @@ Smith *user feedback judge <target>
     - Deduct **-5 points** for any violation of the State Management Protocol (missing context files, incorrect summarizing, improper handoffs).
   - **Efficiency/Design Bonuses**:
     - Add **+2 points** (up to **+10 points** maximum) for highly efficient, precise usage patterns or elegant scripting.
-- **Bug/Defect Cataloging**: If any command crashes, returns incorrect results, violates constraints, or behaves unexpectedly, Smith logs the details in `agents/smith.docs/bugs.md` (or `bugs_<target>.md`).
+- **Bug/Defect Cataloging**: If any command crashes, returns incorrect results, violates constraints, or behaves unexpectedly, Smith logs the details in `agents/smith/bugs.md` (or `bugs_<target>.md`).
 - **Decision & Loop Control**:
-  - Record the final score in `agents/smith.docs/trace_eval.md` (or `trace_eval_[target].md`).
+  - Record the final score in `agents/smith/trace_eval.md` (or `trace_eval_[target].md`).
   - **Target Score**: **90 points** or higher is considered optimal.
   - **Branching**:
     - **If TES >= 90** and no bugs/anti-patterns remain: Hand off to Trin to finalize and exit.
@@ -94,7 +94,7 @@ bobp chat "Optimal score [TES] reached! No bugs. @Trin *qa done" --persona Smith
 ```
 Neo *swe fix judge <target>
 ```
-- Neo resolves the bugs or structural issues cataloged in `agents/smith.docs/bugs.md` (or target bug file).
+- Neo resolves the bugs or structural issues cataloged in `agents/smith/bugs.md` (or target bug file).
 - Neo ensures any scripts, Makefiles, or codebase modules behave correctly.
 - Neo runs the project tests (`bobp make test`) to ensure a completely green baseline.
 
@@ -111,7 +111,7 @@ Bob *prompt update judge <target>
 ```
 - Bob extracts the optimal usage patterns identified by Smith and updates:
   - The universal customization skill guidelines under `agents/skills/<target>/SKILL.md` (or the relevant skill/persona file).
-  - Specialist persona instructions (`agents/<persona>.docs/SKILL.md`) to guide future agent interactions and prevent identified anti-patterns.
+  - Specialist persona instructions (`agents/<persona>/SKILL.md`) to guide future agent interactions and prevent identified anti-patterns.
 - Bob registers the updated skills/rules configurations.
 
 ### Handoff:

@@ -27,15 +27,16 @@ Bloop commands trigger an **autonomous chain** of personas. Each persona complet
 ## Bloop Commands
 
 ### `*fix <thing>`
-**Fix loop** — investigate, fix, test, and review a bug or broken behavior.
+**Fix loop** — diagnose, confirm with the user, fix, test, and review a bug or broken behavior.
 
 ```
-Chain: Neo → Trin → Morpheus
+Chain: Neo (diagnose) → User (confirm) → Neo (fix) → Trin → Morpheus
 ```
 
 | Step | Persona | Action |
 |------|---------|--------|
-| 1 | Neo | Investigate and fix: `*swe fix <thing>` |
+| 0 | Neo | **Diagnose first, change nothing.** Work out what the bug actually is — reproduce it with a test or the existing suite, read the code — then **tell the user** before touching any code: what happens, what should happen, the cause, and the fix you propose. **Stop and wait for the user to confirm** or correct the diagnosis. The user's words in `<thing>` are a symptom, not a diagnosis; do not assume you know what they mean. |
+| 1 | Neo | Fix what the user confirmed (tests first): `*swe fix <thing>` |
 | 2 | Trin | Verify fix, run tests: `*qa uat <thing>` |
 | 3 | Morpheus | Code review: `*lead review <thing>` |
 

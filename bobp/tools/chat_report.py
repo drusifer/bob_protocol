@@ -25,6 +25,15 @@ TLDR:
         own: it concatenates each archive's .diagram.md verbatim, so any
         image-embedded archives (from `archive --svg`) carry their image
         reference straight through.
+    Per-phase report: if the chat log contains phase markers — ordinary chat
+    messages whose command is `phase <label>` (e.g. posted by the scrum
+    master with `bobp chat "<phase description>" --persona Mouse --cmd
+    "phase 1"`) — the archived .diagram.md becomes a phase-by-phase document:
+    the sprint summary at the top, then for each phase a heading, the
+    marker's text as the phase description, and a diagram of just that
+    phase's messages. Messages before the first marker form a "Planning"
+    section. A log with no markers archives exactly as before (one diagram),
+    so projects that don't use markers are unaffected.
     Reuses parse_blocks()/BLOCK_SEP from chat_merge.py rather than
     reimplementing CHAT.md's header/blocks split.
 """
@@ -52,6 +61,8 @@ MERMAID_RENDER_DIR = Path(__file__).resolve().parent / "mermaid_render"
 ARCHIVE_DIRNAME = "chat_archive"
 FENCE_MARKER = "```mermaid"
 _NATURAL_KEY_RE = re.compile(r"(\d+)")
+PHASE_CMD_RE = re.compile(r"^phase\s+(?P<label>\S.*)$", re.IGNORECASE)
+PLANNING_TITLE = "Planning"
 
 
 def _natural_key(path: Path):
@@ -74,6 +85,73 @@ def _extract_mermaid_source(diagram_body: str) -> str | None:
     if end == -1:
         return None
     return diagram_body[start:end].strip("\n")
+
+
+def _phase_title(label: str) -> str:
+    """`1` -> `Phase 1`, `2: CI` -> `Phase 2: CI`, `close` -> `Close`."""
+    label = label.strip()
+    if label[:1].isdigit():
+        return f"Phase {label}"
+    return label[:1].upper() + label[1:]
+
+
+def split_phases(blocks: list[str]) -> list[tuple[str, str, list[str]]] | None:
+    """Group chat blocks into [(title, description, blocks)] by phase markers.
+
+    A marker is a message whose command is `phase <label>`; its body is the
+    phase description and the marker itself is not part of the phase's
+    diagram. Blocks before the first marker go into a "Planning" section.
+    Returns None when the log contains no markers at all.
+    """
+    sections: list[tuple[str, str, list[str]]] = []
+    current: list[str] = []
+    title, description = PLANNING_TITLE, ""
+    seen_marker = False
+    for block in blocks:
+        entries = chat_diagram.parse_entries(block)
+        marker = PHASE_CMD_RE.match(entries[0].cmd) if entries else None
+        if marker is None:
+            current.append(block)
+            continue
+        if seen_marker or current:
+            sections.append((title, description, current))
+        seen_marker = True
+        title, description, current = _phase_title(marker.group("label")), entries[0].body, []
+    if not seen_marker:
+        return None
+    sections.append((title, description, current))
+    return sections
+
+
+def _slug(title: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-") or "section"
+
+
+def _diagram_fence(blocks: list[str]) -> str:
+    """Render just these blocks to a ```mermaid fenced diagram (no file header)."""
+    rendered = chat_diagram.render(BLOCK_SEP.join(blocks))
+    return rendered[rendered.find(FENCE_MARKER):]
+
+
+def render_phase_report(heading: str, sections: list[tuple[str, str, list[str]]],
+                        archive_dir: Path, moniker: str, svg: bool) -> str:
+    """Build the per-phase .diagram.md body: summary heading, then one section per phase."""
+    parts = [heading]
+    for title, description, blocks in sections:
+        parts.append(f"\n---\n\n## {title}\n")
+        if description.strip():
+            parts.append(f"\n{description.strip()}\n")
+        if not blocks:
+            parts.append("\n_No messages in this phase._\n")
+            continue
+        body = _diagram_fence(blocks)
+        if svg:
+            mermaid_source = _extract_mermaid_source(body)
+            phase_svg = archive_dir / f"CHAT_{moniker}.{_slug(title)}.svg"
+            if mermaid_source is not None and render_svg(mermaid_source, phase_svg):
+                body = f"![CHAT_{moniker} {title} diagram]({phase_svg.name})\n"
+        parts.append("\n" + body)
+    return "".join(parts)
 
 
 def render_svg(mermaid_source: str, out_svg: Path) -> bool:
@@ -141,18 +219,22 @@ def archive(chat_file: Path, diagram_file: Path, archive_dir: Path,
     heading = _summary_heading(moniker, summary)
     archive_md.write_text(heading + "\n---\n" + BLOCK_SEP.join(blocks) + "\n")
 
-    diagram_text = diagram_file.read_text() if diagram_file.exists() else chat_diagram.render(text)
-    fence_at = diagram_text.find(FENCE_MARKER)
-    diagram_body = diagram_text[fence_at:] if fence_at != -1 else diagram_text
+    sections = split_phases(blocks)
+    if sections is not None:
+        archive_diagram.write_text(render_phase_report(heading, sections, archive_dir, moniker, svg))
+    else:
+        diagram_text = diagram_file.read_text() if diagram_file.exists() else chat_diagram.render(text)
+        fence_at = diagram_text.find(FENCE_MARKER)
+        diagram_body = diagram_text[fence_at:] if fence_at != -1 else diagram_text
 
-    if svg:
-        mermaid_source = _extract_mermaid_source(diagram_body)
-        if mermaid_source is not None:
-            archive_svg = archive_dir / f"CHAT_{moniker}.svg"
-            if render_svg(mermaid_source, archive_svg):
-                diagram_body = f"![CHAT_{moniker} diagram]({archive_svg.name})\n"
+        if svg:
+            mermaid_source = _extract_mermaid_source(diagram_body)
+            if mermaid_source is not None:
+                archive_svg = archive_dir / f"CHAT_{moniker}.svg"
+                if render_svg(mermaid_source, archive_svg):
+                    diagram_body = f"![CHAT_{moniker} diagram]({archive_svg.name})\n"
 
-    archive_diagram.write_text(heading + "\n" + diagram_body)
+        archive_diagram.write_text(heading + "\n" + diagram_body)
 
     summary_first_line = summary.strip().splitlines()[0] if summary.strip() else ""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

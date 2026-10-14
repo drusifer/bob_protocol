@@ -5,21 +5,28 @@ Print TLDR: block contents from all *.py and *.md files.
 TLDR:
     Scans the project for files containing a TLDR: marker and prints
     each file's one-liner summary and block so agents can orient without
-    opening files. Uses via.core.discovery for file discovery (respects
-    .gitignore and project layout). Used by `make tldr`.
+    opening files. File discovery is delegated to the system-installed
+    `via` command: it first runs `via index .` so files added or changed
+    since the last index are included, then `via -mg '*' -tF -oJ -n 0`,
+    which lists the files in the project's via index (and so respects
+    .gitignore and project layout) —
+    via is not imported as a library, because bobp and via are installed
+    into separate environments. The project is located from the current
+    directory (find_project_root), not from this file's location.
+    Used by `bobp tldr`.
 """
 
+import json
 import os
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent.parent
-
-# Ensure via is importable when run directly
-sys.path.insert(0, str(PROJECT_ROOT))
-
-from via.core.discovery import FileDiscovery  # noqa: E402
+try:
+    from ._common import find_project_root
+except ImportError:
+    from _common import find_project_root
 
 TARGET_EXTENSIONS = {'.py', '.md'}
 
@@ -88,21 +95,58 @@ def find_tldr_with_coords(path: str) -> dict | None:
     return None
 
 
-def main():
-    discovery = FileDiscovery(
-        root_dir=str(PROJECT_ROOT),
-        parseable_extensions=TARGET_EXTENSIONS,
+def discover_files(project_root: Path) -> list[str]:
+    """Absolute paths of the project's indexed .py/.md files, from the system `via` command.
+
+    Re-indexes the project first so the listing is current. Exits with a
+    one-line explanation if via is missing or either step fails.
+    """
+    if shutil.which("via") is None:
+        print("bobp tldr: the 'via' command was not found on PATH - install via first.",
+              file=sys.stderr)
+        sys.exit(1)
+
+    indexed = subprocess.run(
+        ["via", "index", "."],
+        cwd=project_root, capture_output=True, text=True, stdin=subprocess.DEVNULL,
     )
+    if indexed.returncode != 0:
+        detail = (indexed.stderr or indexed.stdout).strip().splitlines()
+        print(f"bobp tldr: `via index .` failed in {project_root}"
+              + (f": {detail[-1]}" if detail else ""), file=sys.stderr)
+        sys.exit(1)
+
+    result = subprocess.run(
+        ["via", "-mg", "*", "-tF", "-oJ", "-n", "0"],
+        cwd=project_root, capture_output=True, text=True, stdin=subprocess.DEVNULL,
+    )
+    try:
+        symbols = json.loads(result.stdout) if result.returncode == 0 else None
+    except json.JSONDecodeError:
+        symbols = None
+    if not isinstance(symbols, list):
+        detail = (result.stderr or result.stdout).strip().splitlines()
+        print("bobp tldr: 'via' could not list the project's files"
+              + (f": {detail[-1]}" if detail else "")
+              + f"\n  Check `via -mg '*' -tF` in {project_root}.", file=sys.stderr)
+        sys.exit(1)
+
+    paths = {s.get("file_path") for s in symbols if isinstance(s, dict)}
+    return sorted(p for p in paths if p and Path(p).suffix in TARGET_EXTENSIONS)
+
+
+def main():
+    project_root = find_project_root()
+    files = discover_files(project_root)
+    if not files:
+        print(f"bobp tldr: via indexed no .py or .md files in {project_root}.", file=sys.stderr)
+        sys.exit(1)
 
     results: list[tuple[str, tuple[str, list[str]]]] = []
-    for discovered in discovery.discover():
-        ext = Path(discovered.path).suffix
-        if ext not in TARGET_EXTENSIONS:
-            continue
-        result = find_tldr(discovered.path)
+    for path in files:
+        result = find_tldr(path)
         if result:
-            rel = os.path.relpath(discovered.path, PROJECT_ROOT)
-            results.append((rel, result))
+            results.append((os.path.relpath(path, project_root), result))
 
     for rel, (one_liner, block) in sorted(results):
         print(f'{rel}:')

@@ -112,20 +112,21 @@ Chain: Morpheus → Trin (optional)
 **Sprint planning loop** — full planning sequence from stories through phase breakdown.
 
 ```
-Chain: Cypher → [Smith gate] → Morpheus → [Smith gate] → Mouse → Morpheus review → [Tank if deploy in scope]
+Chain: [SDLC gate] → Cypher → [Smith gate] → Morpheus → [Smith gate] → Mouse → Morpheus review → [Tank if deploy or build-env in scope]
 ```
 
 | Step | Persona | Action | Gate |
 |------|---------|--------|------|
+| 0 | (starter) | **SDLC gate**: confirm `docs/SDLC.md` exists. Missing → `@Tank *devops sdlc` and stop until Tank confirms it is written. | Blocker |
 | 1 | Cypher | Write stories + acceptance criteria: `*pm plan sprint` | Smith review |
 | 1a | Smith | `*user review <stories>` → `*user approve` or `*user reject` | Must approve |
 | 2 | Morpheus | Architecture decisions: `*lead arch sprint` | Smith review |
 | 2a | Smith | `*user feedback <arch>` → `*user approve` or `*user reject` | Must approve |
 | 3 | Mouse | Break into short phases (1-3 tasks each): `*sm plan sprint` | Morpheus review |
 | 3a | Morpheus | Review sprint plan vs. architecture: `*lead review sprint plan` | |
-| 3b | Tank | **DevOps planning gate** (if sprint includes deployment, env, or infra work): `*devops infra <sprint>` — Tank reviews sprint for infra impact, adds any deployment tasks to the plan, and confirms pipeline readiness. Skip if sprint is app-only. | |
+| 3b | Tank | **DevOps planning gate** (if sprint includes deployment, env, infra, or build-environment work — a new language, package manager, runtime version, or dependency mechanism): `*devops infra <sprint>` — Tank reviews sprint for infra impact, adds deployment tasks (sequenced last) and build-environment tasks (sequenced as Phase 0, before Neo) to the plan, and confirms pipeline readiness. Skip if neither applies. | |
 
-**Gates are hard stops** — Smith must explicitly `*user approve` before the chain continues. Tank's 3b step is required (not optional) whenever Cypher's stories include env var changes, new services, or deployment work.
+**Gates are hard stops** — Smith must explicitly `*user approve` before the chain continues. Step 0 is a hard stop too: no stories are written until `docs/SDLC.md` exists. Tank's 3b step is required (not optional) whenever Cypher's stories include env var changes, new services, or deployment work, or Morpheus's architecture changes the build environment. Sprint close adds Tank's `*devops sdlc-check` before Oracle's groom (see the `sprint` skill, Step 6a).
 
 **Example:** `*plan sprint`
 

@@ -131,7 +131,9 @@ all tools:
 4.  **Keep CHAT.md Short:** Post brief updates (5-10 lines), put detailed reports in `agents/cypher/`
 5.  **Collaborate:** Work closely with Morpheus on feasibility, Mouse on scheduling.
 6.  **MCP First:** Check for MCP tools before standard file operations
-7.  **Bloop Loop Efficiency (CRITICAL)**: Minimize coordination overhead. Facilitate Fast-Track (Tier 2) Sprint Planning for minor/maintenance/tech-debt sprints by combining User Stories and Architecture into a single document in cooperation with Morpheus. Prefer consolidated tasks for minor requirements changes.
+7.  **Stories Template and Rubric:** Write sprint stories from `agents/templates/_template_USER_STORIES.md` into `docs/sprints/USER_STORIES_SPRINT<N>.md`, deleting the rubric block. Before handing off, check your draft against that template's STORIES rubric and fix anything you would call Weak — Smith applies the same rubric at Gate 1 and rejects on any Weak.
+8.  **SDLC Gate:** Before writing stories for a new sprint, confirm `docs/SDLC.md` exists. If it does not, do not plan — post `@Tank *devops sdlc` and wait for Tank to write it.
+9.  **Bloop Loop Efficiency (CRITICAL)**: Minimize coordination overhead. Facilitate Fast-Track (Tier 2) Sprint Planning for minor/maintenance/tech-debt sprints by combining User Stories and Architecture into a single document in cooperation with Morpheus. Prefer consolidated tasks for minor requirements changes.
 
 
 

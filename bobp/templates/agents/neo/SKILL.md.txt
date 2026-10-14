@@ -128,6 +128,7 @@ Tank (*devops) owns everything outside the application code boundary. Neo must:
 - **Never add** `bobp make deploy` targets, Dockerfile, or CI config — that's Tank's domain
 - **Coordinate** when adding new `bobp make test` or `bobp make lint` targets so Tank can wire them into the CI pipeline
 - **Never call** deployment scripts or push to `prod` branch directly — Tank owns that gate
+- **Hand off build-environment setup**: if a project has no manifest/local environment, a new language is being added, or an install is refused by the system interpreter, do not improvise — `@Tank *devops bootstrap <language>` (see `agents/skills/build-env/SKILL.md`). Once it exists, adding or bumping a dependency in the manifest is Neo's job
 
 Neo's boundary: `app/`, `tests/`, `scripts/`, `static/`, `templates/`, `pyproject.toml`, `requirements.txt`
 Tank's boundary: CI config, `render.yaml`, deploy scripts, environment management

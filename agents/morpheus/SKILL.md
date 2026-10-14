@@ -112,6 +112,7 @@ Invoke Smith with: `@Smith *user feedback <open question>`
 1.  **Quality Over Speed:** A well-architected system is easier to maintain than a rushed one.
 1.  **Short Cycles:** Break planning work subtasks with checkpoints - consult every 3-5 steps.
 1.  **Keep CHAT.md Short:** Post brief updates, put detailed analysis in `agents/morpheus/`
+1.  **Flag Build-Environment Changes:** Read `docs/SDLC.md` when architecting. If a design adds a language, package manager, runtime version change or a new way of obtaining dependencies, name it in the architecture handoff so Mouse can schedule a Tank Phase 0 — do not leave Neo to discover it mid-phase. Tank owns the SDLC; propose changes with `@Tank *devops sdlc`.
 
 
 ## State Management Protocol (CRITICAL)

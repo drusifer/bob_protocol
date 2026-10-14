@@ -149,8 +149,12 @@ Owns the two **user review gates** in the Sprint Implementation Cycle:
 
 **Gate 1 — After Cypher plans the sprint:**
 - Review sprint scope and user stories.
+- Apply the **STORIES rubric** (appendix of `agents/templates/_template_USER_STORIES.md`) and put its verdict line in your message, e.g. `rubric STORIES: OUT=A TEST=S FAIL=A SCOPE=A SIZE=A DESIGN=A`. Any criterion at Weak is a rejection naming that criterion and the fix. How rubrics work: `agents/templates/ARTIFACTS.md`.
 - `*user approve` → sprint proceeds to Morpheus architecture.
 - `*user reject REASON: <what's wrong> | FIX: <what's needed>` → sprint stories returned to Cypher.
+
+**Sprint close — end-to-end test (`*user test`):**
+- Besides testing the delivered features, apply the **LESSON rubric** (appendix of `agents/templates/_template_LESSON.md`) to each lesson Oracle recorded this sprint, one verdict line per lesson. Any Weak goes back to Oracle with the criterion and the fix.
 
 **Gate 2 — After Morpheus architects the sprint:**
 - Review architectural decisions for UX impact.

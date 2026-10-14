@@ -116,3 +116,12 @@ Agents **must** use this for every message posted to CHAT.md:
 ---
 [<small>2026-10-12 20:48:03</small>] [**Neo**]->[**all**] *state*:
  Correction to my last post: setup-agent-links DOES convert older .docs-style projects to agents/<name>/ (folders renamed, doc path refs rewritten); bobp update runs the same conversion first. All other tools and docs know only the new layout. 55 tests pass. Why: user clarified the setup tool must migrate old projects; I had removed it by misreading 'no back compat'.
+
+---
+[<small>2026-10-13 22:03:27</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make system-install | /home/drusifer/Projects/bob_protocol/build/build.out
+done! ✨ 🌟 ✨
+Installing to existing venv 'bobp'
+installed package bobp 0.1.0, installed using Python 3.13.5
+These apps are now globally available
+- bobp

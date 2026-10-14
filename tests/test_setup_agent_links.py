@@ -206,6 +206,68 @@ class SetupAgentLinksTests(unittest.TestCase):
             # already-converted project: nothing to do
             self.assertEqual(setup_agent_links.migrate_legacy_layout(agents_dir), [])
 
+    def _make_tools(self, agents_dir: Path, *names: str) -> Path:
+        tools_dir = agents_dir / "tools"
+        tools_dir.mkdir(parents=True, exist_ok=True)
+        for name in names:
+            (tools_dir / name).write_text("# stale copy\n")
+        return tools_dir
+
+    def test_remove_legacy_tools_deletes_superseded_scripts_and_empty_dir(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            agents_dir = Path(tmp) / "agents"
+            tools_dir = self._make_tools(agents_dir, *setup_agent_links.LEGACY_TOOL_SCRIPTS)
+            (tools_dir / "__pycache__").mkdir()
+            (tools_dir / "__pycache__" / "chat.cpython-313.pyc").write_bytes(b"x")
+
+            removed = setup_agent_links.remove_legacy_tools(agents_dir)
+
+            self.assertEqual(removed, sorted(setup_agent_links.LEGACY_TOOL_SCRIPTS))
+            self.assertFalse(tools_dir.exists())
+
+    def test_remove_legacy_tools_keeps_project_tools_and_trace_rules(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            agents_dir = Path(tmp) / "agents"
+            tools_dir = self._make_tools(
+                agents_dir, "chat.py", "mkf.py", "trace_rules.json", "my_project_tool.py")
+            (tools_dir / "__pycache__").mkdir()
+
+            removed = setup_agent_links.remove_legacy_tools(agents_dir)
+
+            self.assertEqual(removed, ["chat.py", "mkf.py"])
+            self.assertEqual(
+                sorted(p.name for p in tools_dir.iterdir()),
+                ["my_project_tool.py", "trace_rules.json"],
+            )
+
+    def test_remove_legacy_tools_is_a_no_op_when_nothing_to_remove(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            agents_dir = Path(tmp) / "agents"
+            agents_dir.mkdir()
+            self.assertEqual(setup_agent_links.remove_legacy_tools(agents_dir), [])
+
+            tools_dir = self._make_tools(agents_dir, "trace_rules.json", "my_project_tool.py")
+            (tools_dir / "__pycache__").mkdir()
+            self.assertEqual(setup_agent_links.remove_legacy_tools(agents_dir), [])
+            # untouched, including the cache of the project's own tool
+            self.assertEqual(
+                sorted(p.name for p in tools_dir.iterdir()),
+                ["__pycache__", "my_project_tool.py", "trace_rules.json"],
+            )
+
+            # second run after a real removal is also quiet
+            self._make_tools(agents_dir, "tldr.py")
+            self.assertEqual(setup_agent_links.remove_legacy_tools(agents_dir), ["tldr.py"])
+            self.assertEqual(setup_agent_links.remove_legacy_tools(agents_dir), [])
+
+    def test_every_legacy_script_has_a_real_bobp_subcommand(self) -> None:
+        from bobp.cli import SUBCOMMANDS
+
+        for script, command in setup_agent_links.LEGACY_TOOL_SCRIPTS.items():
+            with self.subTest(script=script):
+                self.assertTrue(command.startswith("bobp "))
+                self.assertIn(command.removeprefix("bobp "), SUBCOMMANDS)
+
     def test_migrate_persona_folders_merges_without_overwriting(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             agents_dir = Path(tmp) / "agents"
@@ -223,3 +285,22 @@ class SetupAgentLinksTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+class ChatExitStatusTests(unittest.TestCase):
+    def test_over_length_chat_message_exits_non_zero_and_is_not_recorded(self) -> None:
+        import subprocess
+        import sys
+
+        with tempfile.TemporaryDirectory() as tmp:
+            agents = Path(tmp) / "agents"
+            agents.mkdir()
+            (agents / "CHAT.md").write_text("# Chat\n\n---\n")
+            result = subprocess.run(
+                [sys.executable, "-m", "bobp.cli", "chat", "x" * 600, "--persona", "T", "--cmd", "t"],
+                cwd=tmp, capture_output=True, text=True,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("exceeds 512", result.stdout + result.stderr)
+            self.assertNotIn("x" * 600, (agents / "CHAT.md").read_text())

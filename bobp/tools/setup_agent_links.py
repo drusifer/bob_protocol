@@ -4,7 +4,9 @@ Setup Agent Discovery Links — creates symlinks so AI tools can find agent pers
 
 TLDR:
     Converts older projects whose persona folders are agents/<name>.docs/ to
-    the current agents/<name>/ layout, then scans agents/<name>/ directories
+    the current agents/<name>/ layout, removes the tool scripts older
+    projects carried in agents/tools/ now that they ship inside bobp, then
+    scans agents/<name>/ directories
     for persona folders (identified by the presence of SKILL.md) and creates
     the platform-specific symlinks each AI
     tool expects: .claude/skills/<name>/ for Claude Code, $CODEX_HOME/skills/<name>/
@@ -14,7 +16,9 @@ TLDR:
     Key functions: find_project_root() locates the repo root;
     migrate_legacy_layout() renames agents/<name>.docs/ -> agents/<name>/ and
     updates the path references in the project's agent docs (this module is
-    the only place that knows the old layout); find_persona_dirs()
+    the only place that knows the old layout); remove_legacy_tools() deletes
+    the superseded agents/tools/*.py copies (leaving project-specific tools
+    and trace_rules.json alone); find_persona_dirs()
     discovers persona dirs; find_shared_skills() finds agents/skills/*/;
     setup_claude_skills() builds the .claude/skills/ tree; setup_codex_skills()
     builds the Codex skill links; setup_root_symlinks() creates root-level links;
@@ -52,6 +56,8 @@ LEGACY_REF_PLACEHOLDERS = ("[persona]", "<persona>", "<name>", "<agent>", "agent
 REWRITE_SKIP_NAMES = {"CHAT.md", "CHAT.diagram.md"}
 REWRITE_SKIP_DIRS = {"chat_archive"}
 REWRITE_SUFFIXES = {".md", ".txt", ".template"}
+
+
 
 
 def migrate_persona_folders(agents_dir: Path) -> list[str]:
@@ -155,6 +161,62 @@ def migrate_legacy_layout(agents_dir: Path) -> list[str]:
         if rewritten:
             print(f"  ✅ Updated persona folder references in {rewritten} file(s)")
     return migrated
+
+
+# Scripts that used to be copied into <project>/agents/tools/ and are now bobp
+# subcommands. A project copy is never what `bobp <subcommand>` runs, so it can
+# only go stale. Anything else in agents/tools/ — a project's own bespoke tools,
+# or trace_rules.json, which `bobp trace-annotate` still reads from there — is
+# not ours to remove.
+LEGACY_TOOL_SCRIPTS = {
+    "chat.py": "bobp chat",
+    "chat_merge.py": "bobp chat-merge",
+    "mkf.py": "bobp make",
+    "prep_tldr.py": "bobp prep-tldr",
+    "session_trace.py": "bobp session-trace",
+    "setup_agent_links.py": "bobp setup-agent-links",
+    "teardown_agent_links.py": "bobp teardown-agent-links",
+    "tldr.py": "bobp tldr",
+    "trace_annotate.py": "bobp trace-annotate",
+}
+
+
+def remove_legacy_tools(agents_dir: Path) -> list[str]:
+    """Delete the superseded tool scripts from agents/tools/.
+
+    Only the file names in LEGACY_TOOL_SCRIPTS are removed. The directory's
+    __pycache__ goes with them, and the directory itself is removed if that
+    leaves it empty. A no-op (and silent) when there is nothing to remove.
+    Returns the names of the scripts removed.
+    """
+    tools_dir = agents_dir / "tools"
+    if not tools_dir.is_dir() or tools_dir.is_symlink():
+        return []
+
+    present = [name for name in sorted(LEGACY_TOOL_SCRIPTS)
+               if (tools_dir / name).is_file() or (tools_dir / name).is_symlink()]
+    if not present:
+        return []
+
+    print("\n🧹 Removing tool scripts that now ship inside bobp...")
+    removed = []
+    for name in present:
+        try:
+            (tools_dir / name).unlink()
+        except OSError as exc:
+            print(f"  ⚠️  Could not remove agents/tools/{name}: {exc}")
+            continue
+        removed.append(name)
+        print(f"  ✅ agents/tools/{name} removed - use `{LEGACY_TOOL_SCRIPTS[name]}`")
+
+    shutil.rmtree(tools_dir / "__pycache__", ignore_errors=True)
+    remaining = sorted(item.name for item in tools_dir.iterdir())
+    if not remaining:
+        tools_dir.rmdir()
+        print("  ✅ agents/tools/ removed (empty)")
+    else:
+        print(f"  ℹ️  agents/tools/ kept: {', '.join(remaining)}")
+    return removed
 
 
 def find_shared_skills(agents_dir: Path) -> list[tuple[str, Path]]:
@@ -604,6 +666,9 @@ def main():
 
     # Convert an older agents/<name>.docs/ project before discovering personas
     migrate_legacy_layout(agents_dir)
+
+    # Drop the agents/tools/*.py copies that bobp subcommands replaced
+    remove_legacy_tools(agents_dir)
 
     # Find persona folders
     personas = find_persona_dirs(agents_dir)

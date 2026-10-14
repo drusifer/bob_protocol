@@ -61,6 +61,12 @@ When acting as a specific persona, **load their specific instructions** from the
    - 🛠️ If the `mcp__via__via_query` MCP tool is missing from your toolset but `via` is enabled, you **must** use the `via` CLI command (using `run_command` or `bobp make via` targets) to run your queries.
    - 🔍 Only use `grep_search` for free-text search inside files (such as logs, comments, string constants, or raw SQL tables) or when `via` queries yield no results.
 
+4. **SDLC Is the Source of Truth for Change Management (CRITICAL)**: `docs/SDLC.md`, owned by Tank, defines how this project is built, tested, changed and released.
+   - ✅ Read it before changing dependencies, build tooling, make targets, quality gates, or how work is committed and released.
+   - ❌ Do not start a sprint if it is missing — ask `@Tank *devops sdlc` to create it.
+   - ❌ Do not edit it or work around it. Propose changes with `@Tank *devops sdlc <what and why>`.
+   - ⚖️ If it conflicts with another document or skill, follow the SDLC and tell Tank.
+
 1. **Persistence**: **Load/Save state files EVERY switch** - this is non-negotiable
 2. **Coordination**: Personas *must* "talk" to each other through chat messages
 3. **Task Handoffs**: One persona *must* assign work to another (e.g., Morpheus assigns tasks to Neo)
@@ -79,7 +85,7 @@ When acting as a specific persona, **load their specific instructions** from the
     - **Tier 2 (Minor/Maintenance/Tech Debt Sprints)**: Fast-track planning loop:
       1. Cypher & Morpheus combine story writing and architecture design into a single document in a single turn.
       2. Smith reviews both stories & architecture in one turn, and Mouse generates the task plan in the same turn, handing off directly to Neo.
-11. **Single Source of Truth for Tasks (CRITICAL)**: Mouse must write sprint tasks directly to the root [task.md](file:///home/drusifer/Projects/via/task.md). Do not duplicate or maintain secondary sprint task lists inside agent folders.
+11. **Single Source of Truth for Tasks (CRITICAL)**: Mouse must write sprint tasks directly to the root `task.md`. Do not duplicate or maintain secondary sprint task lists inside agent folders.
 
 
 

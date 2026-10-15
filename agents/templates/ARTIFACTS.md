@@ -37,6 +37,23 @@ written down rather than taste. Rubrics here guide a reviewer; nothing computes 
 mechanical ways — too long, stale, a missing section, the wrong format — and a check that can be
 run (a length limit, a required-heading test) catches those better than a reviewer's judgement.
 
+## Loop Effectiveness Rubrics
+
+While artifact rubrics evaluate what was written into a static deliverable, **Loop Effectiveness Rubrics** evaluate the dynamic health, discipline, and execution quality of an autonomous multi-persona loop. They are evaluated by designated leads/advocates (Morpheus, Smith, Tank, Oracle) at loop completion or during `*judge <loop>` evaluations:
+
+| Loop | Trigger | Rubric Code | Focus / Invariant | Evaluated by, when |
+|---|---|---|---|---|
+| Epic Planning | `*plan epic` | **LOOP_EPIC** | Problem framing, appetite, domain model, de-risking | Smith, Gate 1 & Gate 2 / `*judge epic` |
+| Story Planning | `*plan story` | **LOOP_STORY** | Vertical slicing, INVEST criteria, ADRs, test strategy | Smith, Gate 1 & Gate 2 / `*judge story` |
+| Sprint Container | `*plan sprint` | **LOOP_SPRINT** | SDLC gate, work-loop decomposition, gate enforcement, retro | Morpheus / Smith / `*judge sprint` |
+| Conductor | `*bloop` | **LOOP_BLOOP** | Handoff ergonomics, state compliance, anti-loop, capture | Bob / Smith / `*judge bloop` |
+| Feature Impl | `*impl` | **LOOP_IMPL** | Test-first TDD, verification rigour, modularity, regression | Morpheus, Step 3 / `*judge impl` |
+| Defect Fix | `*fix` | **LOOP_FIX** | Reproduce & diagnose first, surgical fix, zero regression | Morpheus, Step 3 / `*judge fix` |
+| Tech Debt | `*refactor` | **LOOP_REFACTOR** | Two-Hats rule, baseline green, 100% test parity | Morpheus, Step 5 / `*judge refactor` |
+| Research Spike | `*spike` | **LOOP_SPIKE** | Timeboxing, disposable sandbox, empirical findings | Morpheus / Oracle / `*judge spike` |
+| UAT | `*uat` | **LOOP_UAT** | Real-world execution, scenario coverage, UX audit | Smith / Cypher / `*judge uat` |
+| Deploy | `*deploy` | **LOOP_DEPLOY** | Pipeline as code, pre-flight, smoke verification, rollback | Tank / Trin / `*judge deploy` |
+
 ## Rubric Quality Standards
 
 Bob Protocol rubrics are held to formal assessment design standards grounded in Dr. Susan Brookhart's

@@ -25,6 +25,7 @@ When executing `*judge <target>`, the loop evaluates the specified target (e.g.,
 - **`via`**: Focuses on database queries, query efficiency (avoiding fallback file reads/grep), qualified matches, result counts, and CLI parser reliability.
 - **`make`**: Focuses on use of Makefile targets, avoidance of raw commands, captured logs, and verbosity flags.
 - **`trin`** (or other personas): Focuses on adherence to persona role, handoff instructions, State Management Protocol compliance, and coordination clarity.
+- **Workflow Loops (`impl`, `fix`, `refactor`, `spike`, `uat`, `deploy`, `epic`, `story`, `sprint`, `bloop`)**: Evaluates loop execution against the canonical Loop Effectiveness Rubrics (`LOOP_<TARGET>`) defined in each loop's `SKILL.md` and indexed in `agents/templates/ARTIFACTS.md`.
 - **Other tools/skills**: Focuses on correct parameter passing, error handling, avoidance of failure loops, and optimal token utilization.
 
 ---

@@ -85,3 +85,18 @@ If a spike fails to prove feasibility within its timebox:
 1. Do not endlessly extend the spike.
 2. Record an explicit "Infeasible" or "High Risk" finding in `FINDING.md`.
 3. Escalate to the Story or Epic planning loop to consider alternative technical paths.
+
+---
+
+## Loop Effectiveness Rubric (`LOOP_SPIKE`)
+
+Reviewed by Morpheus or Oracle (at Step 3/4 Findings Synthesis) or during `*judge spike`.  
+Verdict line in `agents/CHAT.md`: `rubric LOOP_SPIKE: TIMEBX=L DISPOS=L EMPIR=L ARTIFACT=L CLARITY=L`
+
+| Code | Criterion | Weak (W) | Acceptable (A) | Strong (S) |
+|---|---|---|---|---|
+| `TIMEBX` | **Timebox Bounding** | Open-ended wandering research without explicit question or stopping criteria; exceeded time budget exploring tangents. | Bounded to a specific feasibility, performance, or API integration question with a clear time limit. | Formulated as a crisp, falsifiable hypothesis (e.g. "Can library X achieve Y throughput in Z ms?") with explicit boundary stops. |
+| `DISPOS` | **Disposable Isolation** | Prototype code committed directly to production modules or main codebase branches without isolation. | Prototype built strictly in `scratch/`, disposable test scripts, or a throwaway sandbox branch; zero production commits. | Complete isolation verified; all scratch artifacts cleanly organized or purged; zero residual dependencies added to manifests. |
+| `EMPIR` | **Empirical Evidence** | Recommendation based on marketing claims, documentation assumptions, or intuition without executing code. | Executed real code; recorded quantitative benchmarks, error traces, resource consumption, or compatibility results. | Rigorous benchmark matrix across multiple scenarios; documented edge cases and failure modes under stress or boundary inputs. |
+| `ARTIFACT` | **Deliverable Quality** | Results lost in chat history or unstructured monologue; missing context, alternatives, or trade-off evaluation. | Structured artifact created in `docs/` or `agents/oracle/` following `_template_finding.md` or `_template_DECISION.md`. | Exemplary MADR or finding artifact; articulates trade-offs, negative consequences, rejected alternatives, and implementation costs. |
+| `CLARITY` | **Actionable Direction** | Ambiguous "it depends" conclusion without recommendation; leaves downstream planners with same uncertainty. | Definitive recommendation (proceed, pivot, or abandon) with clear justification for Story/Sprint planning. | Outlines exact architectural constraints, dependency requirements, and risks for downstream implementation loops (`*impl`). |

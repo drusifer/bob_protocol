@@ -134,4 +134,6 @@ sequenceDiagram
     Note right of Bob: "Implementing first-class<br/>Work Loops: creating<br/>skills for impl, fix,<br/>refactor, spike, uat,<br/>deploy, grounded in SE<br/>literature. Why:<br/>provides…"
     bob->>All: "prompt"
     Note right of bob: "Formalized hierarchical<br/>loop architecture into<br/>first-class skills:<br/>Planning Loops (epic,<br/>story, sprint) and Work<br/>Loops (impl, fix,<br/>refactor…"
+    bob->>All: "prompt"
+    Note right of bob: "Added Brookhart-<br/>compliant Loop<br/>Effectiveness Rubrics to<br/>all 10 loop skills<br/>(LOOP_EPIC, LOOP_STORY,<br/>LOOP_SPRINT, LOOP_IMPL,<br/>LOOP_FIX, LOOP_R…"
 ```

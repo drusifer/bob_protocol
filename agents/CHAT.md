@@ -334,3 +334,12 @@ These apps are now globally available
 ---
 [<small>2026-10-14 21:40:22</small>] [**bob**]->[**all**] *prompt*:
  Formalized hierarchical loop architecture into first-class skills: Planning Loops (epic, story, sprint) and Work Loops (impl, fix, refactor, spike, uat, deploy; bloop conductor) grounded in SE literature. Synced 24 skills, template mirrors & docs. Verified tests (76 passed). why? Provides principled, compositional SDLC execution for autonomous multi-agent teams.
+
+---
+[<small>2026-10-14 21:47:07</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.64s
+
+---
+[<small>2026-10-14 21:47:26</small>] [**bob**]->[**all**] *prompt*:
+ Added Brookhart-compliant Loop Effectiveness Rubrics to all 10 loop skills (LOOP_EPIC, LOOP_STORY, LOOP_SPRINT, LOOP_IMPL, LOOP_FIX, LOOP_REFACTOR, LOOP_SPIKE, LOOP_UAT, LOOP_DEPLOY, LOOP_BLOOP). Updated ARTIFACTS.md, judge skill, & template mirrors. Verified tests pass (76 passed). why? Enables objective, empirical measurement of multi-agent loop execution quality and procedural discipline.

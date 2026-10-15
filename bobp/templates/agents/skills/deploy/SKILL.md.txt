@@ -89,3 +89,18 @@ If Trin’s smoke test fails:
 1. Tank executes immediate rollback via `bobp make rollback ARGS="ENV=<env>"`.
 2. Post failure incident report to `agents/CHAT.md`.
 3. Halt deployment loop until the defect is diagnosed via a `*fix` loop.
+
+---
+
+## Loop Effectiveness Rubric (`LOOP_DEPLOY`)
+
+Reviewed by Tank (at Step 3 Conclusion) or Trin (at Smoke Verification) or during `*judge deploy`.  
+Verdict line in `agents/CHAT.md`: `rubric LOOP_DEPLOY: ASCODE=L PREFLT=L SMOKE=L ROLLBK=L AUDIT=L`
+
+| Code | Criterion | Weak (W) | Acceptable (A) | Strong (S) |
+|---|---|---|---|---|
+| `ASCODE` | **Pipeline as Code** | Ad-hoc, uncaptured shell commands run manually; hardcoded credentials in terminal; bypassed Makefile targets. | Deployment driven entirely via `bobp make deploy ARGS="..."` per specifications in `docs/SDLC.md`. | Idempotent, deterministic deployment target; build artifact versioned and hashed; logs captured cleanly in `build/build.out`. |
+| `PREFLT` | **Pre-Flight Hygiene** | Deployed uncommitted local changes, untracked files, or unverified test states to target environment. | Git working tree verified clean; all commits pushed/tagged per SDLC; test suite confirmed green prior to deploy. | Automated pre-flight checks validated environmental configs, dependency hashes, secrets availability, and DB migration readiness. |
+| `SMOKE` | **Smoke Verification** | Deployment assumed successful once upload exited 0 without live traffic or endpoint verification. | Trin executed post-deploy smoke tests against live target environment (health endpoints, core workflows, database connectivity). | Comprehensive smoke sweep covering authentication, primary API contracts, database migrations, and telemetry/logging confirmation. |
+| `ROLLBK` | **Rollback Safety** | No rollback target defined; failed deployment left target environment in broken, unrecoverable state. | Rollback target documented (`bobp make rollback`) and triggered immediately if smoke tests or health checks failed. | Zero-downtime blue/green or canary strategy; automated instant rollback with health degradation alerting and state preservation. |
+| `AUDIT` | **Audit Trail & Logging** | Deployed silently without posting to CHAT.md; version tag omitted; failed to update task board. | Deployment status, target environment, version/commit hash, and smoke results posted to `agents/CHAT.md`. | Complete release audit trail: changelog updated, git tags pushed, deployment artifact archived, and stakeholder notification posted. |

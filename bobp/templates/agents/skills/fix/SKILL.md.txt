@@ -101,3 +101,18 @@ If Neo's fix attempt fails twice:
    ```
 3. Allow ONE retry with Oracle's insight.
 4. If that fails, escalate to the user with all logs.
+
+---
+
+## Loop Effectiveness Rubric (`LOOP_FIX`)
+
+Reviewed by Morpheus (at Step 3 Code Review) or Smith (during `*judge fix`).  
+Verdict line in `agents/CHAT.md`: `rubric LOOP_FIX: REPRO=L DIAG=L SURG=L NOSIDE=L GUARD=L`
+
+| Code | Criterion | Weak (W) | Acceptable (A) | Strong (S) |
+|---|---|---|---|---|
+| `REPRO` | **Deterministic Reproduction** | Fix attempted directly on application code based on symptoms alone without an automated reproduction test or script. | Minimal, deterministic failing test or script created that reliably reproduces the observed defect prior to code edits. | Automated reproduction test captures minimal reproducing input, isolates environmental dependencies, and becomes a permanent regression test. |
+| `DIAG` | **Root Cause Diagnosis** | Blind edits guessing at the fix; failed to explain underlying fault in CHAT.md; touched code without user/lead confirmation. | Root cause explained in CHAT.md distinguishing symptom from underlying fault; user or lead confirmed proposed fix before edits. | Pinpoints exact faulty invariant/symbol with stack trace analysis; explains why the bug occurred and why proposed fix prevents recurrence. |
+| `SURG` | **Surgical Scope** | Sprawling diff modifying unrelated files, reformatting unrelated code, or bundling opportunistic feature changes. | Targeted diff restricted strictly to repairing the diagnosed fault; preserves surrounding conventions and styles. | Minimal lines changed; addresses root cause at the right layer without defensive workarounds or symptom-patching conditionals. |
+| `NOSIDE` | **Regression Sweep** | Only checked that reproduction test passed without running full regression suite; new warnings or broken tests introduced. | Trin ran full test suite via `bobp make test`; verified reproduction test passes and all existing tests pass with 0 regressions. | Verified edge cases adjacent to the fix; verified performance was not degraded; clean test output captured in `build/build.out`. |
+| `GUARD` | **Anti-Loop & Escalation** | Loop cycled 3+ times without resolution; blind trial-and-error edits; unlogged failure states. | Resolved on attempt 1 or 2; if attempt 2 failed, paused and consulted Oracle before third attempt. | First-pass resolution; defect and resolution logged to `docs/LESSONS.md` or `agents/oracle/lessons.md` to prevent future team recurrence. |

@@ -104,3 +104,18 @@ If refactoring causes persistent test failures or broken contracts after 2 attem
 1. Revert to git baseline.
 2. Re-assess the refactoring plan with Morpheus.
 3. Consult Oracle if unexpected inter-module coupling is detected.
+
+---
+
+## Loop Effectiveness Rubric (`LOOP_REFACTOR`)
+
+Reviewed by Morpheus (at Step 5 Architectural Sign-off) or Smith (during `*judge refactor`).  
+Verdict line in `agents/CHAT.md`: `rubric LOOP_REFACTOR: TWOHAT=L BASELN=L PARITY=L DESIGN=L ATOMIC=L`
+
+| Code | Criterion | Weak (W) | Acceptable (A) | Strong (S) |
+|---|---|---|---|---|
+| `TWOHAT` | **Two-Hats Invariant** | New functionality, API changes, or opportunistic bugfixes blended into the refactoring diff. | 100% pure refactoring; external behavior, public contracts, and CLI interfaces remained strictly identical. | Explicitly isolated pure transformations; logged discovered bugs as separate `*fix` candidates rather than fixing in-place. |
+| `BASELN` | **Baseline Verification** | Began refactoring with failing or unverified tests; assumed codebase was green without captured test run. | Trin ran full suite via `bobp make test` before edits; confirmed 100% green baseline and recorded test count in CHAT.md. | Verified baseline test coverage for target modules; augmented missing baseline tests prior to refactoring if coverage had gaps. |
+| `PARITY` | **Behavioral & Test Parity** | Preexisting tests modified to make them pass after refactoring; deleted tests; reduced assertion count. | 100% of preexisting tests pass without test code modification (excluding intentional, approved symbol renames). | Full test suite runs green with zero changes to existing assertions; test run time equal or faster; linter and type-checker clean. |
+| `DESIGN` | **Design Improvement** | Code rearranged cosmetically without reducing complexity; increased indirection with unnecessary wrappers. | Reduced duplication, improved naming clarity, decoupled monolithic functions/classes, and aligned with standard patterns. | Measurable reduction in cyclomatic complexity; eliminated code smells named in Fowler's taxonomy; improved module cohesion. |
+| `ATOMIC` | **Micro-Step Cadence** | Giant big-bang rewrite touching dozens of files at once, making regression debugging impossible. | Executed in logical, bounded increments (e.g. Extract Function, Rename Symbol, Move Class) with frequent test checks. | Each micro-step verified with fast quiet tests; easily reversible diff sequence; zero disruption to active development. |

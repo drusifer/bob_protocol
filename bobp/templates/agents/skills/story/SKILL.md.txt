@@ -85,3 +85,18 @@ flowchart TD
 
 ### Step 4: Deferral to Sprint Planning
 - Story specifications are complete and verified. Hand off to Mouse to schedule into a **Sprint** (`*plan sprint`).
+
+---
+
+## Loop Effectiveness Rubric (`LOOP_STORY`)
+
+Reviewed by Smith (at Gate 1 & Gate 2) or Morpheus or during `*judge story`.  
+Verdict line in `agents/CHAT.md`: `rubric LOOP_STORY: SLICE=L INVEST=L GHERK=L ARCHAL=L STRAT=L`
+
+| Code | Criterion | Weak (W) | Acceptable (A) | Strong (S) |
+|---|---|---|---|---|
+| `SLICE` | **Vertical User Slicing** | Horizontal component stories ("write schema", "build UI mockup", "write backend") that deliver zero standalone user value. | Vertical slices traversing interface to storage that deliver observable capability to a user or developer. | Thin, elegant end-to-end slices; each slice demonstrable independently; prioritized by narrative workflow in story map. |
+| `INVEST` | **INVEST Independence & Size** | Monolithic stories; tightly coupled dependencies requiring simultaneous delivery; untestable vague descriptions. | Independent stories sized to fit cleanly within 1-3 tasks; clear value proposition; easily estimated and testable. | Completely decoupled stories allowing arbitrary delivery order; minimal dependencies; sized for rapid work-loop execution. |
+| `GHERK` | **Testable Acceptance Criteria** | Criteria contain subjective adjectives ("should work properly", "fast", "clean"); lacks verifiable assertions. | Unambiguous Given-When-Then scenarios with explicit inputs, triggers, and expected observable outcomes. | Comprehensive scenarios covering edge conditions, error states, and boundary values; directly convertible into automated tests. |
+| `ARCHAL` | **Architectural Alignment & ADRs** | Architecture missing or disconnected from stories; undocumented architectural shortcuts or unvetted dependencies. | `ARCH.md` articulates module structure, data flows, and trade-offs; includes ADRs for non-trivial decisions; passes ARCH rubric. | Clean separation of concerns; explicit interface contracts; ADRs detail positive/negative consequences and alternatives. |
+| `STRAT` | **Test Strategy Readiness** | No test strategy; leaves test levels and verification approach undefined until development starts. | `TEST_STRATEGY.md` defines unit, integration, and UAT boundaries, test tooling, and pass criteria. | Comprehensive testing pyramid tailored to the story scope; identifies mocks vs live dependencies; passes STRATEGY rubric. |

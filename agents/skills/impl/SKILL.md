@@ -114,3 +114,18 @@ If any implementation verification fails more than twice:
 2. Consult **Oracle**: `bobp chat "@Oracle *ora ask <error>" --persona Neo --cmd "swe ask" --to Oracle`.
 3. Allow ONE retry with a fresh approach.
 4. If it fails again, halt and escalate to the user with full logs.
+
+---
+
+## Loop Effectiveness Rubric (`LOOP_IMPL`)
+
+Reviewed by Morpheus (at Step 3 Code Review) or Smith (during `*judge impl`).  
+Verdict line in `agents/CHAT.md`: `rubric LOOP_IMPL: TFIRST=L VERIF=L MODUL=L REGRESS=L BUDGET=L`
+
+| Code | Criterion | Weak (W) | Acceptable (A) | Strong (S) |
+|---|---|---|---|---|
+| `TFIRST` | **Test-First Invariant** | Production code was written before or concurrently with tests; test added post-hoc without demonstrating an initial red phase. | Failing unit/integration test reproducing acceptance criterion was written and confirmed failing before minimal passing code was added. | Test cleanly isolates requirement in a minimal fixture; failure message explicitly documents the missing capability; zero excess test harness overhead. |
+| `VERIF` | **Acceptance Verification** | Trin accepted on developer assertions alone without test runs; mocks mask real behavior; criteria skipped. | Trin ran full suite and targeted acceptance tests via `bobp make test`, confirming 100% green against declared phase criteria. | Trin tested edge cases and boundary conditions beyond happy path; verified output contracts; full run captured in `build/build.out`. |
+| `MODUL` | **Modularity & Cleanliness** | Over-engineered speculative abstractions; leaky module boundaries; duplicative boilerplate retained. | Minimal code necessary to pass tests; respects established architectural layers and naming conventions from `ARCH.md`. | Highly cohesive, loosely coupled functions/classes; zero dead code; self-documenting naming requiring no explanatory comments for basic flow. |
+| `REGRESS` | **Regression & Suite Hygiene** | Unrelated test suite broke and was ignored or disabled; dirty git working tree; uncaptured shell test runs. | Zero regressions across existing test suite; captured output in `build/build.out` with clean exit code 0. | Test run time bounded; no flaky tests introduced; all new tests cleanly integrated into standard Makefile test targets. |
+| `BUDGET` | **Loop & State Discipline** | Persona switch without `state.md` flush; CHAT.md message exceeded 512 chars; loop iterated $>2$ times without Oracle consult. | Handoff messages properly formatted with why-rationale; `state.md` updated; context saturation checked after loop. | Seamless handoffs with concise, actionable summaries; proactive `*prep-clear` run before context reached saturation threshold. |

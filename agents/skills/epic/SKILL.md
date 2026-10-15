@@ -82,3 +82,18 @@ flowchart TD
 
 ### Step 4: Deferral to Story Loops
 - Epic shaping is complete. Cypher and Morpheus begin decomposing the shaped epic into concrete **Story Loops** (`*plan story`).
+
+---
+
+## Loop Effectiveness Rubric (`LOOP_EPIC`)
+
+Reviewed by Smith (at Gate 1 & Gate 2) or Morpheus or during `*judge epic`.  
+Verdict line in `agents/CHAT.md`: `rubric LOOP_EPIC: FRAME=L APPET=L BOUNDS=L DOMAIN=L DERISK=L`
+
+| Code | Criterion | Weak (W) | Acceptable (A) | Strong (S) |
+|---|---|---|---|---|
+| `FRAME` | **Problem Framing** | Jumps straight to proposing specific UI features or implementation code without explaining what user problem is being solved. | Clear problem statement documented in `VISION.md` detailing current pain points, target persona, and desired outcomes. | Deeply articulates customer root cause; backs problem with user research or telemetry; explains why alternative solutions fail. |
+| `APPET` | **Appetite Budgeting** | Scope unbounded ("build everything"); asks engineering for open-ended estimates without an appetite budget. | Explicit appetite declared (e.g. 1 sprint, 2 weeks) bounding how much investment the problem is worth. | Appetite explicitly calibrated against business value; establishes clear trade-off priorities between depth and delivery speed. |
+| `BOUNDS` | **Boundary & "No-Gos"** | No boundaries established; scope expands to accommodate every edge case; creates high risk of runaway implementation. | Explicit list of "no-gos" and non-goals defining what will NOT be built in this initiative. | Preemptively identifies tempting rabbit holes and cuts them; defines narrow, focused functional baseline with high impact. |
+| `DOMAIN` | **Domain Modeling** | Inconsistent terminology used across specs; domain concepts conflated with database tables or UI widgets. | Domain entities, aggregates, and ubiquitous language documented in `docs/DOMAIN.md` using standard template. | Exemplary DDD ubiquitous language; domain boundaries and state lifecycles modeled cleanly; approved through DOMAIN rubric. |
+| `DERISK` | **De-risking & Spikes** | High-risk architectural assumptions accepted without verification; known unknowns deferred to sprint implementation. | Technical risks surfaced; spikes triggered where needed; Tank verified infrastructure and platform feasibility. | All critical risks retired via disposable spikes (`*spike`); concrete architectural evidence secured before greenlighting stories. |

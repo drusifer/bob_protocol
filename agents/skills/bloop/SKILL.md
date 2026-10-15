@@ -67,3 +67,18 @@ bobp chat "<summary> @NextPersona *command" --persona <Name> --cmd "<prefix> han
 
 5. **Consolidation for Minor Changes**:
    For trivial configuration tweaks or single-line typo fixes, do not trigger a full multi-persona loop. Execute implementation, verification, and state update in a single focused step.
+
+---
+
+## Conductor Orchestration Rubric (`LOOP_BLOOP`)
+
+Reviewed by Bob or Smith (during `*judge bloop`).  
+Verdict line in `agents/CHAT.md`: `rubric LOOP_BLOOP: HANDOFF=L STATE=L ANTILOOP=L CAPTURE=L CONTEXT=L`
+
+| Code | Criterion | Weak (W) | Acceptable (A) | Strong (S) |
+|---|---|---|---|---|
+| `HANDOFF` | **Handoff Ergonomics** | Silent transitions without handoff message; generic messages lacking command or why-rationale; messages exceeding 512 chars. | Formatted per `bobp chat` standard: `<summary> @NextPersona *command` with `why?` explanation under 512 chars. | Concise, highly informative handoffs specifying exact artifact paths, test counts, and immediate actionable directive. |
+| `STATE` | **State Protocol Compliance** | Persona switched without updating `state.md`; missing Context, Current Task, or Next Steps sections; stale timestamps. | `state.md` updated with completed progress, active blockers, and concrete next actions before handoff. | Exemplary state fidelity: exact task percentages, crystal-clear cold-start resume plan, verified against `_template_state.md`. |
+| `ANTILOOP` | **Anti-Loop Enforcement** | Agents repeatedly retried failing steps (3+ attempts); blind repetitive edits; thrashing between implementer and tester. | Paused immediately upon second failure; consulted Oracle for guidance; escalated to user if third attempt was needed. | Proactive root-cause triage on first failure preventing second; Oracle knowledge leveraged effectively to break impasses. |
+| `CAPTURE` | **Automation & Capture** | Bare `make` or uncaptured raw shell commands executed; console flooded with verbose untracked output. | All build, test, and deploy operations executed via `bobp make <target>`; status automatically reported to CHAT.md. | Target discovery verified via `bobp make help`; quiet flags (`-q`) used during inner loops; build artifacts cleanly maintained. |
+| `CONTEXT` | **Context Budgeting** | Context allowed to reach saturation/compaction without state checkpointing; working memory lost to context truncation. | Context checked between work loops; `*prep-clear` triggered when saturation exceeded 60% before issuing `/clear`. | Seamless multi-loop execution spanning multiple context resets with zero lost knowledge or redundant initialization steps. |

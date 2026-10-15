@@ -2,38 +2,41 @@
 
 ## Context
 ### Recent Decisions
-- Updated and synchronized all user documentation, guides, and templates across the repository:
-  - `bobp/templates/README.md`: Updated to present the full 24-skill roster, hierarchical Planning & Work Loops, and prep-clear protocol.
-  - `agents/bob/HELP.md` and `bobp/templates/agents/bob/HELP.md`: Added Session Lifecycle Triggers, Planning Loops, Work Loops, and aligned anti-loop rule and make targets.
-  - `STARTUP.md` and `bobp/templates/STARTUP.md`: Updated Quick Reference with Planning and Work Loops.
-  - `agents/DOCUMENTATION_INDEX.md` and `bobp/templates/agents/DOCUMENTATION_INDEX.md`: Purged legacy file references, expanded quick command reference.
-  - Root `README.md`: Added comprehensive Bob Protocol Overview section with 9 personas and loop architecture.
-- Full 1:1 synchronization maintained across all `bobp/templates/` files.
+- Authored a comprehensive user guide and walkthrough: `docs/WALKTHROUGH.md` ("TableCraft — Restaurant Reservation System").
+- Grounded the walkthrough in real protocol workflows:
+  - Setup and initialization (`bobp install`, `bobp setup-agent-links`, `*init`).
+  - Strategic Epic Loop (`*plan epic`) with appetite, `DOMAIN.md`, de-risking spike, and Smith review gates.
+  - Story Specification Loop (`*plan story`) with Given-When-Then acceptance criteria, `ARCH.md` ADRs, and STORIES/ARCH rubrics.
+  - Sprint Planning Loop (`*plan sprint`) with Stage 0 SDLC gating and typed Work Loops in `task.md`.
+  - Feature TDD Work Loop (`*impl`) following Kent Beck's red-green-refactor and `LOOP_IMPL` rubric.
+  - Context Budget Guard & Checkpointing (`*prep-clear` and `*resume`).
+  - Defect Diagnosis Work Loop (`*fix`) following David Agans' reproduce-first invariant and `LOOP_FIX` rubric.
+  - Usability & UAT Loop (`*uat`) with Smith HCI audit and `LOOP_UAT` rubric.
+  - Sprint close and knowledge harvest (`docs/LESSONS.md`, `*ora groom`, `*pm launch`).
+- Mirrored walkthrough to `bobp/templates/docs/WALKTHROUGH.md` and indexed in `agents/DOCUMENTATION_INDEX.md` and `README.md`.
 
 ### Key Findings
-- Zero documentation drift remains across root docs, template docs, and agent reference files.
+- Walkthrough provides a concrete, copy-pasteable reference for new users and AI agents to understand how to invoke Bob Protocol end-to-end.
 - Full test suite passes 100% (76 passed, 7 skipped).
 
 ### Important Notes
-- All 24 skills, 9 personas, and 10 rubrics are accurately documented and cross-linked.
+- `docs/WALKTHROUGH.md` is available both in repo root `docs/` and packaged in `bobp/templates/docs/`.
 
 ## Current Task
 **Status:** Completed
 **Assigned to:** Bob
-**Started:** 2026-10-14T21:53:00
-**Completed:** 2026-10-14T21:57:00
+**Started:** 2026-10-14T21:58:00
+**Completed:** 2026-10-14T22:01:00
 
 ### Task Description
-Synchronize all user documentation, guides, and template mirrors across the project with the latest hierarchical loop architecture, 24 skills, and Brookhart rubrics.
+Write an end-to-end user walkthrough guide showing new users how to invoke Bob Protocol to build a restaurant reservation app ("TableCraft").
 
 ### Progress
-- [x] Updated `bobp/templates/README.md`
-- [x] Updated `agents/bob/HELP.md` and `bobp/templates/agents/bob/HELP.md`
-- [x] Updated `STARTUP.md` and `bobp/templates/STARTUP.md`
+- [x] Created `docs/WALKTHROUGH.md` with complete end-to-end tutorial
+- [x] Mirrored to `bobp/templates/docs/WALKTHROUGH.md`
 - [x] Updated `agents/DOCUMENTATION_INDEX.md` and `bobp/templates/agents/DOCUMENTATION_INDEX.md`
-- [x] Updated root `README.md`
-- [x] Verified 1:1 diff parity between live docs and `bobp/templates/`
-- [x] Verified full test suite via `bobp make test` (76 passed, 7 skipped)
+- [x] Updated root `README.md` and `bobp/templates/README.md`
+- [x] Verified test suite via `bobp make test` (76 passed, 7 skipped)
 - [x] Updated `agents/bob/state.md` working memory
 
 ### Blockers
@@ -53,4 +56,4 @@ User
 - [ ] Ready for dogfooding SDLC, rubric CLI tooling, or next sprint tasks
 
 ---
-*Last updated: 2026-10-14T21:57:00*
+*Last updated: 2026-10-14T22:01:00*

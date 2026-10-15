@@ -209,5 +209,6 @@ If resuming after a context clear with no memory:
 2. Load that persona's `state.md`
 3. Resume immediately from its `## Next Steps` section
 
+See **[docs/WALKTHROUGH.md](docs/WALKTHROUGH.md)** for a complete step-by-step tutorial building a restaurant reservation app.
 See **[STARTUP.md](STARTUP.md)** for LLM startup instructions.
 See **[SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md)** for the full trigger/command reference.

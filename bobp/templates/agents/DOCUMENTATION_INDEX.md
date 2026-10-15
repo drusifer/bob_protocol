@@ -12,6 +12,7 @@ Type `*help` for complete command reference with examples.
 
 ### Getting Started
 - **[STARTUP.md](../STARTUP.md)** - LLM startup instructions
+- **[docs/WALKTHROUGH.md](../docs/WALKTHROUGH.md)** - Step-by-step user walkthrough: building an app with Bob Protocol
 - **[skills/init/SKILL.md](skills/init/SKILL.md)** - Canonical session initialization & resume skill
 - **[skills/prep-clear/SKILL.md](skills/prep-clear/SKILL.md)** - Pre-clear checkpointing & state preservation skill
 - **[README.md](../README.md)** - Project overview and team reference

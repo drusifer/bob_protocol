@@ -138,4 +138,6 @@ sequenceDiagram
     Note right of bob: "Added Brookhart-<br/>compliant Loop<br/>Effectiveness Rubrics to<br/>all 10 loop skills<br/>(LOOP_EPIC, LOOP_STORY,<br/>LOOP_SPRINT, LOOP_IMPL,<br/>LOOP_FIX, LOOP_R…"
     bob->>All: "prompt"
     Note right of bob: "Synchronized all user<br/>guides & documentation:<br/>root README, bobp/templa<br/>tes/README.md,<br/>agents/bob/HELP.md,<br/>STARTUP.md, &<br/>DOCUMENTATION_INDEX.…"
+    bob->>All: "prompt"
+    Note right of bob: "Created<br/>docs/WALKTHROUGH.md: a<br/>complete step-by-step<br/>user guide demonstrating<br/>how to build a<br/>restaurant reservation<br/>app (TableCraft) with B…"
 ```

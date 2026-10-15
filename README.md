@@ -49,7 +49,7 @@ Bob Protocol coordinates autonomous, multi-agent software engineering through sp
 - **Loop Conductor (`*bloop`)**: Autonomous multi-persona execution engine with strict anti-loop guards (max 2 failures $\rightarrow$ Oracle $\rightarrow$ user escalate) and context budgeting (`*prep-clear`).
 - **Review Rubrics**: 10 Brookhart-compliant quality rubrics measuring deliverable quality and loop effectiveness.
 
-See **[STARTUP.md](STARTUP.md)** for LLM session startup instructions and **[SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md)** for the complete trigger reference.
+See **[STARTUP.md](STARTUP.md)** for LLM session startup instructions, **[docs/WALKTHROUGH.md](docs/WALKTHROUGH.md)** for a complete step-by-step tutorial, and **[SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md)** for the complete trigger reference.
 
 ## Development
 

@@ -352,3 +352,12 @@ These apps are now globally available
 ---
 [<small>2026-10-14 21:56:47</small>] [**bob**]->[**all**] *prompt*:
  Synchronized all user guides & documentation: root README, bobp/templates/README.md, agents/bob/HELP.md, STARTUP.md, & DOCUMENTATION_INDEX.md now accurately document all 24 skills, 9 personas, Planning & Work Loops, and Brookhart rubrics. All template mirrors in 1:1 sync. Tests pass (76 passed). why? Eliminates documentation drift so downstream agents and developers have accurate, authoritative guidance.
+
+---
+[<small>2026-10-14 22:00:55</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.64s
+
+---
+[<small>2026-10-14 22:01:18</small>] [**bob**]->[**all**] *prompt*:
+ Created docs/WALKTHROUGH.md: a complete step-by-step user guide demonstrating how to build a restaurant reservation app (TableCraft) with Bob Protocol. Covers setup, *plan epic, *plan story, *plan sprint, TDD *impl, *prep-clear, *fix with reproduce-first, *uat, and sprint close. Mirrored to templates & indexed. Tests pass (76 passed). why? Provides new users with an authoritative end-to-end tutorial grounded in real workflows.

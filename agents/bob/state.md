@@ -42,7 +42,7 @@ Formalize the session initialization procedure as a dedicated `init` skill in `a
 - [x] Updated `SHORTHAND_GUIDE.md` and `bobp/templates/SHORTHAND_GUIDE.md`
 - [x] Updated `agents/bob/SKILL.md` and `bobp/templates/agents/bob/SKILL.md.txt`
 - [x] Ran test suite via `bobp make test` (76 passed, 7 skipped)
-- [x] Staged, committed, and pushed changes to `main`
+- [x] Staged, committed (`3799168`), and pushed changes to `main`
 
 ### Blockers
 None

@@ -103,4 +103,6 @@ sequenceDiagram
     Note right of User: "push"
     Bob->>All: "prompt progress"
     Note right of Bob: "Staging changes: init<br/>skill, discovery link,<br/>documentation and<br/>template mirrors.<br/>Preparing to commit and<br/>push."
+    Bob->>All: "prompt ready"
+    Note right of Bob: "Pushed commit 3799168 to<br/>origin/main. Working<br/>tree clean. Init skill<br/>formalization complete."
 ```

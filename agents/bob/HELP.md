@@ -1,6 +1,6 @@
 # BobProtocol — Quick Reference
 
-Type `*help` anytime to see this. One AI switches between 8 specialized personas driven by `agents/CHAT.md`.
+Type `*help` anytime to see this. One AI switches between 9 specialized personas driven by `agents/CHAT.md`.
 
 **Basic usage:**
 - `*chat <message>` — auto-routes to the right persona
@@ -103,8 +103,20 @@ Type `*help` anytime to see this. One AI switches between 8 specialized personas
 | `*user consult <question>` | Quick, non-blocking UX opinion |
 | `*user feedback <question>` | Deeper investigation of open UX/domain questions |
 | `*user approve [gate]` | Approve a sprint review gate |
-| `*user reject REASON: … \| FIX: …` | Block a sprint gate |
-| `*user bug CMD: … \| EXPECTED: … \| ACTUAL: … \| UX ISSUE: …` | File a usability defect |
+| `*user reject REASON: … | FIX: …` | Block a sprint gate |
+| `*user bug CMD: … | EXPECTED: … | ACTUAL: … | UX ISSUE: …` | File a usability defect |
+
+### Tank — DevOps Engineer
+`agents/tank/SKILL.md` · prefix: `*devops`
+
+| Command | Action |
+|---------|--------|
+| `*devops deploy` | Orchestrate deployment |
+| `*devops infra` | Declarative IaC management |
+| `*devops ci` | Maintain CI/CD pipelines |
+| `*devops env` | Environment hygiene & secrets |
+| `*devops bootstrap <lang>` | Setup build environment & manifest |
+| `*devops sdlc [check]` | Create or audit docs/SDLC.md |
 
 ---
 
@@ -147,9 +159,9 @@ Fail once → stop, consult Oracle, retry with new approach.
 ## Common Make Targets
 
 ```bash
-make help    # list all targets
-bobp chat     # post to CHAT.md
-make tldr    # show TL;DR from all files
+bobp make help    # list all project targets
+bobp chat         # post to CHAT.md
+bobp make test    # run tests (captured to build/build.out)
 ```
 
 See **[SHORTHAND_GUIDE.md](../../SHORTHAND_GUIDE.md)** for the full trigger reference.

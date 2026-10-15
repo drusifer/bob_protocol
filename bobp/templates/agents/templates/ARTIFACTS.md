@@ -18,9 +18,13 @@ written down rather than taste. Rubrics here guide a reviewer; nothing computes 
 | Sprint stories | `docs/sprints/USER_STORIES_SPRINT<N>.md` | Cypher | `_template_USER_STORIES.md` | **STORIES** | Smith, Gate 1 |
 | SDLC | `docs/SDLC.md` | Tank | `_template_SDLC.md`, `.python.md`, `.javascript.md` | **SDLC** | Oracle, at groom when it changed |
 | Lessons | `docs/LESSONS.md`, `agents/oracle/lessons.md` | Oracle | `_template_LESSON.md` | **LESSON** | Smith, at the close test |
-| Architecture section / `docs/ARCH.md` | sprint stories document; `docs/ARCH.md` | Morpheus | `_template_ARCH.md` | none yet | Smith, Gate 2 |
-| Decisions | `docs/DECISIONS.md` | Oracle | none | none | — |
-| Task board, sprint log | `task.md`, `agents/mouse/sprint_log.md` | Mouse | none | none | Morpheus, plan review |
+| Architecture section / `docs/ARCH.md` | sprint stories document; `docs/ARCH.md` | Morpheus | `_template_ARCH.md` | **ARCH** | Smith, Gate 2 |
+| Domain Model | `docs/DOMAIN.md`, `docs/domain/` | Cypher / Morpheus | `_template_DOMAIN.md` | **DOMAIN** | Smith / Morpheus, planning |
+| Decisions | `docs/DECISIONS.md`, `docs/decisions/` | Oracle / Morpheus | `_template_DECISION.md` | **DECISION** | Oracle, at groom (or Smith, Gate 2) |
+| Task board, sprint log | `task.md`, `agents/mouse/sprint_log.md` | Mouse | `_template_task.md` | **PLAN** | Morpheus, Step 3a (plan review) |
+| Research finding | persona folder | any | `_template_finding.md` | **FINDING** | Oracle, at groom (or Morpheus, spike review) |
+| Quality & UAT Strategy | `docs/TEST_STRATEGY.md` | Trin | `_template_TEST_STRATEGY.md` | **STRATEGY** | Morpheus / Smith, setup & groom |
+| Acceptance Test Plan (UAT) | `docs/sprints/UAT_PLAN_SPRINT<N>.md` | Trin | `_template_UAT_PLAN.md` | **UAT** | Smith, at close (or Morpheus, review) |
 | Work summary | `agents/<persona>/<Task>_Summary_<timestamp>.md` | any | none | none | — |
 | Gate verdicts, UAT results, code reviews | `agents/CHAT.md` | Smith, Trin, Morpheus | none (chat) | none | — |
 | Sprint chat report | `agents/chat_archive/CHAT_<SPRINT>*.md` | Oracle, via `bobp chat-report` | generated | none | — |
@@ -28,14 +32,31 @@ written down rather than taste. Rubrics here guide a reviewer; nothing computes 
 | Persona state | `agents/<persona>/state.md` | each persona | `_template_state.md` | none — see below | — |
 | Chat messages | `agents/CHAT.md` | all | `_template_CHAT.md` | none — see below | — |
 | TLDR blocks | top of `.py` / `.md` files | Oracle | `_template_tldr.md` | none — see below | — |
-| Research finding | persona folder | any | `_template_finding.md` | none yet | — |
 
 **Deliberately without a rubric:** persona state, chat messages and TLDR blocks. They go wrong in
 mechanical ways — too long, stale, a missing section, the wrong format — and a check that can be
 run (a length limit, a required-heading test) catches those better than a reviewer's judgement.
 
-**"None yet"** marks artifacts that have a template and would suit a rubric. Architecture is the
-next candidate: it already has an independent reviewer and a gate.
+## Rubric Quality Standards
+
+Bob Protocol rubrics are held to formal assessment design standards grounded in Dr. Susan Brookhart's
+framework (*How to Create and Use Rubrics for Formative Assessment and Grading*) and IEEE/ABET
+engineering peer-review principles:
+
+1. **Criterion Independence (Orthogonality):** Each criterion measures a single, distinct dimension
+   of quality. A failure in one criterion must never automatically cause a failure in another.
+2. **Observable Descriptors with Concrete Tells:** Descriptors paint a verifiable picture of what the
+   reviewer observes in the text (e.g. "contains 'should' or 'properly'", "lacks timeout/retry
+   specifications", "no single source of truth cited"), avoiding subjective adjectives ("good",
+   "clean", "thorough").
+3. **Formative Actionability (Weak = Actionable Fix):** Weak does not mean unpolished; it means the
+   document fails its downstream reader (an implementer is blocked, a tester cannot write assertions,
+   an on-call cannot trace failure). The Weak descriptor tells the author exactly what to fix.
+4. **Parallel Developmental Progression:** Descriptors progress across columns evaluating the same
+   underlying attribute: Weak (fails downstream reader) $\rightarrow$ Acceptable (enables safe execution)
+   $\rightarrow$ Strong (exemplary, anticipates edge cases, provides copy-pasteable reference examples).
+5. **Cognitive Ergonomics (The 4–6 Rule):** Exactly 4 to 6 criteria per rubric. More than that causes
+   cognitive fatigue, leading reviewers to skim or rubber-stamp gates.
 
 ## Rubric format
 

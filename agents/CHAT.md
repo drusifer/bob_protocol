@@ -125,3 +125,105 @@ Installing to existing venv 'bobp'
 installed package bobp 0.1.0, installed using Python 3.13.5
 These apps are now globally available
 - bobp
+
+---
+[<small>2026-10-14 18:48:57</small>] [**User**]->[**all**] *request*:
+ /bob-protocol init
+
+---
+[<small>2026-10-14 18:49:34</small>] [**Bob**]->[**all**] *ready*:
+ Bob Protocol initialized. Team ready.
+
+---
+[<small>2026-10-14 18:50:22</small>] [**User**]->[**all**] *request*:
+ we started creating rubrics for the artifact templates I'd like to do the rest
+
+---
+[<small>2026-10-14 18:54:00</small>] [**User**]->[**all**] *request*:
+ Let's start with some research. This is a good opportunity to upgrade the artifact templates to follow the latest best practices. wdyt?
+
+---
+[<small>2026-10-14 18:55:26</small>] [**User**]->[**all**] *request*:
+ also search for rubric standards I want our rubrics to aslo have high standards
+
+---
+[<small>2026-10-14 19:09:54</small>] [**User**]->[**all**] *request*:
+ this is good pleae proceed
+
+---
+[<small>2026-10-14 19:14:31</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.63s
+
+---
+[<small>2026-10-14 19:14:55</small>] [**Bob**]->[**all**] *prompt update*:
+ Upgraded artifact templates with high-standard review rubrics grounded in Brookhart & SWE design standards: ARCH (Smith Gate 2), FINDING (Oracle/Morpheus), PLAN (Morpheus 3a), and DECISION (Oracle). Mirrored to bobp/templates. 76/76 tests pass.
+
+---
+[<small>2026-10-14 19:18:42</small>] [**User**]->[**all**] *request*:
+ where should Software arch live? is there a standard artifact for that?
+
+---
+[<small>2026-10-14 19:20:24</small>] [**User**]->[**all**] *request*:
+ i'm thinking of stuff like the DOMAIN MODEL
+
+---
+[<small>2026-10-14 19:26:25</small>] [**User**]->[**all**] *request*:
+ 1
+
+---
+[<small>2026-10-14 19:27:35</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.57s
+
+---
+[<small>2026-10-14 19:27:53</small>] [**Bob**]->[**all**] *prompt update*:
+ Created _template_DOMAIN.md (Domain Model & Ubiquitous Language) with DOMAIN review rubric. Co-owned by Cypher & Morpheus; reviewed by Smith & Morpheus during planning. Mirrored to bobp/templates. 76/76 tests pass.
+
+---
+[<small>2026-10-14 19:48:18</small>] [**User**]->[**all**] *request*:
+ what about a UAT Strategy template for high level testing instructions? What are the latests forms for that. Maybe in addition to a Sprint specific test strategy
+
+---
+[<small>2026-10-14 20:07:33</small>] [**User**]->[**all**] *request*:
+ 1 please
+
+---
+[<small>2026-10-14 20:10:03</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.57s
+
+---
+[<small>2026-10-14 20:10:22</small>] [**Bob**]->[**all**] *prompt update*:
+ Created _template_TEST_STRATEGY.md (Standing Quality Strategy, rubric STRATEGY) and _template_UAT_PLAN.md (Sprint UAT Plan, rubric UAT). Owned by Trin; reviewed by Morpheus & Smith. Mirrored to bobp/templates. 76/76 tests pass.
+
+---
+[<small>2026-10-14 20:22:27</small>] [**User**]->[**all**] *request*:
+ there are a bunch of redundant duplicate instructions that have accumulated over the iterations. For instance AGENTS.md AGENT.md vs content in the agents/ dir. let's KEEP IT DRY and use refs to where the common instructions are instead of letting it drift
+
+---
+[<small>2026-10-14 20:35:38</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.61s
+
+---
+[<small>2026-10-14 20:35:59</small>] [**Bob**]->[**all**] *prompt refactor*:
+ Refactored instruction hierarchy to KEEP IT DRY: streamlined agents/AGENTS.md into a canonical conductor referencing authoritative skills; unified 10 core operational principles; completed 9-persona roster (added Smith & Tank); eliminated duplicated State Management & Via boilerplate across persona SKILL.md files; mirrored all updates to bobp/templates. 76/76 tests pass.
+
+---
+[<small>2026-10-14 20:41:22</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.57s
+
+---
+[<small>2026-10-14 20:41:31</small>] [**Bob**]->[**all**] *prompt refactor*:
+ Adopted standardized redirect ref pattern ('See instructions here -> agents/xx.md') across AGENTS.md and all 9 persona SKILL.md files. Persona files now redirect to common skills (bob-protocol, via, make, sprint) and declare only persona-specific tweaks and overrides. Documented in Bob's agent authoring guidelines. 76/76 tests pass.
+
+---
+[<small>2026-10-14 20:49:51</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.59s
+
+---
+[<small>2026-10-14 20:50:04</small>] [**Bob**]->[**all**] *progress*:
+ Prepared repository for clean commit and push covering Brookhart rubrics, DRY redirect refs, and template sync.

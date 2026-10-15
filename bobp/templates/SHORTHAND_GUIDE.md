@@ -104,6 +104,16 @@ Invoke a persona directly — bypasses `*chat` routing.
 | `*help` | Show full system reference |
 | `*bob review <target>` | Review agent interactions and prompt effectiveness |
 
+### Tank — DevOps Engineer
+| Trigger | Action |
+|---------|--------|
+| `*devops deploy` | Orchestrate deployment |
+| `*devops infra` | Declarative IaC management |
+| `*devops ci` | Maintain CI/CD pipelines |
+| `*devops env` | Environment hygiene & secrets |
+| `*devops bootstrap <lang>` | Setup build environment & manifest |
+| `*devops sdlc [check]` | Create or audit docs/SDLC.md |
+
 ---
 
 ## `*chat` Routing Syntax

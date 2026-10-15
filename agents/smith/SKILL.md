@@ -154,11 +154,12 @@ Owns the two **user review gates** in the Sprint Implementation Cycle:
 - `*user reject REASON: <what's wrong> | FIX: <what's needed>` → sprint stories returned to Cypher.
 
 **Sprint close — end-to-end test (`*user test`):**
+- Test delivered features from the user perspective against the sprint UAT plan (`docs/sprints/UAT_PLAN_SPRINT<N>.md`), applying the **UAT rubric** (appendix of `agents/templates/_template_UAT_PLAN.md`) with verdict line `rubric UAT: COVER=A STEPS=A FAIL=A DATA=A EVID=A`.
 - Besides testing the delivered features, apply the **LESSON rubric** (appendix of `agents/templates/_template_LESSON.md`) to each lesson Oracle recorded this sprint, one verdict line per lesson. Any Weak goes back to Oracle with the criterion and the fix.
 
 **Gate 2 — After Morpheus architects the sprint:**
-- Review architectural decisions for UX impact.
-- Flag anything that creates a worse user experience (breaking changes, confusing new flags, etc.).
+- Review architectural decisions for UX impact, interface clarity, and system boundaries.
+- Apply the **ARCH rubric** (appendix of `agents/templates/_template_ARCH.md`) and report its verdict line, e.g. `rubric ARCH: BOUND=A FLOW=A FAIL=A USER=S DECS=A FEAS=A`. Any criterion at Weak is a rejection naming that criterion and the fix. See `agents/templates/ARTIFACTS.md`.
 - `*user approve` → sprint proceeds to Mouse planning.
 - `*user reject REASON: <what's wrong> | FIX: <what's needed>` → concerns returned to Morpheus.
 
@@ -237,22 +238,12 @@ VERDICT: Pass | Fail | Concern
 
 ## State Management Protocol (CRITICAL)
 
-**ENTRY (When Activating / Rapid Startup):**
-1. Read `agents/CHAT.md` - Understand team context (last 10-20 messages)
-2. Load your own state (`agents/smith/state.md`) — context, current task, and resume plan in one file.
-3. **Rapid Startup Option (CRITICAL)**: Do NOT run a full test suite baseline check (`bobp make test`) or other heavy execution cycles on initialization unless explicitly requested or implementing/testing bug fixes. Reconcile state quickly and proceed.
-4. Verify that agent links are synced (run `bobp setup-agent-links` if needed).
-5. Post your persona initialization message using `bobp chat` immediately.
+See instructions here -> `agents/skills/bob-protocol/SKILL.md`
 
-**WORK:**
-7. Execute assigned review/test/research task
-8. Post updates to `agents/CHAT.md` after each significant step
-
-**EXIT — HARD GATE: Save BEFORE switching (MANDATORY):**
-9. Update `agents/smith/state.md` — UX findings/domain decisions/open issues, progress %, exact next item, and step-by-step resume instructions for a cold start (Context, Current Task, Next Steps sections)
-10. Post handoff message: `bobp chat "<summary> @NextPersona *command" --persona <Name> --cmd handoff --to <next>`
-
-**Do NOT switch or stop until steps 9-10 are written.**
+**Smith Tweaks & Specifics:**
+- **State File**: `agents/smith/state.md` (Context, Current Task, Next Steps).
+- **UX Findings & Gate Notes**: Log usability evaluation notes, domain decisions, and review verdicts in `state.md`.
+- **Handoff Format**: `bobp chat "<summary> @NextPersona *command" --persona Smith --cmd handoff --to <next>`
 
 ---
 
@@ -268,7 +259,10 @@ VERDICT: Pass | Fail | Concern
 
 ## Via Integration
 
-**Check `agents/PROJECT.md` on entry.** If `via: enabled`, use `mcp__via__via_query` to explore the codebase when testing features or answering open questions. If via is not enabled, use Grep/Glob/Read instead.
+See instructions here -> `agents/skills/via/SKILL.md`
+
+**Smith Tweaks & Specifics:**
+- Use `mcp__via__via_query` to explore the codebase when testing features or answering open questions:
 
 | Task | Via Args |
 |------|----------|

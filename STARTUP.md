@@ -57,14 +57,15 @@ If `CHAT.md` has no clear handoff, ask the user: *"I'm resuming — what should 
 *pm story / *pm doc / *pm assess     # Cypher
 *user review / *user test / *user approve  # Smith
 *prompt / *reprompt / *learn         # Bob
+*devops deploy / *devops infra / *devops sdlc  # Tank
 ```
 
-### Make Targets
+### Make Targets (Single Front Door via bobp make)
 ```bash
-make help                          # list all targets
-make tldr                          # TL;DR from all project files
+bobp make help                       # list all project targets
+bobp make test                       # run tests (captured to build/build.out)
+bobp make -vvv test                  # run tests (full output live)
 bobp chat "..." --persona ... --cmd ... --to ...  # post to CHAT.md
-make test V=-vvv                   # run tests (full output)
 ```
 
 See **[SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md)** for the full command reference.

@@ -1,6 +1,6 @@
 ---
 name: bob-protocol
-description: Multi-persona coordination protocol. Enables AI to switch between specialized personas (Neo, Morpheus, Trin, Oracle, Mouse, Cypher, Bob, Smith) based on task needs. Use for *chat workflow, state management, and cross-agent communication.
+description: Multi-persona coordination protocol. Enables AI to switch between specialized personas (Neo, Morpheus, Trin, Oracle, Mouse, Cypher, Bob, Smith, Tank) based on task needs. Use for *chat workflow, state management, and cross-agent communication.
 triggers: ["*chat"]
 requires: ["chat", "bloop", "sprint", "make"]
 ---
@@ -33,6 +33,7 @@ Each persona is defined in `agents/<name>/SKILL.md`:
 | **Cypher** | Product Manager | `*pm` | Requirements, user stories |
 | **Bob** | Prompt Engineer | `*prompt` | Agent creation, process improvement |
 | **Smith** | HCI Expert | `*user` | UX review, usability testing, sprint gates |
+| **Tank** | DevOps Engineer | `*devops` | Infrastructure, CI/CD, deployment, env hygiene |
 
 ---
 
@@ -72,6 +73,7 @@ Analyze the request and route to the best persona:
 | Requirements, user stories | Cypher (`*pm`) |
 | Agent creation, prompt improvement | Bob (`*prompt`) |
 | UX review, usability, sprint gates | Smith (`*user`) |
+| Infrastructure, CI/CD, deployment | Tank (`*devops`) |
 
 For multi-step workflows, use a Bloop command instead: `*fix`, `*impl`, `*qa`, `*review`, `*plan sprint`.
 
@@ -190,3 +192,5 @@ If a fix attempt fails:
 | `*chat @bob *prompt P` | Bob | `*prompt P` |
 | `*chat @smith *user review S` | Smith | `*user review S` |
 | `*chat @smith *user approve` | Smith | `*user approve` |
+| `*chat @tank *devops deploy` | Tank | `*devops deploy` |
+| `*chat @tank *devops sdlc` | Tank | `*devops sdlc` |

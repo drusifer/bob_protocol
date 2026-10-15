@@ -97,7 +97,8 @@ bobp chat "*user reject REASON: <reason> | FIX: <fix>. @Cypher revise stories." 
 ```
 Morpheus *lead arch sprint
 ```
-- Define architecture decisions and technical design
+- Write the architecture from `agents/templates/_template_ARCH.md` (delete its rubric block)
+- Self-check against the template's ARCH rubric before handing off
 - **Build-environment check:** read `docs/SDLC.md`. If the design adds a language, a new
   third-party dependency mechanism, a different package manager, a runtime version change, or a
   new standard make target, say so explicitly in the handoff — Mouse schedules it as a Tank
@@ -116,6 +117,7 @@ bobp chat "Architecture complete. @Smith *user feedback <arch summary>" --person
 Smith *user feedback <arch>
 ```
 - Evaluate architecture for UX impact (flag naming, output formats, breaking changes)
+- Apply the ARCH rubric and report its verdict line (`rubric ARCH: BOUND=A FLOW=A FAIL=A USER=S DECS=A FEAS=A`); any Weak rejects, naming the criterion and the fix — see `agents/templates/ARTIFACTS.md`
 - Must post explicit approve or reject
 
 ```bash
@@ -130,11 +132,13 @@ bobp chat "*user reject REASON: <reason> | FIX: <fix>. @Morpheus revise arch." -
 ```
 Mouse *sm plan sprint
 ```
+- Write sprint tasks to root `task.md` using `agents/templates/_template_task.md` (delete rubric block)
 - Break sprint into phases of **1-3 tasks each** (no larger — context overflow risk)
 - If Morpheus flagged a build-environment change, make it **Phase 0**, assigned to Tank
   (`*devops bootstrap` or `*devops sdlc`), before any Neo phase — Neo cannot build on an
   environment that does not exist yet. Deploy tasks, by contrast, stay last.
 - Always include the close-out task "Tank `*devops sdlc-check`"
+- Self-check against the template's PLAN rubric before handing off
 - Record phases in `agents/mouse/sprint_log.md`
 - Hand off to Morpheus for plan review
 
@@ -148,6 +152,7 @@ bobp chat "Sprint planned. Phases ready for review. @Morpheus *lead review sprin
 Morpheus *lead review sprint plan
 ```
 - Verify phase breakdown aligns with architecture decisions
+- Apply the PLAN rubric and report its verdict line (`rubric PLAN: SIZE=A GATE=A VERIF=A ALIGN=A OWNER=A`); any Weak rejects, naming criterion and fix — see `agents/templates/ARTIFACTS.md`
 - Approve or request adjustment to Mouse
 
 **Handoff (approved):**
@@ -177,7 +182,7 @@ bobp chat "Phase N impl complete. @Trin *qa uat phase-N" --persona Neo --cmd "sw
 ```
 Trin *qa uat <phase N>
 ```
-- Run tests, verify all acceptance criteria for this phase
+- Run tests, verify all acceptance criteria for this phase using `agents/templates/_template_UAT_PLAN.md` (self-checked against the **UAT rubric**)
 - Consult Oracle for expected behavior before asserting
 
 **Handoff (pass):**
@@ -244,6 +249,8 @@ Oracle *ora groom
 ```
 - Update docs, record decisions, archive sprint artifacts
 - If `docs/SDLC.md` changed this sprint, apply the SDLC rubric and report its verdict line; any Weak goes back to Tank before the handoff
+- If any research spikes or findings were added, apply the FINDING rubric (`agents/templates/_template_finding.md`) and report its verdict line
+- If any decision records were added, apply the DECISION rubric (`agents/templates/_template_DECISION.md`) and report its verdict line
 - Write new lessons from the lesson template, self-checked against the LESSON rubric
 - Ensure CHAT.md is archived if over 50-100 messages (rolling `*ora archive`)
 - **Per-phase report:** `bobp chat-report` splits the archived diagram into one section per phase when Mouse has posted `*phase <N>*` markers (sprint summary first, then each phase's description and its own diagram). Run it after Cypher's launch if the SDLC says so, so the report covers the whole sprint.
@@ -263,7 +270,8 @@ bobp chat "Docs groomed. @Smith *user test <sprint>" --persona Oracle --cmd "ora
 Smith *user test <sprint>
 Smith *user feedback
 ```
-- Test all delivered features from the user's perspective
+- Test all delivered features from the user's perspective against the sprint UAT plan (`docs/sprints/UAT_PLAN_SPRINT<N>.md`)
+- Apply the UAT rubric (`agents/templates/_template_UAT_PLAN.md`) and report its verdict line (`rubric UAT: COVER=A STEPS=A FAIL=A DATA=A EVID=A`)
 - Apply the LESSON rubric to each lesson Oracle added this sprint and report a verdict line per lesson; any Weak goes back to Oracle
 - Apply HCI heuristics — flag rough edges, inconsistencies, confusing interfaces
 

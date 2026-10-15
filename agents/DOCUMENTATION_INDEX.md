@@ -23,7 +23,7 @@ Type `*help` for complete command reference with examples.
 
 ## Persona Documentation
 
-### Active Personas (8)
+### Active Personas (9)
 
 | Persona | Role | SKILL.md | Prefix |
 |---------|------|----------|--------|
@@ -35,6 +35,7 @@ Type `*help` for complete command reference with examples.
 | Trin | QA / Guardian | [trin/SKILL.md](trin/SKILL.md) | `*qa` |
 | Mouse | Scrum Master | [mouse/SKILL.md](mouse/SKILL.md) | `*sm` |
 | Smith | Expert User & UX Advocate | [smith/SKILL.md](smith/SKILL.md) | `*user` |
+| Tank | DevOps Engineer | [tank/SKILL.md](tank/SKILL.md) | `*devops` |
 
 ---
 
@@ -50,11 +51,19 @@ Type `*help` for complete command reference with examples.
 
 Located in `agents/templates/`:
 
-- `_template_ARCH.md` - Architecture decision record
+- `ARTIFACTS.md` - Artifact inventory, rubric quality standards, and review gates
+- `_template_USER_STORIES.md` - Sprint user stories (rubric: STORIES)
+- `_template_ARCH.md` - System & sprint architecture (rubric: ARCH)
+- `_template_DOMAIN.md` - Domain model & ubiquitous language specification (rubric: DOMAIN)
+- `_template_task.md` - Sprint task board (rubric: PLAN)
+- `_template_SDLC.md` - Software development lifecycle (rubric: SDLC; variants for python, javascript)
+- `_template_LESSON.md` - Engineering lessons learned (rubric: LESSON)
+- `_template_DECISION.md` - Architecture decision record / MADR (rubric: DECISION)
+- `_template_finding.md` - Research spike & technical finding (rubric: FINDING)
+- `_template_TEST_STRATEGY.md` - Quality & UAT strategy (rubric: STRATEGY)
+- `_template_UAT_PLAN.md` - Sprint acceptance test plan (rubric: UAT)
+- `_template_state.md` - Agent working memory state
 - `_template_CHAT.md` - CHAT.md message format
-- `_template_finding.md` - Research finding
-- `_template_LESSON.md` - Lesson learned
-- `_template_state.md` - Agent state.md
 - `_template_tldr.md` - TLDR block formats
 
 ---

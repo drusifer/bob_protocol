@@ -2,49 +2,38 @@
 
 ## Context
 ### Recent Decisions
-- Defined and implemented formal Loop Effectiveness Rubrics across all Planning Loops (`LOOP_EPIC`, `LOOP_STORY`, `LOOP_SPRINT`), Work Loops (`LOOP_IMPL`, `LOOP_FIX`, `LOOP_REFACTOR`, `LOOP_SPIKE`, `LOOP_UAT`, `LOOP_DEPLOY`), and the Conductor (`LOOP_BLOOP`).
-- Enforced Brookhart rubric quality standards:
-  - Exactly 5 orthogonal criteria per rubric (Cognitive Ergonomics / The 4-6 Rule).
-  - Observable descriptors with concrete tells rather than subjective adjectives.
-  - Formative actionability (Weak indicates the exact downstream failure and fix).
-  - Parallel developmental progression across Weak, Acceptable, and Strong levels.
-  - Standardized one-line verdict format for `agents/CHAT.md`: `rubric <CODE>: CODE1=L CODE2=L ...`.
-- Indexed all Loop Effectiveness Rubrics in `agents/templates/ARTIFACTS.md`.
-- Integrated loop rubrics into `agents/skills/judge/SKILL.md` target evaluations.
-- Mirrored all changes to `bobp/templates/`.
+- Updated and synchronized all user documentation, guides, and templates across the repository:
+  - `bobp/templates/README.md`: Updated to present the full 24-skill roster, hierarchical Planning & Work Loops, and prep-clear protocol.
+  - `agents/bob/HELP.md` and `bobp/templates/agents/bob/HELP.md`: Added Session Lifecycle Triggers, Planning Loops, Work Loops, and aligned anti-loop rule and make targets.
+  - `STARTUP.md` and `bobp/templates/STARTUP.md`: Updated Quick Reference with Planning and Work Loops.
+  - `agents/DOCUMENTATION_INDEX.md` and `bobp/templates/agents/DOCUMENTATION_INDEX.md`: Purged legacy file references, expanded quick command reference.
+  - Root `README.md`: Added comprehensive Bob Protocol Overview section with 9 personas and loop architecture.
+- Full 1:1 synchronization maintained across all `bobp/templates/` files.
 
 ### Key Findings
-- Distinct separation of evaluation concerns: artifact rubrics measure static deliverable contents; loop effectiveness rubrics measure dynamic procedural discipline and execution invariants.
+- Zero documentation drift remains across root docs, template docs, and agent reference files.
 - Full test suite passes 100% (76 passed, 7 skipped).
 
 ### Important Notes
-- All 10 loop skills contain dedicated `## Loop Effectiveness Rubric` sections.
-- Template mirrors (`bobp/templates/`) are in 1:1 synchronization with live files.
+- All 24 skills, 9 personas, and 10 rubrics are accurately documented and cross-linked.
 
 ## Current Task
 **Status:** Completed
 **Assigned to:** Bob
-**Started:** 2026-10-14T21:42:00
-**Completed:** 2026-10-14T21:48:00
+**Started:** 2026-10-14T21:53:00
+**Completed:** 2026-10-14T21:57:00
 
 ### Task Description
-Add Brookhart-compliant rubrics to each loop skill to measure loop effectiveness, update artifact catalog and judge skill, mirror templates, and verify.
+Synchronize all user documentation, guides, and template mirrors across the project with the latest hierarchical loop architecture, 24 skills, and Brookhart rubrics.
 
 ### Progress
-- [x] Designed and implemented `LOOP_IMPL` rubric in `agents/skills/impl/SKILL.md`
-- [x] Designed and implemented `LOOP_FIX` rubric in `agents/skills/fix/SKILL.md`
-- [x] Designed and implemented `LOOP_REFACTOR` rubric in `agents/skills/refactor/SKILL.md`
-- [x] Designed and implemented `LOOP_SPIKE` rubric in `agents/skills/spike/SKILL.md`
-- [x] Designed and implemented `LOOP_UAT` rubric in `agents/skills/uat/SKILL.md`
-- [x] Designed and implemented `LOOP_DEPLOY` rubric in `agents/skills/deploy/SKILL.md`
-- [x] Designed and implemented `LOOP_EPIC` rubric in `agents/skills/epic/SKILL.md`
-- [x] Designed and implemented `LOOP_STORY` rubric in `agents/skills/story/SKILL.md`
-- [x] Designed and implemented `LOOP_SPRINT` rubric in `agents/skills/sprint/SKILL.md`
-- [x] Designed and implemented `LOOP_BLOOP` rubric in `agents/skills/bloop/SKILL.md`
-- [x] Updated `agents/templates/ARTIFACTS.md` with Loop Effectiveness Rubrics table
-- [x] Updated `agents/skills/judge/SKILL.md` to reference loop rubrics during evaluations
-- [x] Mirrored all updated skills and templates to `bobp/templates/`
-- [x] Verified test suite via `bobp make test` (76 passed, 7 skipped)
+- [x] Updated `bobp/templates/README.md`
+- [x] Updated `agents/bob/HELP.md` and `bobp/templates/agents/bob/HELP.md`
+- [x] Updated `STARTUP.md` and `bobp/templates/STARTUP.md`
+- [x] Updated `agents/DOCUMENTATION_INDEX.md` and `bobp/templates/agents/DOCUMENTATION_INDEX.md`
+- [x] Updated root `README.md`
+- [x] Verified 1:1 diff parity between live docs and `bobp/templates/`
+- [x] Verified full test suite via `bobp make test` (76 passed, 7 skipped)
 - [x] Updated `agents/bob/state.md` working memory
 
 ### Blockers
@@ -61,7 +50,7 @@ Awaiting user direction or next task assignment.
 User
 
 ### Planned Work
-- [ ] Ready to evaluate loop executions using `*judge <loop>` or apply rubrics at review gates
+- [ ] Ready for dogfooding SDLC, rubric CLI tooling, or next sprint tasks
 
 ---
-*Last updated: 2026-10-14T21:48:00*
+*Last updated: 2026-10-14T21:57:00*

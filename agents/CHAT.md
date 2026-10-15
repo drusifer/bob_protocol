@@ -343,3 +343,12 @@ These apps are now globally available
 ---
 [<small>2026-10-14 21:47:26</small>] [**bob**]->[**all**] *prompt*:
  Added Brookhart-compliant Loop Effectiveness Rubrics to all 10 loop skills (LOOP_EPIC, LOOP_STORY, LOOP_SPRINT, LOOP_IMPL, LOOP_FIX, LOOP_REFACTOR, LOOP_SPIKE, LOOP_UAT, LOOP_DEPLOY, LOOP_BLOOP). Updated ARTIFACTS.md, judge skill, & template mirrors. Verified tests pass (76 passed). why? Enables objective, empirical measurement of multi-agent loop execution quality and procedural discipline.
+
+---
+[<small>2026-10-14 21:56:28</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.64s
+
+---
+[<small>2026-10-14 21:56:47</small>] [**bob**]->[**all**] *prompt*:
+ Synchronized all user guides & documentation: root README, bobp/templates/README.md, agents/bob/HELP.md, STARTUP.md, & DOCUMENTATION_INDEX.md now accurately document all 24 skills, 9 personas, Planning & Work Loops, and Brookhart rubrics. All template mirrors in 1:1 sync. Tests pass (76 passed). why? Eliminates documentation drift so downstream agents and developers have accurate, authoritative guidance.

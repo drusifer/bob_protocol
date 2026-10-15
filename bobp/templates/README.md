@@ -27,26 +27,48 @@ All coordination flows through `agents/CHAT.md` — a shared team log that every
 | **Smith** | HCI Expert | `*user` | Usability testing, HCI evaluation, sprint gates |
 | **Tank** | DevOps Engineer | `*devops` | IaC, CI/CD, deployment automation, environment management, systems reliability |
 
-## Skills
+## Skills & Workflow Loops
 
-| Skill | Triggers | Purpose |
-|-------|---------|---------|
-| `bob-protocol` | `*chat` | Core routing, state management, anti-loop protocol |
-| `bloop` | `*fix`, `*impl`, `*qa`, `*review`, `*plan sprint` | Multi-persona workflow chains (Bob Loops) |
-| `sprint` | `*plan sprint`, `*sprint retro`, `*sprint launch` | Full sprint cycle |
-| `chat` | — | Post structured messages to `agents/CHAT.md` |
-| `make` | `*make` | Run project Makefile targets |
-| `personas` | `@Persona` | Direct persona reference |
+Bob Protocol organizes autonomous workflows into hierarchical loops and supporting capabilities:
+
+### Planning Loops (Strategic Scoping & Specification)
+| Skill / Trigger | Focus / Deliverable | Literature |
+|-----------------|---------------------|------------|
+| `epic` / `*plan epic` | Problem framing, appetite budget, domain model (`DOMAIN.md`) | *Shape Up* (Singer) / *Inspired* (Cagan) |
+| `story` / `*plan story` | Vertical user story slicing, INVEST criteria, ADRs (`ARCH.md`), test strategy | *User Story Mapping* (Patton) / *Agile Estimating* (Cohn) |
+| `sprint` / `*plan sprint` | Sprint planning, SDLC verification, task board (`task.md`) with Work Loops | *The Scrum Guide* (Schwaber & Sutherland) |
+
+### Work Loops (Tactical Execution Chains)
+| Skill / Trigger | Execution Chain | Invariant / Literature |
+|-----------------|-----------------|------------------------|
+| `impl` / `*impl` | Neo TDD → Trin verify → Morpheus review | **Test-First**: failing test required before production code (*TDD* — Beck) |
+| `fix` / `*fix` | Neo diagnose → User confirm → Neo fix → Trin test → Morpheus review | **Reproduce First**: diagnose & confirm before edits (*Debugging* — Agans) |
+| `refactor` / `*refactor` | Morpheus plan → Trin baseline → Neo restructure → Trin parity → Morpheus | **Two Hats**: zero behavioral change, green before/after (*Refactoring* — Fowler) |
+| `spike` / `*spike` | Oracle survey → Neo prototype → Morpheus decision/ADR | **Disposable**: timeboxed, zero prod commits (*XP Installed* / *Shape Up*) |
+| `uat` / `*uat` | Trin acceptance matrix → Smith UX audit → Cypher sign-off | **Real-World Experience**: end-to-end evaluation (*Agile Testing* — Crispin) |
+| `deploy` / `*deploy` | Tank Makefile deploy → Trin live smoke test | **Pipeline as Code**: automated release via SDLC Makefile (*Continuous Delivery*) |
+| `bloop` / `*bloop` | Multi-persona work-loop conductor and catalog | Autonomous orchestration, state preservation, anti-loop guards |
+
+### Supporting Protocol & Tool Skills
+- **Session Lifecycle**: `init` (session startup & discovery), `prep-clear` (checkpointing state before `/clear`), `judge` (prompt & tool evaluation)
+- **Protocol & Operations**: `bob-protocol` (routing & state protocol), `bob-tools` (`bobp` CLI operations), `build-env` (`docs/SDLC.md` management), `chat` (team logging), `linter` (code analysis), `make` (captured target runner), `make-discover` (target self-discovery), `personas` (specialist switching), `render` (cloud deployment), `test-runner` (bounded tests), `via` (symbol lookup)
 
 ## Invoking Agents
 
-### Bloop commands — full workflow chains (recommended)
-```
-*fix <bug>               # Neo → Trin → Morpheus fix Bloop
-*impl <feature>          # Neo → Trin → Morpheus implementation Bloop
-*qa <thing>              # Trin → Morpheus QA Bloop
-*review <thing>          # Morpheus → Trin review Bloop
-*plan sprint             # Cypher → Smith → Morpheus → Mouse planning Bloop
+### Autonomous Workflow Loops (Recommended)
+```bash
+# Strategic Planning Loops
+*plan epic <name>        # Cypher framing → Smith gate → Morpheus domain → (Spikes)
+*plan story <slice>      # Cypher story → Smith gate 1 → Morpheus arch → Trin test → Smith gate 2
+*plan sprint             # Cypher → Smith gate → Morpheus → Smith gate → Mouse task board
+
+# Tactical Work Loops
+*impl <task>             # Neo TDD (red-green-refactor) → Trin verify → Morpheus review
+*fix <bug>               # Neo repro/diagnose → confirm → surgical fix → Trin regression sweep
+*refactor <target>       # Morpheus plan → Trin baseline → Neo restructure → Trin parity
+*spike <topic>           # Oracle survey → Neo prototype → Morpheus decision / ADR
+*uat <scope>             # Trin scenario matrix → Smith UX evaluation → Cypher sign-off
+*deploy <env>            # Tank Makefile deploy → Trin live smoke test
 ```
 
 ### `*chat` — auto-select a persona for a single task
@@ -87,14 +109,22 @@ agents/
 ├── [persona]/               # Per-persona state and working memory (e.g. neo/, trin/)
 │   ├── SKILL.md             # Persona definition + command interface
 │   └── state.md             # Context, current task, and resume plan (state)
-├── skills/
-│   ├── bob-protocol/        # Core protocol (*chat routing, state management)
-│   ├── bloop/               # Bob Loop commands (*fix, *impl, *qa, *review, *plan sprint)
-│   ├── sprint/              # Full sprint cycle
-│   ├── chat/                # bobp chat wrapper
-│   ├── make/                # bobp make wrapper — captures your project's own Makefile targets
-│   └── personas/            # Persona switching reference
-└── templates/               # Document and state file templates
+├── skills/                  # 24 shared skills discovered by harnesses
+│   ├── epic/                # Strategic epic planning (*plan epic)
+│   ├── story/               # User story slicing & ADRs (*plan story)
+│   ├── sprint/              # Sprint planning & cadence container (*plan sprint)
+│   ├── impl/                # Feature TDD work-loop (*impl)
+│   ├── fix/                 # Defect diagnosis & surgical fix work-loop (*fix)
+│   ├── refactor/            # Behavior-preserving refactoring work-loop (*refactor)
+│   ├── spike/               # Disposable research spike work-loop (*spike)
+│   ├── uat/                 # End-to-end acceptance & UX audit work-loop (*uat)
+│   ├── deploy/              # Automated delivery & live smoke work-loop (*deploy)
+│   ├── bloop/               # Work-loop conductor & catalog (*bloop)
+│   ├── init/                # Session initialization & resume (*init, *resume)
+│   ├── prep-clear/          # Context checkpointing before /clear (*prep-clear)
+│   ├── judge/               # Agent & prompt optimization loop (*judge)
+│   └── ...                  # Supporting tool skills (make, chat, via, build-env, etc.)
+└── templates/               # Document and state file templates (ARTIFACTS.md, rubrics)
 .claude/skills/              # Symlinks → persona and skill folders (generated by `bobp setup-agent-links`)
 ```
 
@@ -162,18 +192,22 @@ Running `bobp setup-agent-links` installs the generic via MCP config with `via i
 
 Each persona knows how to use `via` in the way that best fits their role (e.g. Trin uses `--stale` for coverage gap detection, Morpheus uses `-oD` for architecture diagrams).
 
-## State and Cold Start Recovery
+## State Management and Cold Start Recovery
 
-State files in `agents/[persona]/` are the only memory that survives context clears and session restarts.
+State files in `agents/[persona]/state.md` are your working memory — the only state that survives context clears and session restarts.
 
-Every persona follows the same protocol:
-- **ENTRY**: Read `CHAT.md` → load `state.md`
-- **EXIT**: Write `state.md` → post handoff to `CHAT.md` → then switch
+Every persona follows the strict State Management Protocol:
+- **ENTRY**: Read `agents/CHAT.md` (last 10–20 messages) → load `agents/[persona]/state.md`
+- **WORK**: Update working memory with progress, blockers, and findings
+- **EXIT (Mandatory Hard Gate)**:
+  1. Follow `agents/skills/prep-clear/SKILL.md` before `/clear` or persona switch — flush Context, Current Task progress %, and Next Steps cold-start resume plan to `state.md`.
+  2. Post handoff message: `bobp chat "<summary> @NextPersona *command" --persona <Name> --cmd handoff --to <next>`.
+  3. Never switch personas or clear context without completing both steps.
 
 If resuming after a context clear with no memory:
-1. Read the bottom of `agents/CHAT.md` to find the last handoff
+1. Run `*init` or read the bottom of `agents/CHAT.md` to find the last handoff
 2. Load that persona's `state.md`
-3. Resume from its `## Next Steps` section
+3. Resume immediately from its `## Next Steps` section
 
 See **[STARTUP.md](STARTUP.md)** for LLM startup instructions.
 See **[SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md)** for the full trigger/command reference.

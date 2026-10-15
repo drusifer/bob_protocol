@@ -143,22 +143,33 @@ Files prefixed with `.archive_` are historical and no longer active:
 - Update `*help` when adding commands
 - Update tool docs when changing MCPs
 - Archive outdated docs with `.archive_` prefix
-- Keep HELP.md, BOB_SYSTEM_PROTOCOL.md, and START_HERE.md in sync
+- Keep `agents/bob/HELP.md`, `STARTUP.md`, and `SHORTHAND_GUIDE.md` in sync with active skills and templates
 
 ---
 
 ## Quick Command Reference
 
 ```bash
-*help                          # Show complete help
-*chat                          # Activate Bob System
-*prompt <desc>                 # Create agent (Bob)
-*swe impl <task>              # Implement (Neo)
-*qa test <scope>              # Test (Trin)
-*ora ask <question>           # Query knowledge (Oracle)
-*lead plan <epic>             # Plan (Morpheus)
-*pm doc <type>                # Create PRD (Cypher)
-*sm status                    # Sprint status (Mouse)
+*help                          # Show complete help (Bob)
+*init                          # Initialize session & ready team (Bob)
+*prep-clear                    # Checkpoint state before /clear (Active)
+*plan epic <name>              # Strategic epic discovery & shaping
+*plan story <slice>            # User story slicing & ADRs
+*plan sprint                   # Sprint planning container & task board
+*impl <task>                   # Feature TDD work-loop (Neo → Trin → Morpheus)
+*fix <defect>                  # Defect diagnosis & surgical fix work-loop
+*refactor <target>             # Behavior-preserving refactoring work-loop
+*spike <topic>                 # Timeboxed disposable research spike
+*uat <scope>                   # End-to-end acceptance & UX audit
+*deploy <env>                  # Pipeline deployment & smoke test
+*swe impl <task>               # Direct implementation (Neo)
+*qa test <scope>               # Direct testing (Trin)
+*lead arch <topic>             # Direct architecture guidance (Morpheus)
+*ora ask <question>            # Query knowledge base (Oracle)
+*sm status                     # Sprint progress & blockers (Mouse)
+*pm story <request>            # User story requirements (Cypher)
+*user review <scope>           # Usability & HCI review (Smith)
+*devops deploy <env>           # Infrastructure & deployment (Tank)
 ```
 
 ---

@@ -39,6 +39,18 @@ This installs the `bobp` command and the `bobp` Python package (including
   `bobp/templates/agents/`, which is the generic, reusable source that
   ships in the package.
 
+## Bob Protocol Overview
+
+Bob Protocol coordinates autonomous, multi-agent software engineering through specialized personas and structured SDLC loops:
+
+- **The Team (9 Personas)**: **Neo** (Senior SWE), **Morpheus** (Tech Lead), **Trin** (QA Guardian), **Oracle** (Knowledge Officer), **Mouse** (Scrum Master), **Cypher** (Product Manager), **Bob** (Prompt Engineer), **Smith** (Expert User & UX Advocate), **Tank** (DevOps Engineer).
+- **Planning Loops (Strategic Scoping)**: `*plan epic` (*Shape Up* / *Inspired*), `*plan story` (*User Story Mapping* / *Agile Estimating*), `*plan sprint` (*The Scrum Guide*).
+- **Work Loops (Tactical Execution)**: `*impl` (TDD — *Beck*), `*fix` (Surgical diagnosis & fix — *Agans*), `*refactor` (Two-Hats behavioral parity — *Fowler*), `*spike` (Disposable exploration — *XP Installed*), `*uat` (User acceptance testing — *Crispin & Gregory*), `*deploy` (Continuous delivery & smoke test — *Humble & Farley*).
+- **Loop Conductor (`*bloop`)**: Autonomous multi-persona execution engine with strict anti-loop guards (max 2 failures $\rightarrow$ Oracle $\rightarrow$ user escalate) and context budgeting (`*prep-clear`).
+- **Review Rubrics**: 10 Brookhart-compliant quality rubrics measuring deliverable quality and loop effectiveness.
+
+See **[STARTUP.md](STARTUP.md)** for LLM session startup instructions and **[SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md)** for the complete trigger reference.
+
 ## Development
 
 ```bash

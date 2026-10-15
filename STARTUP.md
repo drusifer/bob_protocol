@@ -31,13 +31,21 @@ If `CHAT.md` has no clear handoff, ask the user: *"I'm resuming — what should 
 
 ## Quick Reference
 
-### Bloop Commands (full workflow chains)
+### Planning Loops (Strategic Scoping & Specification)
 ```
-*fix <bug>           → Neo fix → Trin UAT → Morpheus review
-*impl <feature>      → Neo impl → Trin UAT → Morpheus review
-*qa <thing>          → Trin test → Morpheus review
-*review <thing>      → Morpheus review → Trin (if needed)
-*plan sprint         → Cypher → Smith gate → Morpheus → Smith gate → Mouse
+*plan epic <name>    → Cypher shape → Smith gate → Morpheus domain → (Spikes)
+*plan story <slice>  → Cypher story → Smith gate 1 → Morpheus arch → Trin test → Smith gate 2
+*plan sprint         → Cypher → Smith gate → Morpheus → Smith gate → Mouse task board
+```
+
+### Work Loops (Tactical Execution Chains)
+```
+*impl <task>         → Neo TDD (red-green-refactor) → Trin verify → Morpheus review
+*fix <bug>           → Neo repro/diagnose → confirm → surgical fix → Trin regression → Morpheus review
+*refactor <target>   → Morpheus plan → Trin baseline → Neo restructure → Trin parity → Morpheus review
+*spike <topic>       → Oracle prior art → Neo prototype → Morpheus decision/ADR
+*uat <scope>         → Trin scenario matrix → Smith UX evaluation → Cypher business sign-off
+*deploy <env>        → Tank Makefile deploy → Trin live smoke test
 ```
 
 ### `*chat` Routing

@@ -7,14 +7,14 @@ The following core operating rules apply to all Bob Protocol agents regardless o
 
 ## State Management Protocol (CRITICAL)
 
-See instructions here -> `agents/skills/bob-protocol/SKILL.md`
+See instructions here -> `agents/skills/bob-protocol/SKILL.md` & `agents/skills/init/SKILL.md`
 
 All personas follow a strict, gated lifecycle:
 
 **ENTRY:**
 1. Read `agents/CHAT.md` — understand team context from the last 10–20 messages.
 2. Load `agents/[persona]/state.md` — your accumulated knowledge, active work, and cold-start resume plan.
-3. Rapid Startup: Do NOT execute full test suites (`bobp make test`) on startup unless validating recent code modifications. Post your persona initialization to `agents/CHAT.md`.
+3. Rapid Startup: Follow `agents/skills/init/SKILL.md`. Do NOT execute full test suites (`bobp make test`) on startup unless validating recent code modifications. Post your persona initialization to `agents/CHAT.md`.
 
 **WORK:**
 4. Execute assigned tasks in small, bounded increments (one focused action at a time).

@@ -2,7 +2,7 @@
 name: bob-protocol
 description: Multi-persona coordination protocol. Enables AI to switch between specialized personas (Neo, Morpheus, Trin, Oracle, Mouse, Cypher, Bob, Smith, Tank) based on task needs. Use for *chat workflow, state management, and cross-agent communication.
 triggers: ["*chat"]
-requires: ["chat", "bloop", "sprint", "make"]
+requires: ["chat", "bloop", "sprint", "make", "init"]
 ---
 
 Orchestrates multi-persona AI coordination through a shared chat log using the `*chat` trigger.
@@ -109,6 +109,9 @@ Each persona has exactly one state file — `agents/[persona]/state.md` — with
 For a **large, growing reference doc** (not `state.md` itself — those stay small) like `agents/oracle/lessons.md`, `agents/oracle/memory.md`, or `docs/ARCH.md`, don't re-read the whole file on every entry once it accumulates many dated entries. If `via` is enabled, locate the section you need first (`via -mg '*SectionName*' -tH` returns `file:start-end`), then read only that range (`Read` with `offset`/`limit`) — see the `via` skill's "Section-Scoped Reads" note. Do not rely on `via`'s `-oR -A N` alone for this: `-A N` is a blind line-count window, not section-aware, and will run past the section boundary into the next one if `N` is too large.
 
 ### ENTRY (When Activating / Rapid Startup)
+
+See instructions here -> `agents/skills/init/SKILL.md`
+
 1. Read `agents/CHAT.md` — last 10-20 messages
 2. Load `agents/[persona]/state.md`
 3. **Rapid Startup Option (CRITICAL)**: Do NOT run a full test suite baseline check (`bobp make test`) or other heavy execution cycles on initialization unless explicitly requested or implementing/testing bug fixes. Reconcile state quickly and proceed.
@@ -128,6 +131,8 @@ For a **large, growing reference doc** (not `state.md` itself — those stay sma
 ---
 
 ## Cold Start Recovery
+
+See instructions here -> `agents/skills/init/SKILL.md`
 
 When resuming after a context clear or new session with no memory:
 

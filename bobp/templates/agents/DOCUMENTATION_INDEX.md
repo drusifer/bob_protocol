@@ -12,9 +12,10 @@ Type `*help` for complete command reference with examples.
 
 ### Getting Started
 - **[STARTUP.md](../STARTUP.md)** - LLM startup instructions
+- **[skills/init/SKILL.md](skills/init/SKILL.md)** - Canonical session initialization & resume skill
 - **[README.md](../README.md)** - Project overview and team reference
 - **[SHORTHAND_GUIDE.md](../SHORTHAND_GUIDE.md)** - Complete trigger/command reference
-- **[HELP.md](bob/HELP.md)** - Quick reference for all 8 personas and commands
+- **[HELP.md](bob/HELP.md)** - Quick reference for all 9 personas and commands
 
 ### Tools
 - **`bobp` CLI** - Agent tooling subcommands (`bobp chat`, `bobp make`, `bobp setup-agent-links`, …); run `bobp --help` for the full list

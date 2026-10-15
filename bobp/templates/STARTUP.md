@@ -2,6 +2,8 @@ TL;DR: On startup, read CHAT.md for context, load your persona's state.md, then 
 
 # BobProtocol: LLM Startup Instructions
 
+See instructions here -> `agents/skills/init/SKILL.md`
+
 ## On Startup (Fresh Session)
 
 1. Read `agents/CHAT.md` — last 10-20 messages for current team context

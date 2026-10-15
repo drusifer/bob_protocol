@@ -2,6 +2,7 @@
 
 ## Context
 ### Recent Decisions
+- Formalized the session initialization and resume protocol into a dedicated canonical skill: `agents/skills/init/SKILL.md`.
 - Grounded all Bob Protocol artifact templates in Brookhart assessment framework and IEEE/SWE design review standards.
 - Enshrined 5 rubric quality standards in `agents/templates/ARTIFACTS.md`: Criterion Independence, Observable Descriptors with Tells, Formative Actionability, Parallel Progression, and 4-6 Criteria bound.
 - Refactored `agents/AGENTS.md` into a lean, canonical, DRY top-level operating guide that references authoritative skills rather than duplicating procedural prose.
@@ -11,8 +12,10 @@
 - Mirrored all refactored instructions and templates to `bobp/templates/`.
 
 ### Key Findings
-- Eliminated broken step numbering (missing step 6, jumps from 2 to 5) and typos across instruction files.
-- Replaced bare `make` commands in `STARTUP.md` with `bobp make`.
+- Created `agents/skills/init/SKILL.md` with explicit triggers (`*init`, `/init`, `/bob-protocol init`, `*startup`, `*resume`), lifecycle mermaid diagram, step-by-step procedures for Fresh Session and Cold Start Recovery, and quick reference card.
+- Synchronized discovery links with `bobp setup-agent-links` (created `.claude/skills/init -> agents/skills/init`).
+- Mirrored `init` skill to `bobp/templates/agents/skills/init/SKILL.md.txt`.
+- Updated `STARTUP.md`, `AGENTS.md`, `bob-protocol/SKILL.md`, `personas/SKILL.md`, `SHORTHAND_GUIDE.md`, and `DOCUMENTATION_INDEX.md` with redirect references to the new `init` skill.
 - Full test suite passes 100% (76 passed, 7 skipped).
 
 ### Important Notes
@@ -21,18 +24,24 @@
 ## Current Task
 **Status:** Completed
 **Assigned to:** Bob
-**Started:** 2026-10-14T20:37:00
-**Completed:** 2026-10-14T20:50:00
+**Started:** 2026-10-14T20:56:00
+**Completed:** 2026-10-14T21:06:50
 
 ### Task Description
-Prepare repository for a clean atomic commit and push: modernizing artifact rubrics, implementing DRY redirect references, updating persona skills with common skill tweaks, adding Smith/Tank to manifests, and syncing package templates.
+Formalize the session initialization procedure as a dedicated `init` skill in `agents/skills/init/SKILL.md`, update all related documentation and templates, verify link discovery, and push to remote repository.
 
 ### Progress
-- [x] Standardized redirect refs (`See instructions here -> ...`) in `agents/AGENTS.md` and `bobp/templates/agents/AGENTS.md`
-- [x] Standardized redirect refs and persona-specific tweaks across all 9 persona `SKILL.md` files and their template mirrors
-- [x] Documented the redirect reference and common skill inheritance pattern in `agents/bob/SKILL.md`
-- [x] Added Brookhart rubrics and updated 7 artifact templates
-- [x] Verified full test suite (`bobp make test`: 76 passed, 7 skipped)
+- [x] Created `agents/skills/init/SKILL.md` with triggers, lifecycle flowchart, and rules
+- [x] Mirrored to `bobp/templates/agents/skills/init/SKILL.md.txt`
+- [x] Verified link discovery with `bobp setup-agent-links` (`.claude/skills/init` created)
+- [x] Updated `STARTUP.md` and `bobp/templates/STARTUP.md`
+- [x] Updated `agents/AGENTS.md` and `bobp/templates/agents/AGENTS.md`
+- [x] Updated `agents/skills/bob-protocol/SKILL.md` and `bobp/templates/agents/skills/bob-protocol/SKILL.md.txt`
+- [x] Updated `agents/skills/personas/SKILL.md` and `bobp/templates/agents/skills/personas/SKILL.md.txt`
+- [x] Updated `agents/DOCUMENTATION_INDEX.md` and `bobp/templates/agents/DOCUMENTATION_INDEX.md`
+- [x] Updated `SHORTHAND_GUIDE.md` and `bobp/templates/SHORTHAND_GUIDE.md`
+- [x] Updated `agents/bob/SKILL.md` and `bobp/templates/agents/bob/SKILL.md.txt`
+- [x] Ran test suite via `bobp make test` (76 passed, 7 skipped)
 - [x] Staged, committed, and pushed changes to `main`
 
 ### Blockers
@@ -49,7 +58,7 @@ Awaiting user direction or next task assignment.
 User
 
 ### Planned Work
-- [ ] Ready for sprint execution or downstream project templating
+- [ ] Ready for sprint execution, persona invocation, or workflow loops
 
 ---
-*Last updated: 2026-10-14T20:50:00*
+*Last updated: 2026-10-14T21:03:00*

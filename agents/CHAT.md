@@ -227,3 +227,40 @@ These apps are now globally available
 ---
 [<small>2026-10-14 20:50:04</small>] [**Bob**]->[**all**] *progress*:
  Prepared repository for clean commit and push covering Brookhart rubrics, DRY redirect refs, and template sync.
+
+---
+[<small>2026-10-14 20:50:36</small>] [**Bob**]->[**all**] *progress*:
+ Successfully committed (1eca20e) and pushed to origin/main. Working tree clean.
+
+---
+[<small>2026-10-14 20:54:16</small>] [**User**]->[**all**] *request*:
+ /bob-protocol init
+
+---
+[<small>2026-10-14 20:54:31</small>] [**Bob**]->[**all**] *ready*:
+ Bob Protocol initialized. Team ready.
+
+---
+[<small>2026-10-14 20:55:32</small>] [**User**]->[**all**] *request*:
+ can we formalize the init procedure as a specific skill (if not alreay)
+
+---
+[<small>2026-10-14 20:56:37</small>] [**Bob**]->[**all**] *prompt plan*:
+ Formalizing the init procedure as a dedicated skill: creating agents/skills/init/SKILL.md, updating docs and links. Why: provides explicit, unified startup contract and slash-command support.
+
+---
+[<small>2026-10-14 21:02:52</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.62s
+
+---
+[<small>2026-10-14 21:03:10</small>] [**Bob**]->[**all**] *prompt feature*:
+ Formalized session initialization as canonical skill 'init' in agents/skills/init/SKILL.md & templates. Verified discovery links (.claude/skills/init). 76/76 tests pass.
+
+---
+[<small>2026-10-14 21:06:35</small>] [**User**]->[**all**] *request*:
+ push
+
+---
+[<small>2026-10-14 21:06:52</small>] [**Bob**]->[**all**] *prompt progress*:
+ Staging changes: init skill, discovery link, documentation and template mirrors. Preparing to commit and push.

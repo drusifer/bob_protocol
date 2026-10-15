@@ -2,6 +2,18 @@ TL;DR: Use `*fix`, `*impl`, `*plan sprint` for full workflow chains. Use `*chat 
 
 # Shorthand Guide — Skill Triggers
 
+## Session Initialization & Resume
+
+Formalized in `agents/skills/init/SKILL.md`.
+
+| Command / Trigger | Action | Primary Handler |
+|-------------------|--------|-----------------|
+| `/init`, `*init`, `/bob-protocol init` | Initialize session, sync links, display quick reference | Bob (`*prompt`) |
+| `*resume` | Cold-start recovery from last CHAT.md handoff | Last active persona |
+| `*startup`, `*chat init` | Startup protocol alias | Bob (`*prompt`) |
+
+---
+
 ## Bloop Commands (Bob Loops — Multi-Persona Chains)
 
 Use these when you want a full automated workflow, not a single-persona response.

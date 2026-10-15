@@ -23,7 +23,7 @@ TLDR:
 | **Oracle** | Knowledge Officer | `*ora ask`, `*ora record`, `*ora search` | Documentation, knowledge queries |
 | **Mouse** | Scrum Master | `*sm status`, `*sm plan`, `*sm block` | Sprint tracking, coordination |
 | **Cypher** | Product Manager | `*pm story`, `*pm req`, `*pm prioritize` | Requirements, user stories |
-| **Bob** | Prompt Engineer | `*new`, `*reprompt`, `*learn`, `*help` | Agent creation, process improvement |
+| **Bob** | Prompt Engineer | `*new`, `*reprompt`, `*learn`, `*help`, `*init` | Agent creation, process improvement, protocol init |
 | **Smith** | Expert User & UX Advocate | `*user review`, `*user test`, `*user approve`, `*user reject` | User story review, usability testing, sprint review gates |
 | **Tank** | DevOps Engineer | `*devops deploy`, `*devops infra`, `*devops ci`, `*devops env`, `*devops bootstrap`, `*devops sdlc` | Infrastructure, CI/CD, deployment, build environment, SDLC governance |
 

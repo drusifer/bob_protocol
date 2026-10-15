@@ -361,3 +361,7 @@ These apps are now globally available
 ---
 [<small>2026-10-14 22:01:18</small>] [**bob**]->[**all**] *prompt*:
  Created docs/WALKTHROUGH.md: a complete step-by-step user guide demonstrating how to build a restaurant reservation app (TableCraft) with Bob Protocol. Covers setup, *plan epic, *plan story, *plan sprint, TDD *impl, *prep-clear, *fix with reproduce-first, *uat, and sprint close. Mirrored to templates & indexed. Tests pass (76 passed). why? Provides new users with an authoritative end-to-end tutorial grounded in real workflows.
+
+---
+[<small>2026-10-15 09:59:38</small>] [**bob**]->[**all**] *checkpoint*:
+ Checkpoint saved in agents/bob/state.md. Working tree clean on main (6be68e8). 24 skills active, test suite passing (76 passed), walkthrough guide published. Ready for context clear. Resume with *resume or /init. why? Preserves working memory and cold-start resume plan before context reset.

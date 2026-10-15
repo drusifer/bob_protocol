@@ -13,6 +13,7 @@ Type `*help` for complete command reference with examples.
 ### Getting Started
 - **[STARTUP.md](../STARTUP.md)** - LLM startup instructions
 - **[skills/init/SKILL.md](skills/init/SKILL.md)** - Canonical session initialization & resume skill
+- **[skills/prep-clear/SKILL.md](skills/prep-clear/SKILL.md)** - Pre-clear checkpointing & state preservation skill
 - **[README.md](../README.md)** - Project overview and team reference
 - **[SHORTHAND_GUIDE.md](../SHORTHAND_GUIDE.md)** - Complete trigger/command reference
 - **[HELP.md](bob/HELP.md)** - Quick reference for all 9 personas and commands
@@ -37,6 +38,42 @@ Type `*help` for complete command reference with examples.
 | Mouse | Scrum Master | [mouse/SKILL.md](mouse/SKILL.md) | `*sm` |
 | Smith | Expert User & UX Advocate | [smith/SKILL.md](smith/SKILL.md) | `*user` |
 | Tank | DevOps Engineer | [tank/SKILL.md](tank/SKILL.md) | `*devops` |
+
+---
+
+## Skills & Workflow Loops (`agents/skills/`)
+
+Bob Protocol organizes autonomous workflows into hierarchical loops and supporting capabilities:
+
+### Planning Loops (Strategic Scoping & Specification)
+- **[skills/epic/SKILL.md](skills/epic/SKILL.md)** - Strategic Epic discovery, appetite framing, domain modeling, and de-risking spikes (*Shape Up* / *Inspired*)
+- **[skills/story/SKILL.md](skills/story/SKILL.md)** - User story vertical slicing, INVEST acceptance criteria, ADRs, test strategies (*User Story Mapping* / *Agile Estimating*)
+- **[skills/sprint/SKILL.md](skills/sprint/SKILL.md)** - Sprint planning, phase execution, review gates, retrospective, and launch (*Scrum Guide*)
+
+### Work Loops (Tactical Execution & Verification)
+- **[skills/bloop/SKILL.md](skills/bloop/SKILL.md)** - Conductor for multi-persona autonomous work loops
+- **[skills/impl/SKILL.md](skills/impl/SKILL.md)** - TDD implementation loop: test-first, red-green-refactor, acceptance verification (*TDD: By Example*)
+- **[skills/fix/SKILL.md](skills/fix/SKILL.md)** - Defect diagnosis & surgical fix: reproduce first, confirm diagnosis, surgical repair, regression sweep (*Debugging*)
+- **[skills/refactor/SKILL.md](skills/refactor/SKILL.md)** - Behavior-preserving refactoring: Two-Hats rule, green baseline, zero behavioral drift (*Refactoring*)
+- **[skills/spike/SKILL.md](skills/spike/SKILL.md)** - Disposable timeboxed spike: rapid prototyping, zero production code, findings/ADR output (*XP Installed*)
+- **[skills/uat/SKILL.md](skills/uat/SKILL.md)** - User acceptance testing: end-to-end scenario verification, UX heuristic evaluation (*Agile Testing*)
+- **[skills/deploy/SKILL.md](skills/deploy/SKILL.md)** - Delivery & release loop: pipeline-as-code via Makefile, live smoke test verification (*Continuous Delivery*)
+
+### Session Lifecycle & Protocol Skills
+- **[skills/init/SKILL.md](skills/init/SKILL.md)** - Canonical session initialization, link validation, and cold-start resume
+- **[skills/prep-clear/SKILL.md](skills/prep-clear/SKILL.md)** - Pre-clear checkpointing, state preservation, and cold-start resume plan
+- **[skills/judge/SKILL.md](skills/judge/SKILL.md)** - Prompt & skill evaluation, bug/anti-pattern cataloging, and instruction optimization
+- **[skills/bob-protocol/SKILL.md](skills/bob-protocol/SKILL.md)** - Multi-persona coordination protocol, state management, and routing
+- **[skills/bob-tools/SKILL.md](skills/bob-tools/SKILL.md)** - `bobp` CLI operations, output capture, and link management
+- **[skills/build-env/SKILL.md](skills/build-env/SKILL.md)** - Language build environment setup, manifests, and `docs/SDLC.md` management
+- **[skills/chat/SKILL.md](skills/chat/SKILL.md)** - Structured team communication and handoffs in `CHAT.md`
+- **[skills/linter/SKILL.md](skills/linter/SKILL.md)** - Code quality, linting, type checks, and static analysis
+- **[skills/make/SKILL.md](skills/make/SKILL.md)** - Project Makefile execution with build output capture
+- **[skills/make-discover/SKILL.md](skills/make-discover/SKILL.md)** - Makefile target self-discovery guide
+- **[skills/personas/SKILL.md](skills/personas/SKILL.md)** - Persona switching and direct specialist delegation
+- **[skills/render/SKILL.md](skills/render/SKILL.md)** - Render cloud infrastructure and deployment management
+- **[skills/test-runner/SKILL.md](skills/test-runner/SKILL.md)** - Bounded test execution and quiet test runners
+- **[skills/via/SKILL.md](skills/via/SKILL.md)** - Strict symbol lookup and relationship queries
 
 ---
 

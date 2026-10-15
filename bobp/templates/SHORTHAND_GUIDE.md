@@ -2,29 +2,43 @@ TL;DR: Use `*fix`, `*impl`, `*plan sprint` for full workflow chains. Use `*chat 
 
 # Shorthand Guide — Skill Triggers
 
-## Session Initialization & Resume
+## Session Lifecycle (Init, Checkpoint & Resume)
 
-Formalized in `agents/skills/init/SKILL.md`.
+Formalized in `agents/skills/init/SKILL.md` & `agents/skills/prep-clear/SKILL.md`.
 
 | Command / Trigger | Action | Primary Handler |
 |-------------------|--------|-----------------|
 | `/init`, `*init`, `/bob-protocol init` | Initialize session, sync links, display quick reference | Bob (`*prompt`) |
 | `*resume` | Cold-start recovery from last CHAT.md handoff | Last active persona |
+| `*prep-clear`, `/prep-clear`, `*checkpoint` | Reconcile state, write resume plan, prepare for `/clear` | Active persona |
 | `*startup`, `*chat init` | Startup protocol alias | Bob (`*prompt`) |
 
 ---
 
-## Bloop Commands (Bob Loops — Multi-Persona Chains)
+## Bloop Commands (Bob Loops — Hierarchical SDLC Cycles)
 
-Use these when you want a full automated workflow, not a single-persona response.
+Multi-persona automated workflow loops decomposed into two hierarchical tiers: **Planning Loops** (strategic scoping and specification) and **Work Loops** (tactical execution and verification). Grounded in canonical software engineering literature (Beck, Agans, Fowler, Singer, Patton, Schwaber & Sutherland, Humble & Farley).
 
-| Command | Chain | Description |
-|---------|-------|-------------|
-| `*fix <bug>` | Neo → Trin → Morpheus | Investigate, fix, test, and review |
-| `*impl <feature>` | Neo → Trin → Morpheus | TDD implementation + UAT + code review |
-| `*qa <thing>` | Trin → Morpheus | Test and review without reimplementation |
-| `*review <thing>` | Morpheus → Trin | Architecture and quality review |
-| `*plan sprint` | Cypher → Smith → Morpheus → Mouse | Full sprint planning with review gates |
+### Planning Loops (Strategic Scoping & Specification)
+
+| Command / Loop | Skill | Sequence | Primary Deliverables / Gates | Literature |
+|----------------|-------|----------|------------------------------|------------|
+| `*plan epic <name>` | `skills/epic` | Cypher → Smith → Morpheus → (Spikes) | Problem framing, appetite, `DOMAIN.md`, de-risking spikes | *Shape Up* (Singer) / *Inspired* (Cagan) |
+| `*plan story <slice>` | `skills/story` | Cypher → [Smith Gate 1] → Morpheus → Trin → [Smith Gate 2] | Vertical slice, INVEST criteria, `ARCH.md` ADRs, `TEST_STRATEGY.md` | *User Story Mapping* (Patton) / *Agile Estimating* (Cohn) |
+| `*plan sprint [tier1\|tier2]` | `skills/sprint` | Cypher → Smith → Morpheus → Smith → Mouse → Morpheus | Sprint goal, scoped stories, prioritized `task.md` with Work Loops | *The Scrum Guide* (Schwaber & Sutherland) |
+
+### Work Loops (Tactical Execution & Verification)
+
+| Command / Loop | Skill | Sequence | Core Invariant | Literature |
+|----------------|-------|----------|----------------|------------|
+| `*impl <task>` | `skills/impl` | Neo → Trin → Morpheus | Test-first (no code without failing test); acceptance verified | *TDD: By Example* (Beck) |
+| `*fix <defect>` | `skills/fix` | Neo → Trin → Morpheus | Reproduce & diagnose first; confirm diagnosis before editing; zero regressions | *Debugging* (Agans) |
+| `*refactor <target>` | `skills/refactor` | Neo → Trin → Morpheus | Two-Hats rule; zero behavioral change; green baseline before and after | *Refactoring* (Fowler) |
+| `*spike <unknown>` | `skills/spike` | Neo / Morpheus → Oracle | Disposable exploration; zero production code; outputs finding/decision | *XP Installed* (Jeffries) / *Shape Up* |
+| `*uat <phase>` | `skills/uat` | Trin → Smith → (Neo if defect) | End-to-end acceptance + UX heuristic evaluation; defect halts to `*fix` | *Agile Testing* (Crispin & Gregory) |
+| `*deploy <target>` | `skills/deploy` | Tank → Trin smoke | Automated release via Makefile; live smoke test before pass | *Continuous Delivery* (Humble & Farley) |
+| `*qa <scope>` | `skills/trin` | Trin → Morpheus | Test suite execution & codebase health verification | *Working Effectively with Legacy Code* |
+| `*review <target>` | `skills/morpheus` | Morpheus → Trin | Architectural alignment, maintainability, and quality review | *Clean Architecture* (Martin) |
 
 ---
 
@@ -158,19 +172,21 @@ Different AI harnesses use different prefixes for direct persona invocation (e.g
 ## Sprint Cycle Quick Reference
 
 ```
-*plan sprint
+*plan sprint (or *plan epic / *plan story)
   → Cypher *pm plan sprint
   → [Smith *user approve]         ← gate
   → Morpheus *lead arch sprint
   → [Smith *user approve]         ← gate
-  → Mouse *sm plan sprint
+  → Mouse *sm plan sprint (task board with typed Work Loops)
   → Morpheus *lead review sprint plan
 
-Per phase (*impl <phase N>):
-  → Neo *swe impl <phase>
-  → Trin *qa uat <phase>
-  → Morpheus *lead review <phase>
-  → (fix Bloop if needed)
+Per task / phase (execute typed Work Loops):
+  → *impl <task>          (Neo TDD → Trin verify → Morpheus review)
+  → *fix <defect>         (Neo diagnose/fix → Trin test → Morpheus review)
+  → *refactor <target>    (Neo restructure → Trin parity → Morpheus review)
+  → *spike <unknown>      (Neo/Morpheus prototype → Oracle record)
+  → *uat <phase>          (Trin acceptance → Smith UX evaluation)
+  → *deploy <target>      (Tank automated deploy → Trin smoke)
 
 Sprint close:
   → Oracle *ora groom

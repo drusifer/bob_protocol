@@ -2,7 +2,7 @@
 name: init
 description: Initialize or resume a BobProtocol session. Validates agent discovery links, reads team chat context and project capabilities, handles cold-start recovery, posts persona status, and displays the command quick reference.
 triggers: ["*init", "/init", "/bob-protocol init", "*startup", "*resume", "*chat init"]
-requires: ["bob-protocol", "chat", "bob-tools"]
+requires: ["bob-protocol", "chat", "bob-tools", "prep-clear"]
 ---
 
 Formalizes the initialization and session resume procedure across all supported AI harnesses.
@@ -10,7 +10,7 @@ Formalizes the initialization and session resume procedure across all supported 
 TLDR:
     Invoked via `*init`, `/init`, `/bob-protocol init`, `*startup`, or `*resume`.
     Fresh session: verify agent links (`bobp setup-agent-links`), read CHAT.md & PROJECT.md, post ready status as Bob, display quick reference, wait for user direction.
-    Cold start recovery: locate last active handoff in CHAT.md, load persona state.md, post resume message, resume from `## Next Steps`.
+    Cold start recovery: locate last active handoff in CHAT.md (prepared via `prep-clear`), load persona state.md, post resume message, resume from `## Next Steps`.
     Hard rule: Rapid Startup — NEVER run full test suites on init. Never auto-execute tasks without user direction.
 
 # Bob Protocol — Initialization & Startup Skill (`init`)
@@ -91,8 +91,8 @@ When starting a new session or after a sprint/task has completed:
 5. **HALT and WAIT**: Do NOT auto-execute tasks. Wait for explicit user instruction.
 
 #### Mode B — Cold Start Recovery (Resuming Mid-Task)
-When resuming after context clear, crash, or session restart mid-task:
-1. **Locate Last Handoff**: Identify the last active persona and pending command from `agents/CHAT.md`.
+When resuming after context clear (prepared via `agents/skills/prep-clear/SKILL.md`), crash, or session restart mid-task:
+1. **Locate Last Handoff / Checkpoint**: Identify the last active persona and pending command or checkpoint from `agents/CHAT.md`.
 2. **Load Working Memory**: Read `agents/<persona>/state.md`.
 3. **Announce Resume**:
    ```bash

@@ -268,3 +268,69 @@ These apps are now globally available
 ---
 [<small>2026-10-14 21:07:26</small>] [**Bob**]->[**all**] *prompt ready*:
  Pushed commit 3799168 to origin/main. Working tree clean. Init skill formalization complete.
+
+---
+[<small>2026-10-14 21:07:54</small>] [**User**]->[**all**] *request*:
+ add a skill for prep-clear
+
+---
+[<small>2026-10-14 21:08:20</small>] [**Bob**]->[**all**] *prompt plan*:
+ Creating canonical prep-clear skill: agents/skills/prep-clear/SKILL.md & templates. Why: guarantees state reconciliation and cold-start plan are flushed before /clear or /compact.
+
+---
+[<small>2026-10-14 21:11:41</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.61s
+
+---
+[<small>2026-10-14 21:12:01</small>] [**Bob**]->[**all**] *prompt feature*:
+ Created prep-clear skill in agents/skills/prep-clear/SKILL.md & templates. Verified discovery link (.claude/skills/prep-clear). 76/76 tests pass.
+
+---
+[<small>2026-10-14 21:13:22</small>] [**User**]->[**all**] *request*:
+ lets review the loops for consistancy - start by listing out the differnt loop skills we have
+
+---
+[<small>2026-10-14 21:17:44</small>] [**User**]->[**all**] *request*:
+ let's add some composition to the loop structure. generally the loops should cover the iterative sdlc sequences in a heirachy: like Epic -> Story -> Sprint with each layer deferring to the loops underneath. does this make sense to you so far?
+
+---
+[<small>2026-10-14 21:21:32</small>] [**User**]->[**all**] *request*:
+ yes that's right but we can rethink the smallest loops.   I like the idea of building a sprint as a collection of impl loops, bugfix loops, tech dept loops, uat loops.  etc... does that map to well understood sdlc cycles?
+
+---
+[<small>2026-10-14 21:23:57</small>] [**User**]->[**all**] *request*:
+ this is cool  - let's call the inner loops that are doing actual tasks the work-loops and the epic/story/sprint cycles as planning loops
+
+---
+[<small>2026-10-14 21:25:00</small>] [**User**]->[**all**] *request*:
+ shoud they be 1st class skills?
+
+---
+[<small>2026-10-14 21:28:02</small>] [**User**]->[**all**] *request*:
+ is there a public source or book for loops like this?
+
+---
+[<small>2026-10-14 21:30:21</small>] [**User**]->[**all**] *request*:
+ this is good use the literature to redefine our set of loop skills, building up from low level work loops
+
+---
+[<small>2026-10-14 21:30:38</small>] [**Bob**]->[**all**] *prompt plan*:
+ Formulating literature-grounded loop taxonomy: 6 first-class Work Loops (impl, fix, refactor, spike, uat, deploy) and 3 Planning Loops (epic, story, sprint). Reviewing specification.
+
+---
+[<small>2026-10-14 21:32:48</small>] [**User**]->[**all**] *request*:
+ yes
+
+---
+[<small>2026-10-14 21:32:53</small>] [**Bob**]->[**all**] *prompt plan*:
+ Implementing first-class Work Loops: creating skills for impl, fix, refactor, spike, uat, deploy, grounded in SE literature. Why: provides modular, token-lean execution units for sprints.
+
+---
+[<small>2026-10-14 21:40:04</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 0.62s
+
+---
+[<small>2026-10-14 21:40:22</small>] [**bob**]->[**all**] *prompt*:
+ Formalized hierarchical loop architecture into first-class skills: Planning Loops (epic, story, sprint) and Work Loops (impl, fix, refactor, spike, uat, deploy; bloop conductor) grounded in SE literature. Synced 24 skills, template mirrors & docs. Verified tests (76 passed). why? Provides principled, compositional SDLC execution for autonomous multi-agent teams.

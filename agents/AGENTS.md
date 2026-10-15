@@ -7,7 +7,7 @@ The following core operating rules apply to all Bob Protocol agents regardless o
 
 ## State Management Protocol (CRITICAL)
 
-See instructions here -> `agents/skills/bob-protocol/SKILL.md` & `agents/skills/init/SKILL.md`
+See instructions here -> `agents/skills/bob-protocol/SKILL.md`, `agents/skills/init/SKILL.md`, & `agents/skills/prep-clear/SKILL.md`
 
 All personas follow a strict, gated lifecycle:
 
@@ -21,9 +21,9 @@ All personas follow a strict, gated lifecycle:
 5. Summarize detailed notes/reports in `agents/[persona]/` and post brief progress updates to `agents/CHAT.md`.
 
 **EXIT (MANDATORY HARD GATE):**
-6. Update `agents/[persona]/state.md` — Context (key decisions/findings), Current Task (progress %, completed items), and Next Steps (step-by-step cold-start resume plan).
+6. Pre-Clear / Checkpoint: Follow `agents/skills/prep-clear/SKILL.md` before `/clear` or persona switches. Update `agents/[persona]/state.md` — Context (key decisions/findings), Current Task (progress %, completed items), and Next Steps (step-by-step cold-start resume plan).
 7. Post handoff message: `bobp chat "<summary> @NextPersona *command" --persona <Name> --cmd handoff --to <next>`.
-8. Never switch personas without completing both steps.
+8. Never switch personas or clear context without completing both steps.
 
 ---
 

@@ -2,7 +2,7 @@
 name: bob-protocol
 description: Multi-persona coordination protocol. Enables AI to switch between specialized personas (Neo, Morpheus, Trin, Oracle, Mouse, Cypher, Bob, Smith, Tank) based on task needs. Use for *chat workflow, state management, and cross-agent communication.
 triggers: ["*chat"]
-requires: ["chat", "bloop", "sprint", "make", "init"]
+requires: ["chat", "bloop", "sprint", "make", "init", "prep-clear"]
 ---
 
 Orchestrates multi-persona AI coordination through a shared chat log using the `*chat` trigger.
@@ -124,6 +124,9 @@ See instructions here -> `agents/skills/init/SKILL.md`
 8. Post updates to `agents/CHAT.md` after each significant step
 
 ### EXIT — HARD GATE
+
+See instructions here -> `agents/skills/prep-clear/SKILL.md`
+
 9. Update `agents/[persona]/state.md` (Context, Current Task, Next Steps sections)
 10. Post handoff message
 11. Only now switch or stop

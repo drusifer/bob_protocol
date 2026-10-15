@@ -14,7 +14,8 @@ sequenceDiagram
     participant Trin
     participant Bob
     participant User
-    Note over Oracle,User: 📅 2026-08-09
+    participant bob
+    Note over Oracle,bob: 📅 2026-08-09
     Oracle->>Smith: "ora handoff"
     Note right of Oracle: "Sprint SPRINT_1 groomed<br/>and archived: agents/cha<br/>t_archive/CHAT_SPRINT_1.<br/>md + .diagram.md. Live<br/>CHAT.md reset to pointer<br/>header (first post-…"
     Smith->>All: "user approve"
@@ -29,10 +30,10 @@ sequenceDiagram
     Note right of Cypher: "Backlog: (1) sweep all<br/>agents/*.docs/SKILL.md +<br/>skills/*/SKILL.md for<br/>stale 'make chat MSG=...<br/>PERSONA=...' examples,<br/>replace with 'bobp ch…"
     Cypher->>All: "pm launch"
     Note right of Cypher: "SPRINT_1 'Chat Archive &<br/>Report' complete.<br/>Shipped: bobp chat-<br/>report<br/>(archive+combine), word-<br/>wrapped diagram labels,<br/>chat-merge conflict-ma…"
-    Note over Oracle,User: 📅 2026-08-10
+    Note over Oracle,bob: 📅 2026-08-10
     Bob->>All: "prompt update"
     Note right of Bob: "Backlog item closed:<br/>swept all stale 'make<br/>chat MSG=...<br/>PERSONA=...' references<br/>(110+ across 24<br/>skill/persona docs, real<br/>+ bobp/templates c…"
-    Note over Oracle,User: 📅 2026-08-12
+    Note over Oracle,bob: 📅 2026-08-12
     Bob->>All: "prompt fix"
     Note right of Bob: "Fixed chat_diagram.py:<br/>message labels were<br/>emitted unquoted, so a<br/>literal semicolon in<br/>chat text got parsed as<br/>a Mermaid statement<br/>terminat…"
     Bob->>All: "prompt fix"
@@ -45,12 +46,12 @@ sequenceDiagram
     Note right of Smith: "Implemented per user<br/>approval: per-message<br/>notes switched from Note<br/>over A,B to Note right<br/>of A. Verified fix<br/>against mermaid's<br/>renderer so…"
     Bob->>All: "prompt feature"
     Note right of Bob: "Added bobp chat-report<br/>--svg: renders the<br/>archive to a standalone<br/>.svg (real Chrome via<br/>mermaid-cli, new<br/>tools/mermaid_render/)<br/>and embeds…"
-    Note over Oracle,User: 📅 2026-10-12
+    Note over Oracle,bob: 📅 2026-10-12
     Neo->>All: "state"
     Note right of Neo: "Persona folders moved<br/>from agents/<name>.docs/<br/>to agents/<name>/ in<br/>this repo and the<br/>packaged templates,<br/>tools support only the<br/>new layout…"
     Neo->>All: "state"
     Note right of Neo: "Correction to my last<br/>post: setup-agent-links<br/>DOES convert older<br/>.docs-style projects to<br/>agents/<name>/ (folders<br/>renamed, doc path refs<br/>rew…"
-    Note over Oracle,User: 📅 2026-10-14
+    Note over Oracle,bob: 📅 2026-10-14
     User->>All: "request"
     Note right of User: "/bob-protocol init"
     Bob->>All: "ready"
@@ -105,4 +106,32 @@ sequenceDiagram
     Note right of Bob: "Staging changes: init<br/>skill, discovery link,<br/>documentation and<br/>template mirrors.<br/>Preparing to commit and<br/>push."
     Bob->>All: "prompt ready"
     Note right of Bob: "Pushed commit 3799168 to<br/>origin/main. Working<br/>tree clean. Init skill<br/>formalization complete."
+    User->>All: "request"
+    Note right of User: "add a skill for prep-<br/>clear"
+    Bob->>All: "prompt plan"
+    Note right of Bob: "Creating canonical prep-<br/>clear skill:<br/>agents/skills/prep-<br/>clear/SKILL.md &<br/>templates. Why:<br/>guarantees state<br/>reconciliation and cold-<br/>start pla…"
+    Bob->>All: "prompt feature"
+    Note right of Bob: "Created prep-clear skill<br/>in agents/skills/prep-<br/>clear/SKILL.md &<br/>templates. Verified<br/>discovery link<br/>(.claude/skills/prep-<br/>clear). 76/76 tests…"
+    User->>All: "request"
+    Note right of User: "lets review the loops<br/>for consistancy - start<br/>by listing out the<br/>differnt loop skills we<br/>have"
+    User->>All: "request"
+    Note right of User: "let's add some<br/>composition to the loop<br/>structure. generally the<br/>loops should cover the<br/>iterative sdlc sequences<br/>in a heirachy: like Epic<br/>->…"
+    User->>All: "request"
+    Note right of User: "yes that's right but we<br/>can rethink the smallest<br/>loops. I like the idea<br/>of building a sprint as<br/>a collection of impl<br/>loops, bugfix loops, t…"
+    User->>All: "request"
+    Note right of User: "this is cool - let's<br/>call the inner loops<br/>that are doing actual<br/>tasks the work-loops and<br/>the epic/story/sprint<br/>cycles as planning loops"
+    User->>All: "request"
+    Note right of User: "shoud they be 1st class<br/>skills?"
+    User->>All: "request"
+    Note right of User: "is there a public source<br/>or book for loops like<br/>this?"
+    User->>All: "request"
+    Note right of User: "this is good use the<br/>literature to redefine<br/>our set of loop skills,<br/>building up from low<br/>level work loops"
+    Bob->>All: "prompt plan"
+    Note right of Bob: "Formulating literature-<br/>grounded loop taxonomy:<br/>6 first-class Work Loops<br/>(impl, fix, refactor,<br/>spike, uat, deploy) and<br/>3 Planning Loops (epi…"
+    User->>All: "request"
+    Note right of User: "yes"
+    Bob->>All: "prompt plan"
+    Note right of Bob: "Implementing first-class<br/>Work Loops: creating<br/>skills for impl, fix,<br/>refactor, spike, uat,<br/>deploy, grounded in SE<br/>literature. Why:<br/>provides…"
+    bob->>All: "prompt"
+    Note right of bob: "Formalized hierarchical<br/>loop architecture into<br/>first-class skills:<br/>Planning Loops (epic,<br/>story, sprint) and Work<br/>Loops (impl, fix,<br/>refactor…"
 ```

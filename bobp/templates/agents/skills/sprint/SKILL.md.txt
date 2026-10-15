@@ -1,27 +1,34 @@
 ---
 name: sprint
-description: Full sprint implementation cycle. Covers planning, phase Bloop, sprint close, retrospective, and launch. Use *plan sprint to start, then *impl <phase> for each phase.
-triggers: ["*plan sprint", "*sprint close", "*sprint retro", "*sprint launch"]
-requires: ["bob-protocol", "bloop", "chat", "make"]
+description: Sprint planning and execution container loop. Orchestrates SDLC verification, breaks stories into an ordered sequence of typed Work Loops in task.md, executes them, and manages sprint close.
+triggers: ["*plan sprint", "/sprint", "*sprint close", "*sprint retro", "*sprint launch"]
+requires: ["bob-protocol", "bloop", "chat", "make", "prep-clear", "epic", "story", "impl", "fix", "refactor", "spike", "uat", "deploy"]
 ---
 
-Full sprint cycle from planning through launch, including all review gates, phase Bloops, and handoff templates.
+Sprint planning and execution container loop: orchestrates the sprint cadence from SDLC gate through work-loop execution to launch.
 
 TLDR:
-    Sprints have three stages: Planning (Cypher→Smith→Morpheus→Mouse), Phase Bloop (*impl per phase), and Close (Tank SDLC check→Oracle→Smith→All retro→Cypher launch).
-    No sprint starts without docs/SDLC.md — if it is missing, stop and ask Tank to write it.
-    Smith gates after Cypher and Morpheus are mandatory — do not auto-proceed without explicit `*user approve`.
-    Keep phases small: 1-3 tasks each. Large phases cause context overflow.
+    Literature: Ken Schwaber & Jeff Sutherland (*The Scrum Guide*).
+    Hierarchy: Third Planning Loop, consuming deliverables from Epic (`*plan epic`) and Story (`*plan story`) loops.
+    Composition: Compiles stories into an ordered pipeline of typed Work Loops (*impl, *fix, *refactor, *spike, *uat, *deploy) in `task.md`.
+    Between work loops: Runs *prep-clear if context > 60% before /clear.
+    Sprint Close: Tank SDLC check → Oracle groom & report → Smith acceptance → Team retro → Cypher launch.
 
-# Sprint — Full Implementation Cycle
+# Sprint — Planning & Cadence Container Loop
+
+## Overview
+
+In the Bob Protocol SDLC hierarchy, the `sprint` loop serves as the **Execution Container**. It takes ready stories from the `story` planning loop, verifies SDLC governance ([docs/SDLC.md](file:///home/drusifer/Projects/bob_protocol/docs/SDLC.md)), structures `task.md` as an ordered sequence of typed **Work Loops**, manages context budgeting (`prep-clear`), and coordinates sprint close.
+
+---
 
 ## Sprint Stages
 
 ```
-Stage 0: SDLC gate     → docs/SDLC.md must exist (else Tank writes it) — blocker
-Stage 1: Planning      → Cypher → Smith gate → Morpheus → Smith gate → Mouse → Morpheus review
-Stage 2: Phase Bloop   → [Tank Phase 0 if build env changes] → (Neo → Trin → Morpheus) × N phases
-Stage 3: Close         → Tank SDLC check → Oracle → Smith → All retro → Cypher launch
+Stage 0: SDLC Gate         → docs/SDLC.md verified by Tank (Blocker)
+Stage 1: Sprint Planning   → Mouse structures task.md as typed Work Loops; Morpheus reviews
+Stage 2: Work-Loop Execution → Sequential execution of Work Loops (*impl, *fix, *refactor, *spike, *uat, *deploy)
+Stage 3: Sprint Close      → Tank SDLC check → Oracle groom → Smith UAT → Retro → Cypher launch
 ```
 
 

@@ -49,3 +49,13 @@ clean: ## Remove build artifacts (keeps .venv — use `rm -rf .venv` to drop it 
 
 help: ## Show available make targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+
+# ── Publish to the pi-patch Forgejo registry (forge.pi-patch.lan) ──────────────
+# Credentials: make -C $(PI_PATCH)/cluster forgejo-token
+PI_PATCH        ?= $(HOME)/Projects/pi-patch
+FORGEJO_PUBLISH := $(PI_PATCH)/cluster/scripts/forgejo-publish.sh
+FORGEJO_VERSION ?= $(shell git describe --tags --always --dirty)
+
+.PHONY: deploy-forgejo
+deploy-forgejo: build ## Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
+	$(FORGEJO_PUBLISH) pypi dist

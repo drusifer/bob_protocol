@@ -9,6 +9,15 @@ needed to scaffold the framework into any project.
 
 > Status: pre-release, not yet published to PyPI. Install from source for now.
 
+## Contents
+
+- [Install from source](#install-from-source)
+- [What's in here](#whats-in-here)
+- [Bob Protocol overview](#bob-protocol-overview)
+- [Development](#development)
+- [Documentation and guides](#documentation-and-guides)
+- [License](#license)
+
 ## Install (from source)
 
 ```bash
@@ -55,8 +64,16 @@ See **[STARTUP.md](STARTUP.md)** for LLM session startup instructions, **[docs/W
 
 ```bash
 pip install -e ".[dev]"
-make test        # or: python -m unittest discover -s tests
+bobp make test   # captured project test run
 ```
+
+## Documentation and guides
+
+- [Documentation index](agents/DOCUMENTATION_INDEX.md) — personas, skills, and templates
+- [Startup guide](STARTUP.md) — initialize or resume a Bob Protocol session
+- [Shorthand guide](SHORTHAND_GUIDE.md) — command and skill trigger reference
+- [Walkthrough](docs/WALKTHROUGH.md) — build an example application with the workflow
+- [Packaged template README](bobp/templates/README.md) — framework scaffolding shipped by `bobp`
 
 ## License
 

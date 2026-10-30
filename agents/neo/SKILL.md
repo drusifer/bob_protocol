@@ -117,6 +117,7 @@ Tank (*devops) owns everything outside the application code boundary. Neo must:
 - **Never add** `bobp make deploy` targets, Dockerfile, or CI config — that's Tank's domain
 - **Coordinate** when adding new `bobp make test` or `bobp make lint` targets so Tank can wire them into the CI pipeline
 - **Never call** deployment scripts or push to `prod` branch directly — Tank owns that gate
+- **Package-manager decisions**: follow Tank's shared `agents/skills/build-env/SKILL.md` guidance; do not introduce or migrate package managers independently.
 - **Hand off build-environment setup**: if a project has no manifest/local environment, a new language is being added, or an install is refused by the system interpreter, do not improvise — `@Tank *devops bootstrap <language>` (see `agents/skills/build-env/SKILL.md`). Once it exists, adding or bumping a dependency in the manifest is Neo's job
 
 Neo's boundary: `app/`, `tests/`, `scripts/`, `static/`, `templates/`, `pyproject.toml`, `requirements.txt`
@@ -157,13 +158,13 @@ bobp make -vv test    # shows failure lines live; no tail needed
 If a tool has no make target (e.g. `bandit`, `py_compile`), add one to this project's own
 `Makefile` — do not call `.venv/bin/` directly.
 
-**This has real teeth now, not just in theory**: `bobp make judge-trace` (see
+**This has real teeth now, not just in theory**: `bobp trace-annotate` (see
 `agents/skills/judge/SKILL.md`) reads real Claude Code session transcripts and counts these
 exact patterns. It was orphaned (missing dependency, no make target) until 2026-07-10 — the
 first time it actually ran against a real sprint, it found **`bobp make test 2>&1 | tail -N` used
 ~39 times** in one session, despite this exact rule already being written above the whole time.
 The rule text wasn't the problem; not checking is. Before signing off any `*qa uat`/`*qa test`
-pass, Trin now runs `bobp make judge-trace DATE=<today>` as part of the gate — expect
+pass, Trin now runs `bobp trace-annotate --date <today> --format md` as part of the gate — expect
 violations to actually surface.
 
 ---

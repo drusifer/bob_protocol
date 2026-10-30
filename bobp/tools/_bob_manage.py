@@ -17,6 +17,7 @@ TLDR:
 """
 
 import filecmp
+import re
 import shutil
 import subprocess
 import sys
@@ -43,17 +44,29 @@ def _restore_skill_extensions(agents_dir: Path) -> None:
         txt.rename(txt.with_suffix(""))
 
 
+_TEMPLATE_CHECK_RE = re.compile(
+    r"(?ms)^<!-- RUBRIC-START -->\s*\n.*?^<!-- RUBRIC-END -->\s*\n?"
+)
+
+
+def _copy_artifact_template(template: Path, destination: Path) -> None:
+    """Copy an artifact template without its reviewer-only check block."""
+    shutil.copy2(template, destination)
+    content = _TEMPLATE_CHECK_RE.sub("", destination.read_text()).rstrip() + "\n"
+    destination.write_text(content)
+
+
 def _write_missing_state_files(agents_dir: Path, template_state: Path) -> None:
     for _, persona_dir in find_persona_dirs(agents_dir):
         state_file = persona_dir / "state.md"
         if not state_file.exists():
-            shutil.copy2(template_state, state_file)
+            _copy_artifact_template(template_state, state_file)
 
 
 def _ensure_chat_md(agents_dir: Path, template_chat: Path) -> None:
     chat_file = agents_dir / "CHAT.md"
     if not chat_file.exists():
-        shutil.copy2(template_chat, chat_file)
+        _copy_artifact_template(template_chat, chat_file)
 
 
 def _regen_chat_diagram(agents_dir: Path) -> None:
@@ -168,8 +181,10 @@ def clean() -> None:
     print("Resetting agent state files to templates...")
     template_state = agents_dir / "templates" / "_template_state.md"
     for _, persona_dir in find_persona_dirs(agents_dir):
-        shutil.copy2(template_state, persona_dir / "state.md")
-    shutil.copy2(agents_dir / "templates" / "_template_CHAT.md", agents_dir / "CHAT.md")
+        _copy_artifact_template(template_state, persona_dir / "state.md")
+    _copy_artifact_template(
+        agents_dir / "templates" / "_template_CHAT.md", agents_dir / "CHAT.md"
+    )
     _regen_chat_diagram(agents_dir)
     print("Done. Environment cleaned and state reset.")
 

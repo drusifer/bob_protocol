@@ -1,6 +1,6 @@
 # BobProtocol Documentation Index
 
-**Last Updated:** 2026-03-22
+**Last Updated:** 2026-10-29
 
 ## Quick Access
 
@@ -119,32 +119,32 @@ Shipped as `bobp` CLI subcommands, not project-local scripts:
 
 ## Archived Documentation
 
-Files prefixed with `.archive_` are historical and no longer active:
-- `.archive_COMMANDS.md` - (Consolidated into HELP.md)
-- `.archive_state_management_fix.md` - (Implemented in protocol)
+Historical Oracle notes use the `.archive_*.md` prefix. The current archive is
+[`oracle/.archive_COMMANDS.md`](oracle/.archive_COMMANDS.md), consolidated into `bob/HELP.md`.
 
 ---
 
 ## Documentation Standards
 
 ### File Naming
-- Persona definitions: `[PersonaName]_[ROLE]_AGENT.md`
-- State files: `state.md`
-- MCP tools: `[toolname]_mcp.md`
-- Templates: `_template_*.md`
-- Archived: `.archive_*.md`
+- Persona instructions and state: `agents/<persona>/SKILL.md` and `state.md`
+- Shared skills: `agents/skills/<skill>/SKILL.md`
+- Templates: `agents/templates/_template_*.md`
+- Archived notes: `.archive_*.md`
 
 ### Structure
-- All persona docs in `agents/[persona]/`
-- All MCP tool docs in `agents/tools/`
+- Persona instructions and working memory in `agents/<persona>/`
+- Shared workflow skills in `agents/skills/`
+- User-facing walkthroughs in `docs/`; startup and command guides in the repository root
 - Team communication in `agents/CHAT.md`
-- Primary references in `agents/bob/`
+- Project documentation index in `agents/DOCUMENTATION_INDEX.md`
 
 ### Maintenance
 - Update `*help` when adding commands
 - Update tool docs when changing MCPs
 - Archive outdated docs with `.archive_` prefix
 - Keep `agents/bob/HELP.md`, `STARTUP.md`, and `SHORTHAND_GUIDE.md` in sync with active skills and templates
+- Keep this index and its packaged mirror in `bobp/templates/agents/` synchronized
 
 ---
 

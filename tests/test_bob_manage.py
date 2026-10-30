@@ -161,9 +161,14 @@ class CleanTests(unittest.TestCase):
             self.assertIn(
                 "Not started", (target / "agents" / "neo" / "state.md").read_text()
             )
-            self.assertIn(
-                "Chat Message Template", (target / "agents" / "CHAT.md").read_text()
+            self.assertNotIn(
+                "RUBRIC-START", (target / "agents" / "neo" / "state.md").read_text()
             )
+            chat = (target / "agents" / "CHAT.md").read_text()
+            self.assertIn(
+                "Chat Log Format", chat
+            )
+            self.assertNotIn("RUBRIC-START", chat)
 
 
 class DiffTests(unittest.TestCase):

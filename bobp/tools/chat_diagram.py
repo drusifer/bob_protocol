@@ -11,7 +11,7 @@ TLDR:
     --include-builds is passed, since they're noise for following the
     persona-to-persona conversation.
     Called automatically by chat.py after every post; also runnable standalone
-    (`make chat_diagram`) to regenerate on demand without posting a message.
+    (`bobp chat-diagram`) to regenerate on demand without posting a message.
 """
 
 import argparse
@@ -110,6 +110,42 @@ def _note_text_for(entry):
     return _wrap_label(_clean_message(_first_line(entry.body)))
 
 
+def _loop_summary(kind, entries):
+    """Build a small deterministic recap from the messages at a loop boundary.
+
+    Chat is intentionally not sent to an external summarizer. Prefer explicit
+    outcome messages (passed, complete, approved, failed); if none exist, use
+    the latest messages so the diagram still records what closed the loop.
+    """
+    if not entries:
+        return None
+    outcomes = [
+        e for e in entries
+        if re.search(r"\b(pass(?:ed)?|fail(?:ed)?|complete|completed|approved|reject(?:ed)?)\b",
+                     _first_line(e.body), re.IGNORECASE)
+    ]
+    selected = (outcomes or entries)[-3:]
+    details = [f"{e.persona}: {_clean_message(_first_line(e.body))}" for e in selected]
+    if not any(_first_line(e.body) for e in selected):
+        return None
+    label = f"{kind.title()} summary"
+    text = "<br/>".join([label] + [_wrap_label(detail) for detail in details if detail.strip()])
+    return text
+
+
+def _is_phase_marker(entry):
+    return re.match(r"^phase\s+\S", entry.cmd, re.IGNORECASE) is not None
+
+
+def _loop_close_kind(entry):
+    cmd = entry.cmd.strip().lower()
+    if cmd == "pm launch":
+        return "Sprint"
+    if re.fullmatch(r"(?:epic\s+)?(?:close|complete|completed|approve|approved)", cmd):
+        return "Epic"
+    return None
+
+
 def _quote_label(label):
     """Wrap a Mermaid sequence-diagram message label in double quotes.
 
@@ -162,7 +198,24 @@ def build_diagram(entries, include_builds=False):
 
     left, right = participant_ids[order[0]], participant_ids[order[-1]]
     last_date = None
+    phase_entries = []
+    phase_label = None
+    epic_entries = None
     for e in filtered:
+        if epic_entries is not None and re.match(r"^plan\s+story\b", e.cmd.strip(), re.IGNORECASE):
+            summary = _loop_summary("Epic", epic_entries)
+            if summary:
+                lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
+            epic_entries = None
+
+        if _is_phase_marker(e):
+            if phase_entries and phase_label:
+                summary = _loop_summary(f"Phase {phase_label}", phase_entries)
+                if summary:
+                    lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
+            phase_label = re.sub(r"^phase\s+", "", e.cmd, flags=re.IGNORECASE).strip()
+            phase_entries = []
+
         date = e.ts.split(" ")[0]
         if date != last_date:
             lines.append(f"    Note over {left},{right}: \U0001F4C5 {date}")
@@ -192,6 +245,32 @@ def build_diagram(entries, include_builds=False):
             if note_text:
                 lines.append(f"    Note right of {from_id}: {_quote_label(note_text)}")
 
+        if not _is_phase_marker(e):
+            phase_entries.append(e)
+        close_kind = _loop_close_kind(e)
+        if re.fullmatch(r"plan\s+epic", e.cmd.strip(), re.IGNORECASE):
+            epic_entries = [e]
+        elif epic_entries is not None:
+            epic_entries.append(e)
+        if close_kind:
+            if close_kind == "Sprint" and phase_entries and phase_label:
+                summary = _loop_summary(f"Phase {phase_label}", phase_entries[:-1])
+                if summary:
+                    lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
+                phase_entries = []
+                phase_label = None
+            summary_entries = (epic_entries or [e]) if close_kind == "Epic" else [e]
+            summary = _loop_summary(close_kind, summary_entries)
+            if summary:
+                lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
+            if close_kind == "Epic":
+                epic_entries = None
+
+    if phase_entries and phase_label:
+        summary = _loop_summary(f"Phase {phase_label}", phase_entries)
+        if summary:
+            lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
+
     return "\n".join(lines)
 
 
@@ -201,8 +280,8 @@ def render(chat_text, include_builds=False):
     return (
         "# CHAT.md — Conversation Flow\n\n"
         "Auto-generated from `agents/CHAT.md` by `bobp chat-diagram`. "
-        "Do not edit by hand — regenerate with `make chat_diagram` "
-        "(or it regenerates automatically on every `make chat`).\n\n"
+        "Do not edit by hand — regenerate with `bobp chat-diagram` "
+        "(or it regenerates automatically on every `bobp chat`).\n\n"
         f"```mermaid\n{diagram}\n```\n"
     )
 

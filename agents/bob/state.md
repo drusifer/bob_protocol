@@ -2,6 +2,8 @@
 
 ## Context
 ### Recent Decisions & Discoveries
+- 2026-10-29: `*learn` established `uv` as the default for new Python projects (`uv sync`, `uv add`, `uv run`, committed `uv.lock`). Existing package managers remain unless migration is explicitly requested. Updated build-env and Neo guidance plus shipped templates; broadcast the lesson in `agents/CHAT.md`.
+- 2026-10-29: `$bob-protocol init` verified agent links and initialized Bob. Root `AGENTS.md` is an existing symlink to `agents/AGENTS.md` (mtime Aug 7); the requested contributor guide was not written because the user explicitly said not to modify an existing file.
 - Repository clean and up to date with `origin/main` (commit `6be68e8`).
 - All 24 shared skills active and discovered via `.claude/skills/` (`bobp setup-agent-links`).
 - Two-tier loop architecture fully formalized:
@@ -20,38 +22,32 @@
 - Team chat log: [`agents/CHAT.md`](agents/CHAT.md)
 
 ## Current Task
-**Status:** Checkpointed (Pre-Clear)
+**Status:** Completed
 **Assigned to:** Bob
 **Started:** 2026-10-15T09:58:00
 **Completed:** 2026-10-15T10:00:00
 
 ### Task Description
-Execute pre-clear checkpointing protocol (`prep-clear`) to secure all working memory, verify working tree, and record cold-start resume plan before LLM context reset.
+Apply the user's `*learn` instruction to use uv for Python projects going forward.
 
 ### Progress
-- [x] Verified working tree is clean and pushed to `origin/main` (`6be68e8`)
-- [x] Verified test suite via `bobp make test` (76 passed, 7 skipped)
-- [x] Reconciled decisions, key files, and architecture context
-- [x] Wrote cold-start resume plan in `## Next Steps`
-- [x] Flushed `agents/bob/state.md` to disk
-- [x] Logged checkpoint to `agents/CHAT.md`
+- [x] Read init protocol, recent chat, Bob state, and project capability declarations
+- [x] Ran `bobp setup-agent-links`; links verified
+- [x] Logged init request and readiness to `agents/CHAT.md`
+- [x] Confirmed root `AGENTS.md` already exists and did not alter it
+- [x] Updated canonical and shipped build-env guidance, Neo's Python setup guidance, and Python SDLC templates
+- [x] Broadcast the convention in `agents/CHAT.md`
+- [x] Ran `git diff --check`; no tests run (documentation-only update)
 
 ### Blockers
 None
 
 ## Next Steps
 ### Immediate Next Action
-On cold-start recovery after `/clear`:
-1. Load `agents/CHAT.md` and `agents/bob/state.md`.
-2. Await user prompt or command.
-3. Candidate next initiatives:
-   - Option A: Have Tank bootstrap `docs/SDLC.md` from `_template_SDLC.python.md` (dogfooding).
-   - Option B: Add `bobp rubric` CLI tool to inspect, evaluate, and lint Brookhart rubrics.
-   - Option C: Add `tests/test_skills_integrity.py` for automated template synchronization checks.
-   - Option D: Execute an end-to-end Work Loop on TableCraft or a new feature.
+Await next user request. This lesson sets the default for new Python projects; the repository's current pip-based environment was not migrated.
 
 ### Waiting On
 User
 
 ---
-*Last updated: 2026-10-15T10:00:00*
+*Last updated: 2026-10-29T15:04:00*

@@ -157,13 +157,13 @@ bobp make -vv test    # shows failure lines live; no tail needed
 If a tool has no make target (e.g. `bandit`, `py_compile`), add one to this project's own
 `Makefile` — do not call `.venv/bin/` directly.
 
-**This has real teeth now, not just in theory**: `bobp make judge-trace` (see
+**This has real teeth now, not just in theory**: `bobp trace-annotate` (see
 `agents/skills/judge/SKILL.md`) reads real Claude Code session transcripts and counts these
 exact patterns. It was orphaned (missing dependency, no make target) until 2026-07-10 — the
 first time it actually ran against a real sprint, it found **`bobp make test 2>&1 | tail -N` used
 ~39 times** in one session, despite this exact rule already being written above the whole time.
 The rule text wasn't the problem; not checking is. Before signing off any `*qa uat`/`*qa test`
-pass, Trin now runs `bobp make judge-trace DATE=<today>` as part of the gate — expect
+pass, Trin now runs `bobp trace-annotate --date <today> --format md` as part of the gate — expect
 violations to actually surface.
 
 ---

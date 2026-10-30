@@ -122,6 +122,50 @@ class BuildDiagramTests(unittest.TestCase):
         self.assertIn("2026-04-12", diagram)
         self.assertIn("2026-06-21", diagram)
 
+    def test_next_phase_marker_inserts_summary_for_previous_phase(self):
+        entries = [
+            chat_diagram.Entry("2026-04-12 12:00:00", "Mouse", "all", "phase 1", "Parser"),
+            chat_diagram.Entry("2026-04-12 12:10:00", "Neo", "Trin", "swe handoff", "Phase 1 implemented."),
+            chat_diagram.Entry("2026-04-12 12:20:00", "Trin", "Morpheus", "qa handoff", "UAT phase 1 passed."),
+            chat_diagram.Entry("2026-04-12 12:30:00", "Mouse", "all", "phase 2", "CLI"),
+        ]
+        diagram = chat_diagram.build_diagram(entries)
+        self.assertIn('"Phase 1 summary', diagram)
+        self.assertIn("UAT phase 1 passed", diagram)
+        self.assertLess(diagram.index("Phase 1 summary"), diagram.index('Mouse->>All: "phase 2"'))
+
+    def test_sprint_launch_inserts_phase_and_sprint_summaries(self):
+        entries = [
+            chat_diagram.Entry("2026-04-12 12:00:00", "Mouse", "all", "phase 1", "CLI"),
+            chat_diagram.Entry("2026-04-12 12:10:00", "Trin", "Morpheus", "qa handoff", "UAT passed."),
+            chat_diagram.Entry("2026-04-12 12:20:00", "Cypher", "all", "pm launch", "Sprint complete."),
+        ]
+        diagram = chat_diagram.build_diagram(entries)
+        self.assertIn('"Phase 1 summary', diagram)
+        self.assertIn('"Sprint summary', diagram)
+        self.assertIn("Sprint complete", diagram)
+
+    def test_explicit_epic_close_inserts_summary(self):
+        entries = [
+            chat_diagram.Entry("2026-04-12 12:00:00", "Cypher", "Smith", "plan epic", "Shape initiative."),
+            chat_diagram.Entry("2026-04-12 12:10:00", "Smith", "all", "user approve", "Epic scope approved."),
+            chat_diagram.Entry("2026-04-12 12:20:00", "Cypher", "all", "epic close", "Epic shaping complete."),
+        ]
+        diagram = chat_diagram.build_diagram(entries)
+        self.assertIn('"Epic summary', diagram)
+        self.assertIn("Epic shaping complete", diagram)
+
+    def test_epic_to_story_transition_inserts_summary_before_story(self):
+        entries = [
+            chat_diagram.Entry("2026-04-12 12:00:00", "Cypher", "Smith", "plan epic", "Shape initiative."),
+            chat_diagram.Entry("2026-04-12 12:10:00", "Smith", "all", "user approve", "Epic scope approved."),
+            chat_diagram.Entry("2026-04-12 12:20:00", "Morpheus", "Cypher", "plan story", "Break down the approved epic."),
+        ]
+        diagram = chat_diagram.build_diagram(entries)
+        self.assertIn('"Epic summary', diagram)
+        self.assertIn("Epic scope approved", diagram)
+        self.assertLess(diagram.index("Epic summary"), diagram.index('Morpheus->>Cypher: "plan story"'))
+
     def test_empty_log_still_renders_a_valid_diagram(self):
         diagram = chat_diagram.build_diagram([])
         self.assertIn(chat_diagram.INIT_DIRECTIVE, diagram)

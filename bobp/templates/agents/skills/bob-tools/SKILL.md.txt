@@ -49,7 +49,7 @@ Notes:
 
 ## bobp chat-diagram
 
-`agents/CHAT.diagram.md` is a derived Mermaid `sequenceDiagram` view of `agents/CHAT.md` — one arrow per `Persona->recipient` message, grouped with a date `Note` whenever the day changes, with build-status entries filtered out by default (they're noise for following the persona-to-persona conversation, not part of it). It's regenerated automatically by `bobp chat`; it's a read-only artifact for humans — don't hand-edit it, and agents shouldn't parse it back for context (read `agents/CHAT.md` itself, per the `chat` skill).
+`agents/CHAT.diagram.md` is a derived Mermaid `sequenceDiagram` view of `agents/CHAT.md` — one arrow per `Persona->recipient` message, grouped with a date `Note` whenever the day changes, with build-status entries filtered out by default (they're noise for following the persona-to-persona conversation, not part of it). It adds interstitial recap notes at phase boundaries (`phase <N>` markers), sprint close (`pm launch`), and epic close (the transition from `plan epic` to `plan story`, or an explicit `epic close`). These are deterministic recaps of logged outcome messages, not generated from hidden context. It's regenerated automatically by `bobp chat`; it's a read-only artifact for humans — don't hand-edit it, and agents shouldn't parse it back for context (read `agents/CHAT.md` itself, per the `chat` skill).
 
 Regenerate on demand, e.g. after manually editing `CHAT.md` or archiving old messages:
 

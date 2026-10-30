@@ -34,45 +34,35 @@
   `make judge-trace` / `trace_annotate.py` invocation model is stale. Neither was touched.
 
 ## Current Task
-**Status:** Conversion restored and tested (55 passed, 7 skipped) — committed and pushed to `main` (follow-up to `bd660c3`)
+**Status:** Chat diagram loop summaries implemented; focused tests passed (20/20). Mermaid parser integration tests skipped because validator dependencies are unavailable.
 **Assigned to:** Neo
-**Started:** 2026-10-12
-**Commit:** `bd660c3` on `main` (pushed to `origin/main`, was `85d7953`)
+**Started:** 2026-10-29
 
 ### Task Description
-Move persona folders from `agents/<name>.docs/` to `agents/<name>/` across the tools, this
-repo and the packaged templates, with the tools supporting only the new layout.
+Update `bobp chat-diagram` to insert deterministic recap notes at phase, sprint, and epic loop boundaries.
 
 ### Progress
-- [x] `git mv` of all nine persona folders in `agents/` and `bobp/templates/agents/`
-- [x] Path references updated in agent docs, skills, templates and root `STARTUP.md`
-- [x] `setup_agent_links`, `_bob_manage` (install/update/pull/clean/diff) and `trace_annotate`
-      resolve personas via `find_persona_dirs()`; no legacy handling
-- [x] `setup-agent-links` replaces a `.claude/skills` directory link into `agents/`
-- [x] Integration test isolated with a throwaway `CODEX_HOME`
-- [x] Stale `setup_agent_links.py` invocations in SKILL files replaced with
-      `bobp setup-agent-links`; `agents/tools/` subtree dropped from the template README
-- [x] Tests green: 52 passed, 7 skipped (`bobp make test`)
-- [x] Committed (`bd660c3`) and pushed to `origin/main`
+- [x] Detect phase boundaries from `phase <N>` markers and summarize the previous phase.
+- [x] Summarize a sprint at `pm launch` and an epic at `plan epic` → `plan story` (or explicit `epic close`).
+- [x] Keep canonical and packaged `bob-tools` guidance synchronized.
+- [x] Run focused tests with `uv run --no-sync pytest tests/test_chat_diagram.py -q` (20 passed).
+- [x] Regenerate `agents/CHAT.diagram.md` and record progress in `agents/CHAT.md`.
 
 ### Blockers
-None
+Mermaid syntax integration tests were skipped because validator dependencies are unavailable in this environment.
 
 ### Oracle Consultations
-None — direct user-directed refactor.
+None.
 
 ## Next Steps
 ### Immediate Next Action
-None. Next session should read `agents/CHAT.md` for whatever comes in fresh.
+No further implementation work for this task. If validating Mermaid syntax is needed, install the validator dependencies and run the focused syntax test.
 
 ### Waiting On
-- User: whether to delete the `persona-folder-layout` branch (local and `origin`); it points
-  at the same commit as `main`.
-- Codex skill links on this machine currently point at bob_protocol; re-run
-  `bobp setup-agent-links` in whichever project should own them.
+- User review of the generated boundary recap behavior.
 
 ### Planned Work
 - [ ] None queued.
 
 ---
-*Last updated: 2026-10-12 20:44*
+*Last updated: 2026-10-29 18:17*

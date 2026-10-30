@@ -1,6 +1,6 @@
 # CHAT.md — Conversation Flow
 
-Auto-generated from `agents/CHAT.md` by `bobp chat-diagram`. Do not edit by hand — regenerate with `make chat_diagram` (or it regenerates automatically on every `make chat`).
+Auto-generated from `agents/CHAT.md` by `bobp chat-diagram`. Do not edit by hand — regenerate with `bobp chat-diagram` (or it regenerates automatically on every `bobp chat`).
 
 ```mermaid
 %%{init: {"sequence": {"messageFontSize": 14, "noteFontSize": 18, "actorFontSize": 14}}}%%
@@ -15,7 +15,8 @@ sequenceDiagram
     participant Bob
     participant User
     participant bob
-    Note over Oracle,bob: 📅 2026-08-09
+    participant Tank
+    Note over Oracle,Tank: 📅 2026-08-09
     Oracle->>Smith: "ora handoff"
     Note right of Oracle: "Sprint SPRINT_1 groomed<br/>and archived: agents/cha<br/>t_archive/CHAT_SPRINT_1.<br/>md + .diagram.md. Live<br/>CHAT.md reset to pointer<br/>header (first post-…"
     Smith->>All: "user approve"
@@ -30,10 +31,11 @@ sequenceDiagram
     Note right of Cypher: "Backlog: (1) sweep all<br/>agents/*.docs/SKILL.md +<br/>skills/*/SKILL.md for<br/>stale 'make chat MSG=...<br/>PERSONA=...' examples,<br/>replace with 'bobp ch…"
     Cypher->>All: "pm launch"
     Note right of Cypher: "SPRINT_1 'Chat Archive &<br/>Report' complete.<br/>Shipped: bobp chat-<br/>report<br/>(archive+combine), word-<br/>wrapped diagram labels,<br/>chat-merge conflict-ma…"
-    Note over Oracle,bob: 📅 2026-08-10
+    Note over Oracle,Tank: "Sprint summary<br/>Cypher: SPRINT_1 'Chat<br/>Archive & Report'<br/>complete. Shipped: bobp<br/>chat-report<br/>(archive+combine), word-<br/>wrapped diagram labels,<br/>chat-merge conflict-ma…"
+    Note over Oracle,Tank: 📅 2026-08-10
     Bob->>All: "prompt update"
     Note right of Bob: "Backlog item closed:<br/>swept all stale 'make<br/>chat MSG=...<br/>PERSONA=...' references<br/>(110+ across 24<br/>skill/persona docs, real<br/>+ bobp/templates c…"
-    Note over Oracle,bob: 📅 2026-08-12
+    Note over Oracle,Tank: 📅 2026-08-12
     Bob->>All: "prompt fix"
     Note right of Bob: "Fixed chat_diagram.py:<br/>message labels were<br/>emitted unquoted, so a<br/>literal semicolon in<br/>chat text got parsed as<br/>a Mermaid statement<br/>terminat…"
     Bob->>All: "prompt fix"
@@ -46,12 +48,12 @@ sequenceDiagram
     Note right of Smith: "Implemented per user<br/>approval: per-message<br/>notes switched from Note<br/>over A,B to Note right<br/>of A. Verified fix<br/>against mermaid's<br/>renderer so…"
     Bob->>All: "prompt feature"
     Note right of Bob: "Added bobp chat-report<br/>--svg: renders the<br/>archive to a standalone<br/>.svg (real Chrome via<br/>mermaid-cli, new<br/>tools/mermaid_render/)<br/>and embeds…"
-    Note over Oracle,bob: 📅 2026-10-12
+    Note over Oracle,Tank: 📅 2026-10-12
     Neo->>All: "state"
     Note right of Neo: "Persona folders moved<br/>from agents/<name>.docs/<br/>to agents/<name>/ in<br/>this repo and the<br/>packaged templates,<br/>tools support only the<br/>new layout…"
     Neo->>All: "state"
     Note right of Neo: "Correction to my last<br/>post: setup-agent-links<br/>DOES convert older<br/>.docs-style projects to<br/>agents/<name>/ (folders<br/>renamed, doc path refs<br/>rew…"
-    Note over Oracle,bob: 📅 2026-10-14
+    Note over Oracle,Tank: 📅 2026-10-14
     User->>All: "request"
     Note right of User: "/bob-protocol init"
     Bob->>All: "ready"
@@ -140,7 +142,52 @@ sequenceDiagram
     Note right of bob: "Synchronized all user<br/>guides & documentation:<br/>root README, bobp/templa<br/>tes/README.md,<br/>agents/bob/HELP.md,<br/>STARTUP.md, &<br/>DOCUMENTATION_INDEX.…"
     bob->>All: "prompt"
     Note right of bob: "Created<br/>docs/WALKTHROUGH.md: a<br/>complete step-by-step<br/>user guide demonstrating<br/>how to build a<br/>restaurant reservation<br/>app (TableCraft) with B…"
-    Note over Oracle,bob: 📅 2026-10-15
+    Note over Oracle,Tank: 📅 2026-10-15
     bob->>All: "checkpoint"
     Note right of bob: "Checkpoint saved in<br/>agents/bob/state.md.<br/>Working tree clean on<br/>main (6be68e8). 24<br/>skills active, test<br/>suite passing (76<br/>passed), walkthroug…"
+    Note over Oracle,Tank: 📅 2026-10-29
+    User->>All: "request"
+    Note right of User: "User invoked $bob-<br/>protocol init,<br/>initializing Bob<br/>session, then resume the<br/>explicitly requested<br/>root AGENTS.md<br/>contributor guide."
+    Bob->>All: "ready"
+    Note right of Bob: "Bob Protocol<br/>initialized. Discovery<br/>links verified. Root<br/>AGENTS.md already exists<br/>as a symlink to<br/>agents/AGENTS.md, so the<br/>requested contri…"
+    Bob->>All: "learn"
+    Note right of Bob: "Learn: use uv by default<br/>for new Python projects<br/>(`uv sync`, `uv add`,<br/>`uv run`) and commit<br/>`uv.lock`. Preserve an<br/>established manager<br/>unle…"
+    Bob->>All: "learn"
+    Note right of Bob: "Refinement: Tank’s<br/>shared build-env skill<br/>is the sole policy owner<br/>for Python package-<br/>manager choices. Neo now<br/>only defers to that<br/>guidance…"
+    Oracle->>All: "init"
+    Note right of Oracle: "Activating Oracle via<br/>harness invocation for<br/>*ora groom docs."
+    Oracle->>User: "handoff"
+    Note right of Oracle: "Groomed docs: README now<br/>has a contents list,<br/>guide links, and the<br/>`bobp make test`<br/>contributor command.<br/>Refreshed<br/>DOCUMENTATION_INDEX.md<br/>a…"
+    Oracle->>User: "handoff"
+    Note right of Oracle: "Validated `bobp update`:<br/>all 24 shared skills, 16<br/>templates, and 9 persona<br/>skills refresh, missing<br/>state/chat seed, diagram<br/>and links regen…"
+    Oracle->>All: "init"
+    Note right of Oracle: "Activating Oracle for a<br/>full artifact-template<br/>audit and external best-<br/>practice research."
+    Oracle->>User: "handoff"
+    Note right of Oracle: "Completed research-<br/>backed audit of all 16<br/>artifact templates,<br/>packaged copies match.<br/>Report: agents/oracle/te<br/>mplate_audit_2026-10-<br/>29.md. It…"
+    Oracle->>All: "ora groom templates"
+    Note right of Oracle: "Implementing the<br/>template audit:<br/>standardizing binary<br/>checks and correcting<br/>type-specific<br/>contradictions in<br/>canonical templates."
+    Oracle->>All: "ora report"
+    Note right of Oracle: "Completed revisions<br/>across all 16 artifact<br/>templates. Binary checks<br/>now cover every<br/>template, packaged and<br/>live copies match.<br/>Validation pa…"
+    Oracle->>All: "judge"
+    Note right of Oracle: "Starting *judge for the<br/>recent Oracle artifact-<br/>template revision,<br/>checking trace coverage<br/>before scoring."
+    Oracle->>Tank: "handoff"
+    Note right of Oracle: "The documented judge-<br/>trace Make target is<br/>absent (removed with<br/>management targets and<br/>never restored), bobp<br/>trace-annotate is<br/>tracked/regis…"
+    Tank->>All: "init"
+    Note right of Tank: "Tank taking the judge-<br/>trace CLI/dependency<br/>handoff, inspecting the<br/>supported Bobp command<br/>and project build<br/>contract."
+    Tank->>All: "decision"
+    Note right of Tank: "Tank decision: retain as<br/>the stable<br/>implementation, add the<br/>missing Make target as<br/>the repo's captured<br/>front door, declare<br/>Jinja2 as a runt…"
+    Tank->>All: "decision"
+    Note right of Tank: "Tank decision: retain<br/>bobp trace-annotate as<br/>the stable<br/>implementation, add the<br/>missing judge-trace Make<br/>target as this<br/>repository’s captur…"
+    Tank->>Oracle: "handoff"
+    Note right of Tank: "Trace command and<br/>dependency gap fixed,<br/>target uses the<br/>supported bobp CLI in<br/>the venv. Also ensured<br/>template check blocks do<br/>not leak into…"
+    Oracle->>User: "handoff"
+    Note right of Oracle: "Judge review complete:<br/>missing Make wrapper and<br/>undeclared Jinja<br/>dependency fixed,<br/>template check blocks no<br/>longer leak into<br/>clean/install…"
+    Oracle->>Tank: "handoff"
+    Note right of Oracle: "User clarified that tool<br/>use must not assume a<br/>target project has a<br/>Makefile. @Tank *devops<br/>sdlc remove the judge-<br/>trace wrapper and use<br/>bob…"
+    Tank->>All: "resume"
+    Note right of Tank: "Tank applying the direct<br/>CLI consistency update:<br/>remove the Make wrapper<br/>and revise all active<br/>skill guidance."
+    Tank->>Oracle: "handoff"
+    Note right of Tank: "Removed the judge-trace<br/>Make target as<br/>requested, Judge, Trin,<br/>and Neo guidance now<br/>call bobp trace-annotate<br/>directly. Project<br/>Makefile is…"
+    Neo->>User: "swe handoff"
+    Note right of Neo: "Chat diagram now adds<br/>phase, sprint, and epic<br/>recap notes from logged<br/>outcomes, focused tests<br/>pass (20). Mermaid<br/>parser tests skipped<br/>becau…"
 ```

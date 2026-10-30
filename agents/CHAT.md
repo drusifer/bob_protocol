@@ -365,3 +365,102 @@ These apps are now globally available
 ---
 [<small>2026-10-15 09:59:38</small>] [**bob**]->[**all**] *checkpoint*:
  Checkpoint saved in agents/bob/state.md. Working tree clean on main (6be68e8). 24 skills active, test suite passing (76 passed), walkthrough guide published. Ready for context clear. Resume with *resume or /init. why? Preserves working memory and cold-start resume plan before context reset.
+
+---
+[<small>2026-10-29 15:01:24</small>] [**User**]->[**all**] *request*:
+ User invoked $bob-protocol init; initializing Bob session, then resume the explicitly requested root AGENTS.md contributor guide.
+
+---
+[<small>2026-10-29 15:01:40</small>] [**Bob**]->[**all**] *ready*:
+ Bob Protocol initialized. Discovery links verified. Root AGENTS.md already exists as a symlink to agents/AGENTS.md, so the requested contributor guide was not written per the no-overwrite instruction. Ready for direction.
+
+---
+[<small>2026-10-29 15:03:57</small>] [**Bob**]->[**all**] *learn*:
+ Learn: use uv by default for new Python projects (`uv sync`, `uv add`, `uv run`) and commit `uv.lock`. Preserve an established manager unless migration is explicitly requested. Updated build-env guidance, Neo guidance, and shipped SDLC/build-env templates. why? One consistent, reproducible Python setup.
+
+---
+[<small>2026-10-29 15:05:25</small>] [**Bob**]->[**all**] *learn*:
+ Refinement: Tank’s shared build-env skill is the sole policy owner for Python package-manager choices. Neo now only defers to that guidance and avoids independent migrations; shipped templates remain synchronized copies.
+
+---
+[<small>2026-10-29 15:06:15</small>] [**Oracle**]->[**all**] *init*:
+ Activating Oracle via harness invocation for *ora groom docs.
+
+---
+[<small>2026-10-29 15:07:29</small>] [**Oracle**]->[**User**] *handoff*:
+ Groomed docs: README now has a contents list, guide links, and the `bobp make test` contributor command. Refreshed DOCUMENTATION_INDEX.md and its packaged mirror; removed a broken archive reference and aligned naming/layout guidance. No files moved. Local links resolve; copies match; diff check passes. @User next request.
+
+---
+[<small>2026-10-29 15:11:49</small>] [**Oracle**]->[**User**] *handoff*:
+ Validated `bobp update`: all 24 shared skills, 16 templates, and 9 persona skills refresh; missing state/chat seed, diagram and links regenerate. Existing state/chat/docs/Oracle knowledge stay. No upstream-deleted files are pruned. Current tests cover samples, not full inventory.
+
+---
+[<small>2026-10-29 15:17:21</small>] [**Oracle**]->[**all**] *init*:
+ Activating Oracle for a full artifact-template audit and external best-practice research.
+
+---
+[<small>2026-10-29 15:20:52</small>] [**Oracle**]->[**User**] *handoff*:
+ Completed research-backed audit of all 16 artifact templates; packaged copies match. Report: agents/oracle/template_audit_2026-10-29.md. It identifies 4 missing artifact checks, contradictions, rubric fixes, and evidence-based recommendations. Analysis only; templates unchanged.
+
+---
+[<small>2026-10-29 16:23:24</small>] [**Oracle**]->[**all**] *ora groom templates*:
+ Implementing the template audit: standardizing binary checks and correcting type-specific contradictions in canonical templates.
+
+---
+[<small>2026-10-29 16:24:41</small>] [**Oracle**]->[**all**] *ora report*:
+ Completed revisions across all 16 artifact templates. Binary checks now cover every template; packaged and live copies match. Validation passed; tests not run (docs-only). Report: agents/oracle/template_audit_2026-10-29.md
+
+---
+[<small>2026-10-29 17:57:55</small>] [**Oracle**]->[**all**] *judge*:
+ Starting *judge for the recent Oracle artifact-template revision; checking trace coverage before scoring.
+
+---
+[<small>2026-10-29 17:58:03</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make help | /home/drusifer/Projects/bob_protocol/build/build.out
+help            Show available make targets
+deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
+
+---
+[<small>2026-10-29 18:00:51</small>] [**Oracle**]->[**Tank**] *handoff*:
+ The documented judge-trace Make target is absent (removed with management targets and never restored); bobp trace-annotate is tracked/registered but fails due to undeclared jinja2. @Tank *devops sdlc review and resolve the CLI/dependency workflow; docs/SDLC.md is absent.
+
+---
+[<small>2026-10-29 18:01:02</small>] [**Tank**]->[**all**] *init*:
+ Tank taking the judge-trace CLI/dependency handoff; inspecting the supported Bobp command and project build contract.
+
+---
+[<small>2026-10-29 18:01:32</small>] [**Tank**]->[**all**] *decision*:
+ Tank decision: retain  as the stable implementation; add the missing  Make target as the repo's captured front door, declare Jinja2 as a runtime dependency, and update stale Judge/Trin instructions.  is absent; no manager migration.
+
+---
+[<small>2026-10-29 18:01:37</small>] [**Tank**]->[**all**] *decision*:
+ Tank decision: retain bobp trace-annotate as the stable implementation; add the missing judge-trace Make target as this repository’s captured front door, declare Jinja2 as a runtime dependency, and update stale Judge/Trin instructions. docs/SDLC.md is absent; no manager migration.
+
+---
+[<small>2026-10-29 18:05:18</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+76 passed, 7 skipped, 9 subtests passed in 1.12s
+
+---
+[<small>2026-10-29 18:05:56</small>] [**Tank**]->[**Oracle**] *handoff*:
+ Trace command and dependency gap fixed; target uses the supported bobp CLI in the venv. Also ensured template check blocks do not leak into generated CHAT/state files. Full suite: 76 passed, 7 skipped. Real trace unavailable for this Codex session; no Claude project directory.
+
+---
+[<small>2026-10-29 18:06:16</small>] [**Oracle**]->[**User**] *handoff*:
+ Judge review complete: missing Make wrapper and undeclared Jinja dependency fixed; template check blocks no longer leak into clean/install state files. Full suite passed (76 passed, 7 skipped). No numeric TES for this Codex session: trace tool supports Claude transcripts only and no Claude project directory is present.
+
+---
+[<small>2026-10-29 18:11:22</small>] [**Oracle**]->[**Tank**] *handoff*:
+ User clarified that tool use must not assume a target project has a Makefile. @Tank *devops sdlc remove the judge-trace wrapper and use bobp trace-annotate directly in all canonical/live guidance.
+
+---
+[<small>2026-10-29 18:11:29</small>] [**Tank**]->[**all**] *resume*:
+ Tank applying the direct CLI consistency update: remove the Make wrapper and revise all active skill guidance.
+
+---
+[<small>2026-10-29 18:12:24</small>] [**Tank**]->[**Oracle**] *handoff*:
+ Removed the judge-trace Make target as requested; Judge, Trin, and Neo guidance now call bobp trace-annotate directly. Project Makefile is no longer required. Verified direct CLI help and clean diff checks; Jinja2 remains a runtime dependency.
+
+---
+[<small>2026-10-29 18:16:59</small>] [**Neo**]->[**User**] *swe handoff*:
+ Chat diagram now adds phase, sprint, and epic recap notes from logged outcomes; focused tests pass (20). Mermaid parser tests skipped because validator dependencies are unavailable. @User *review

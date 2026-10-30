@@ -19,6 +19,12 @@ TLDR:
 
 One AI dynamically switches between specialized personas. All coordination happens through `agents/CHAT.md`. On cold start, each persona reads their state files to resume where they left off.
 
+## Planning Questions and Assumptions
+
+During planning, ask the user about an unresolved decision only when the answer could materially change user-visible scope or outcomes, obligations, safety or privacy, data handling, compatibility, a hard-to-reverse architectural choice, or a significant resource or release commitment. Explain why the decision matters and offer focused options when useful. Continue any planning work that does not depend on the answer.
+
+For routine or reversible choices—such as naming, formatting, implementation details, or a conventional tool choice—follow repository conventions and established best practices. State a material assumption briefly and keep planning; do not interrupt the user to resolve ordinary details.
+
 ## Available Personas
 
 Each persona is defined in `agents/<name>/SKILL.md`:

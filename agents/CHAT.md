@@ -464,3 +464,11 @@ deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 ---
 [<small>2026-10-29 18:16:59</small>] [**Neo**]->[**User**] *swe handoff*:
  Chat diagram now adds phase, sprint, and epic recap notes from logged outcomes; focused tests pass (20). Mermaid parser tests skipped because validator dependencies are unavailable. @User *review
+
+---
+[<small>2026-10-29 23:10:24</small>] [**Bob**]->[**User**] *prompt learn*:
+ Recording a shared planning rule: ask only about consequential, high-cost-to-change uncertainties; resolve routine choices by convention and best practice. @User *review
+
+---
+[<small>2026-10-29 23:10:55</small>] [**Bob**]->[**User**] *prompt learned*:
+ Planning rule learned and recorded in canonical and packaged Bob Protocol skills. Agents ask only about high-impact, hard-to-reverse decisions; conventions cover routine choices. Discovery links refreshed. @User *review

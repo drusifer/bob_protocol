@@ -4,6 +4,7 @@
 ### Recent Decisions & Discoveries
 - 2026-10-29: `*learn` established `uv` as the default for new Python projects (`uv sync`, `uv add`, `uv run`, committed `uv.lock`). Existing package managers remain unless migration is explicitly requested. Updated build-env and Neo guidance plus shipped templates; broadcast the lesson in `agents/CHAT.md`.
 - 2026-10-29: `$bob-protocol init` verified agent links and initialized Bob. Root `AGENTS.md` is an existing symlink to `agents/AGENTS.md` (mtime Aug 7); the requested contributor guide was not written because the user explicitly said not to modify an existing file.
+- 2026-10-29: Planning rule: ask the user only about unresolved decisions with material consequences and high change cost; use repository convention and established practice for routine or reversible choices. Added to canonical and packaged Bob Protocol guidance.
 - Repository clean and up to date with `origin/main` (commit `6be68e8`).
 - All 24 shared skills active and discovered via `.claude/skills/` (`bobp setup-agent-links`).
 - Two-tier loop architecture fully formalized:
@@ -24,27 +25,24 @@
 ## Current Task
 **Status:** Completed
 **Assigned to:** Bob
-**Started:** 2026-10-15T09:58:00
-**Completed:** 2026-10-15T10:00:00
+**Started:** 2026-10-29T23:10:00
+**Completed:** 2026-10-29T23:12:00
 
 ### Task Description
-Apply the user's `*learn` instruction to use uv for Python projects going forward.
+Apply the user's `*learn` instruction for planning questions and routine assumptions.
 
 ### Progress
-- [x] Read init protocol, recent chat, Bob state, and project capability declarations
-- [x] Ran `bobp setup-agent-links`; links verified
-- [x] Logged init request and readiness to `agents/CHAT.md`
-- [x] Confirmed root `AGENTS.md` already exists and did not alter it
-- [x] Updated canonical and shipped build-env guidance, Neo's Python setup guidance, and Python SDLC templates
-- [x] Broadcast the convention in `agents/CHAT.md`
-- [x] Ran `git diff --check`; no tests run (documentation-only update)
+- [x] Logged the lesson in `agents/CHAT.md`.
+- [x] Added the consequentiality and change-cost filter to canonical and packaged Bob Protocol guidance.
+- [x] Refreshed agent discovery links with `bobp setup-agent-links`.
+- [x] Followed best practices for this process-only update; no tests run.
 
 ### Blockers
 None
 
 ## Next Steps
 ### Immediate Next Action
-Await next user request. This lesson sets the default for new Python projects; the repository's current pip-based environment was not migrated.
+Await the next user request. Planning personas should ask about high-impact, costly-to-change uncertainties and resolve routine choices using convention and best practice.
 
 ### Waiting On
 User

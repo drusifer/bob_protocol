@@ -190,4 +190,8 @@ sequenceDiagram
     Note right of Tank: "Removed the judge-trace<br/>Make target as<br/>requested, Judge, Trin,<br/>and Neo guidance now<br/>call bobp trace-annotate<br/>directly. Project<br/>Makefile is…"
     Neo->>User: "swe handoff"
     Note right of Neo: "Chat diagram now adds<br/>phase, sprint, and epic<br/>recap notes from logged<br/>outcomes, focused tests<br/>pass (20). Mermaid<br/>parser tests skipped<br/>becau…"
+    Bob->>User: "prompt learn"
+    Note right of Bob: "Recording a shared<br/>planning rule: ask only<br/>about consequential,<br/>high-cost-to-change<br/>uncertainties, resolve<br/>routine choices by<br/>convention an…"
+    Bob->>User: "prompt learned"
+    Note right of Bob: "Planning rule learned<br/>and recorded in<br/>canonical and packaged<br/>Bob Protocol skills.<br/>Agents ask only about<br/>high-impact, hard-to-<br/>reverse decisi…"
 ```

@@ -5,30 +5,40 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
+from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
+ASSET_PACKAGE = "bobp.tools.persona_eval_assets"
 MODEL = "gpt-6-luna"
 RUBRIC_START = "<!-- RUBRIC-START -->"
 RUBRIC_END = "<!-- RUBRIC-END -->"
 
 
 def find_project_root(start: Path | None = None) -> Path:
-    """Find the Bob Protocol checkout containing the eval catalog."""
+    """Find the nearest project root, without assuming a Makefile or Bobp checkout."""
     current = (start or Path.cwd()).resolve()
     for candidate in (current, *current.parents):
-        if (candidate / "tools" / "persona-eval" / "catalog.json").is_file():
+        if any(
+            (candidate / marker).exists()
+            for marker in (".git", "pyproject.toml", "package.json", "AGENTS.md", "README.md")
+        ):
             return candidate
-    raise FileNotFoundError("Could not find the Bob Protocol persona eval catalog.")
+    return current
 
 
-def load_catalog(path: Path) -> list[dict[str, Any]]:
-    """Load and validate the versioned, manually curated evaluation catalog."""
-    catalog = json.loads(path.read_text())
+def load_catalog(path: Path | None = None) -> list[dict[str, Any]]:
+    """Load and validate the package's versioned evaluation catalog or a test file."""
+    if path is None:
+        catalog_text = files(ASSET_PACKAGE).joinpath("catalog.json").read_text(encoding="utf-8")
+    else:
+        catalog_text = path.read_text(encoding="utf-8")
+    catalog = json.loads(catalog_text)
     if catalog.get("version") != 1 or not isinstance(catalog.get("suites"), list):
         raise ValueError("Eval catalog must use version 1 and contain a suites list.")
     suites = catalog["suites"]
@@ -69,8 +79,8 @@ def create_test_project(project: Path) -> None:
     )
 
 
-def install_local_bobp(root: Path, project: Path, temp_root: Path) -> None:
-    """Run this checkout's bobp install while isolating global setup locations."""
+def install_local_bobp(project: Path, temp_root: Path) -> None:
+    """Run the active Bobp installation while isolating global setup locations."""
     isolated_home = temp_root / "home"
     codex_home = temp_root / "codex-home"
     isolated_path = temp_root / "bin"
@@ -87,7 +97,6 @@ def install_local_bobp(root: Path, project: Path, temp_root: Path) -> None:
             "CODEX_HOME": str(codex_home),
             # Prevent optional via/Codex-global integrations during fixture setup.
             "PATH": str(isolated_path),
-            "PYTHONPATH": str(root),
             "TMPDIR": str(isolated_tmp),
             "TMP": str(isolated_tmp),
             "TEMP": str(isolated_tmp),
@@ -95,7 +104,7 @@ def install_local_bobp(root: Path, project: Path, temp_root: Path) -> None:
     )
     result = subprocess.run(
         [sys.executable, "-m", "bobp.cli", "install", str(project)],
-        cwd=root,
+        cwd=project,
         env=env,
         capture_output=True,
         text=True,
@@ -108,10 +117,10 @@ def install_local_bobp(root: Path, project: Path, temp_root: Path) -> None:
         )
 
 
-def prepare_test_project(root: Path, project: Path, temp_root: Path) -> Path:
-    """Create a project and populate it using bobp install from this checkout."""
+def prepare_test_project(project: Path, temp_root: Path) -> Path:
+    """Create a project and populate it using the active Bobp installation."""
     create_test_project(project)
-    install_local_bobp(root, project, temp_root)
+    install_local_bobp(project, temp_root)
     expose_codex_skills(project)
     return project
 
@@ -149,6 +158,95 @@ def expose_codex_skills(project: Path) -> None:
         link.symlink_to(os.path.relpath(source, skills_dir), target_is_directory=True)
     if not (skills_dir / "bob" / "SKILL.md").is_file():
         raise RuntimeError("Installed Bob skill was not available at Codex's project-local path.")
+
+
+def _npm_command(*args: str) -> list[str] | None:
+    """Return an npm argv that also works when Windows resolves npm.cmd."""
+    npm = shutil.which("npm")
+    if not npm:
+        return None
+    if os.name == "nt" and Path(npm).suffix.lower() in {".cmd", ".bat"}:
+        return ["cmd", "/c", npm, *args]
+    return [npm, *args]
+
+
+def check_node_prerequisites() -> str | None:
+    """Return a user-facing error when the required Node.js/npm runtime is unavailable."""
+    node = shutil.which("node")
+    if not node:
+        return "persona-eval requires Node.js >=22.22.0 and npm. Install Node.js from https://nodejs.org/ and retry."
+
+    try:
+        result = subprocess.run([node, "--version"], capture_output=True, text=True, check=False)
+    except OSError as exc:
+        return f"Could not run Node.js at {node}: {exc}. Install Node.js >=22.22.0 and retry."
+    match = re.fullmatch(r"v?(\d+)\.(\d+)\.(\d+)(?:[-+].*)?", result.stdout.strip())
+    if result.returncode or not match:
+        detail = result.stderr.strip() or result.stdout.strip() or "no version was reported"
+        return f"Could not determine the Node.js version ({detail}). Install Node.js >=22.22.0 and retry."
+    version = tuple(int(part) for part in match.groups())
+    if version < (22, 22, 0):
+        reported = result.stdout.strip()
+        return f"persona-eval requires Node.js >=22.22.0; found {reported}. Upgrade Node.js and retry."
+    if not shutil.which("npm"):
+        return "persona-eval requires npm, but npm was not found on PATH. Install npm with Node.js >=22.22.0 and retry."
+    return None
+
+
+def _npm_eval_dependencies() -> dict[str, str]:
+    """Read pinned npm requirements from the package's dependency manifest."""
+    manifest = json.loads(files(ASSET_PACKAGE).joinpath("package.json").read_text(encoding="utf-8"))
+    return manifest["devDependencies"]
+
+
+def _npm_install_hint() -> str:
+    packages = " ".join(f"{name}@{version}" for name, version in _npm_eval_dependencies().items())
+    return f"npm install --global {packages}"
+
+
+def show_node_setup_instructions() -> int:
+    """Print global npm setup instructions without writing to the target project."""
+    prerequisite_error = check_node_prerequisites()
+    if prerequisite_error:
+        print(prerequisite_error, file=sys.stderr)
+        return 2
+
+    print("Install the persona-evaluation npm dependencies globally with:")
+    print(f"  {_npm_install_hint()}")
+    print("Then rerun the evaluation command. Bobp did not install anything.")
+    return 0
+
+
+def _global_node_runtime_error() -> str | None:
+    """Check that the pinned Promptfoo and Codex SDK packages are installed globally."""
+    npm = _npm_command("root", "--global")
+    if npm is None:
+        return "npm was not found on PATH. Install npm with Node.js >=22.22.0 and retry."
+    result = subprocess.run(npm, capture_output=True, text=True, check=False)
+    if result.returncode:
+        detail = result.stderr.strip() or result.stdout.strip() or "npm root --global failed"
+        return f"Could not locate globally installed npm packages ({detail}). Run `bobp persona-eval --setup` for instructions."
+
+    modules = Path(result.stdout.strip())
+    dependencies = _npm_eval_dependencies()
+    missing = []
+    for name, expected in dependencies.items():
+        manifest = modules / name / "package.json"
+        try:
+            installed = json.loads(manifest.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            missing.append(f"{name}@{expected}")
+            continue
+        if installed.get("version") != expected:
+            missing.append(f"{name}@{expected}")
+    if missing:
+        return (
+            "Required global npm dependencies are missing or have the wrong version: "
+            f"{', '.join(missing)}. Run `{_npm_install_hint()}` and retry."
+        )
+    if shutil.which("promptfoo") is None:
+        return "The global Promptfoo command is not on PATH. Add npm's global executable directory to PATH and retry."
+    return None
 
 
 def build_config(
@@ -236,10 +334,14 @@ def build_config(
 
 def run_suite(root: Path, suite: dict[str, Any], repeat: int = 1) -> int:
     """Run repeated, isolated copies of one catalog suite."""
-    package_dir = root / "tools" / "persona-eval"
-    promptfoo = package_dir / "node_modules" / ".bin" / "promptfoo"
-    if not promptfoo.is_file():
-        print("Promptfoo is not installed. Run `bobp make install-evals` first.", file=sys.stderr)
+    prerequisite_error = check_node_prerequisites()
+    if prerequisite_error:
+        print(prerequisite_error, file=sys.stderr)
+        return 2
+
+    runtime_error = _global_node_runtime_error()
+    if runtime_error:
+        print(runtime_error, file=sys.stderr)
         return 2
 
     if repeat < 1:
@@ -255,7 +357,7 @@ def run_suite(root: Path, suite: dict[str, Any], repeat: int = 1) -> int:
         run_dir = runtime_dir / f"{suite['id']}-{timestamp}-run{attempt}"
         run_dir.mkdir()
         project = run_dir / "project"
-        prepare_test_project(root, project, run_dir)
+        prepare_test_project(project, run_dir)
 
         artifact_path = _project_path(project, suite["artifact"])
         rubric_path = _project_path(project, suite["rubric"])
@@ -269,16 +371,23 @@ def run_suite(root: Path, suite: dict[str, Any], repeat: int = 1) -> int:
         isolated_tmp.mkdir(exist_ok=True)
         env = os.environ.copy()
         env.update({"TMPDIR": str(isolated_tmp), "TMP": str(isolated_tmp), "TEMP": str(isolated_tmp)})
+        promptfoo = shutil.which("promptfoo")
+        if not promptfoo:
+            print("The global Promptfoo command is not on PATH. Add npm's global executable directory to PATH and retry.", file=sys.stderr)
+            return 2
+        command = [
+            promptfoo,
+            "eval",
+            "--config",
+            str(config_path),
+            "--no-cache",
+            "--output",
+            str(output_path),
+        ]
+        if os.name == "nt" and Path(promptfoo).suffix.lower() in {".cmd", ".bat"}:
+            command = ["cmd", "/c", *command]
         result = subprocess.run(
-            [
-                str(promptfoo),
-                "eval",
-                "--config",
-                str(config_path),
-                "--no-cache",
-                "--output",
-                str(output_path),
-            ],
+            command,
             cwd=root,
             env=env,
             check=False,
@@ -309,6 +418,7 @@ def main(argv: list[str] | None = None) -> None:
     group.add_argument("selector", nargs="?", help="Persona name or eval suite id.")
     group.add_argument("--all", action="store_true", help="Run every suite in the catalog.")
     group.add_argument("--list", action="store_true", help="List catalog suites.")
+    group.add_argument("--setup", action="store_true", help="Show instructions for installing locked npm dependencies globally.")
     parser.add_argument("--repeat", type=int, default=1, help="Fresh runs per suite (default: 1).")
     args = parser.parse_args(argv)
     if args.repeat < 1:
@@ -316,9 +426,12 @@ def main(argv: list[str] | None = None) -> None:
 
     try:
         root = find_project_root()
-        suites = load_catalog(root / "tools" / "persona-eval" / "catalog.json")
-    except (FileNotFoundError, ValueError) as exc:
+        suites = load_catalog()
+    except ValueError as exc:
         parser.error(str(exc))
+
+    if args.setup:
+        raise SystemExit(show_node_setup_instructions())
 
     if args.list:
         for suite in suites:

@@ -6,8 +6,8 @@ This document is the source of truth for building, testing, changing, and releas
 
 | | Python | JavaScript tools |
 |---|---|---|
-| Runtime | 3.15 development; package supports `>=3.10,<4` | Node `>=22.22.0` for Promptfoo; Node/npm for Mermaid |
-| Manifest / lock | `pyproject.toml` / `uv.lock` | `tools/persona-eval/package.json` / `tools/persona-eval/package-lock.json`; Mermaid has no lock |
+| Runtime | 3.15 development; package supports `>=3.10,<4` | Node.js `>=22.22.0` and npm for persona evaluation; Node/npm for Mermaid |
+| Manifest / lock | `pyproject.toml` / `uv.lock` | Packaged `bobp/tools/persona_eval_assets/package.json` and lockfile; Mermaid has no lock |
 | Manager / environment | uv / `.venv/` | npm / each tool's `node_modules/` |
 
 `.python-version` selects the latest available Python 3.15 patch. Python requirements use minimum versions; `uv.lock` records the current compatible resolution. Package version is in `bobp/__init__.py`.
@@ -21,7 +21,7 @@ uv sync --python 3.15 --locked --extra dev
 uv run bobp make test
 ```
 
-uv supplies Python when needed. Mermaid dependencies install on the first lint run. For Promptfoo, run `uv run bobp make install-evals`; Codex must already be logged in locally. The evaluator does not copy credentials into the fixture.
+Persona evaluation has external system prerequisites: Node.js `>=22.22.0` and npm on `PATH`. `pip install bobp` does not install system executables or npm packages. The `bobp persona-eval --setup` and evaluation commands check Node.js/npm and report actionable errors when they are missing or outdated. Setup prints the global install command; it does not install packages or write files into the user's project. Promptfoo and the Codex SDK are pinned in Bobp's packaged npm manifest. Install them globally with the command shown by `bobp persona-eval --setup`. Codex must already be logged in locally. The evaluator does not copy credentials into the fixture. uv supplies Python when needed, and Mermaid dependencies install on the first lint run. For Promptfoo, run `uv run bobp persona-eval --setup` and follow its instructions.
 
 ## 3. Make targets and persona evaluation
 
@@ -30,11 +30,11 @@ Run project targets with `bobp make <target>`; prefix with `uv run` when the loc
 | Target | Purpose |
 |---|---|
 | `install` | Sync the locked Python environment |
-| `install-evals` | Install locked Promptfoo dependencies |
+| `install-evals` | Print instructions for globally installing pinned Promptfoo dependencies |
 | `test`, `test-q` | Full pytest suite; focused pytest selection (`ARGS="-k name"`) |
 | `lint`, `lint-mermaid` | Validate Mermaid fences with the real parser |
 | `build` | Build wheel and sdist in `dist/` |
-| `system-install` | Optional editable pipx install of `bobp` |
+| `system-install` | Optional editable `uv tool` install of `bobp` into uv's tool environment |
 | `clean` | Remove `build/`, `dist/`, and egg metadata; keep `.venv/` |
 | `distclean` | Run `clean` and remove `.venv/` |
 | `help` | List available targets |
@@ -43,7 +43,7 @@ Run project targets with `bobp make <target>`; prefix with `uv run` when the loc
 There is no `format` or application `run` target. `lint` checks Mermaid only; Python lint/type checks and secret scanning are not configured.
 
 ```sh
-uv run bobp make install-evals
+uv run bobp persona-eval --setup
 uv run bobp persona-eval --list
 uv run bobp persona-eval <persona-or-suite>
 ```
@@ -53,7 +53,8 @@ Each eval uses a versioned catalog suite, a fresh fixture under `build/persona-e
 ## 4. Dependencies
 
 - Python: add/remove runtime packages in `[project].dependencies` and dev packages in `[project.optional-dependencies].dev`; run `uv lock` and commit `pyproject.toml` plus `uv.lock`.
-- Promptfoo: add/update packages with `npm install --prefix tools/persona-eval --save-dev <package>`; remove with `npm uninstall --prefix tools/persona-eval <package>`. Commit the manifest and lockfile together.
+- Persona evaluation system prerequisites: Node.js `>=22.22.0` and npm are external system dependencies; declare them in this document and preserve the evaluator's startup checks and actionable errors.
+- Promptfoo and Codex SDK: update `bobp/tools/persona_eval_assets/package.json` and lockfile with npm (`npm install --prefix bobp/tools/persona_eval_assets --save-dev <package>`); remove with `npm uninstall --prefix bobp/tools/persona_eval_assets <package>`. Commit both packaged assets. Users install the pinned dependencies globally with the command printed by `bobp persona-eval --setup`; Bobp does not install packages into their projects.
 - Mermaid: change `tools/mermaid_validate/package.json` and run `npm install --prefix tools/mermaid_validate`; no lockfile is committed, so its resolved versions are not reproducibly locked.
 - Neo maintains application dependencies. New runtimes, managers, Make targets, or quality gates go through Tank.
 

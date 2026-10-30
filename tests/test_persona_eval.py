@@ -1,4 +1,5 @@
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -29,8 +30,7 @@ def test_load_catalog_requires_unique_suites_and_required_fields(tmp_path: Path)
 
 
 def test_repository_catalog_has_matching_persona_suites() -> None:
-    root = persona_eval.find_project_root()
-    suites = persona_eval.load_catalog(root / "tools/persona-eval/catalog.json")
+    suites = persona_eval.load_catalog()
 
     assert {suite["id"] for suite in suites} == {
         "bob-persona-authoring",
@@ -39,6 +39,15 @@ def test_repository_catalog_has_matching_persona_suites() -> None:
     morpheus = next(suite for suite in suites if suite["persona"] == "morpheus")
     assert morpheus["artifact"] == "docs/decisions/ADR-0001-refund-lifecycle.md"
     assert morpheus["rubric"] == "agents/templates/_template_DECISION.md"
+
+
+def test_project_root_does_not_require_bobp_checkout_or_makefile(tmp_path: Path) -> None:
+    project = tmp_path / "customer-project"
+    nested = project / "src"
+    nested.mkdir(parents=True)
+    (project / "pyproject.toml").write_text("[project]\nname='customer'\n")
+
+    assert persona_eval.find_project_root(nested) == project
 
 
 def test_catalog_paths_cannot_escape_disposable_project(tmp_path: Path) -> None:
@@ -67,7 +76,7 @@ def test_prepare_test_project_runs_local_bobp_install_in_isolated_locations(
     temp_root.mkdir()
     project = tmp_path / "project"
 
-    persona_eval.prepare_test_project(root, project, temp_root)
+    persona_eval.prepare_test_project(project, temp_root)
 
     assert (project / "README.md").is_file()
     assert (project / "pyproject.toml").is_file()
@@ -86,6 +95,75 @@ def test_prepare_test_project_runs_local_bobp_install_in_isolated_locations(
     assert (project / ".agents/skills/bob/SKILL.md").is_file()
     assert (project / ".agents/skills/morpheus/SKILL.md").is_file()
     assert (temp_root / "codex-home/skills/bob").is_symlink()
+
+
+def test_setup_prints_global_npm_instructions_without_installing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def which(name: str) -> str | None:
+        return f"/{name}" if name in {"node", "npm"} else None
+
+    monkeypatch.setattr(persona_eval.shutil, "which", which)
+    monkeypatch.setattr(
+        persona_eval.subprocess,
+        "run",
+        lambda args, **kwargs: subprocess.CompletedProcess(args, returncode=0, stdout="v24.15.0\n", stderr=""),
+    )
+
+    assert persona_eval.show_node_setup_instructions() == 0
+
+    # Setup is informational only and never writes packages or files into the project.
+    assert not (tmp_path / "build").exists()
+
+
+def test_global_runtime_error_lists_exact_install_command(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    modules = tmp_path / "node_modules"
+    modules.mkdir()
+    monkeypatch.setattr(
+        persona_eval.shutil,
+        "which",
+        lambda name: f"/{name}" if name in {"node", "npm"} else None,
+    )
+
+    def run(args: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        return subprocess.CompletedProcess(args, returncode=0, stdout="v24.15.0\n" if args[1:] == ["--version"] else f"{modules}\n", stderr="")
+
+    monkeypatch.setattr(persona_eval.subprocess, "run", run)
+
+    error = persona_eval._global_node_runtime_error()
+
+    assert error is not None
+    assert "promptfoo@0.125.1" in error
+    assert "@openai/codex-sdk@0.156.1" in error
+
+
+def test_node_prerequisite_error_explains_missing_runtime(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(persona_eval.shutil, "which", lambda name: None)
+
+    error = persona_eval.check_node_prerequisites()
+
+    assert error is not None
+    assert "Node.js >=22.22.0 and npm" in error
+    assert "https://nodejs.org/" in error
+
+
+def test_node_prerequisite_error_reports_unsupported_version(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        persona_eval.shutil, "which", lambda name: f"/{name}" if name in {"node", "npm"} else None
+    )
+    monkeypatch.setattr(
+        persona_eval.subprocess,
+        "run",
+        lambda args, **kwargs: subprocess.CompletedProcess(
+            args, returncode=0, stdout="v20.12.0\n", stderr=""
+        ),
+    )
+
+    assert persona_eval.check_node_prerequisites() == (
+        "persona-eval requires Node.js >=22.22.0; found v20.12.0. Upgrade Node.js and retry."
+    )
 
 
 def test_build_config_checks_skill_use_and_artifact_rubric(tmp_path: Path) -> None:

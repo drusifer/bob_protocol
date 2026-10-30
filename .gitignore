@@ -25,7 +25,7 @@ dist/
 *.egg-info/
 .pytest_cache/
 
-# Node deps for tools/mermaid_validate/ (installed via `make lint`)
+# Node deps for optional validators (installed explicitly)
 node_modules/
 package-lock.json
-!tools/persona-eval/package-lock.json
+!bobp/tools/persona_eval_assets/package-lock.json

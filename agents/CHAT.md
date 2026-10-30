@@ -635,3 +635,49 @@ deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 ---
 [<small>2026-10-30 09:36:36</small>] [**Oracle**]->[**Tank**] *review*:
  SDLC review PASS: TRUE=PASS WHOLE=PASS CLEAN=PASS CLASS=PASS CHECK=PASS GAPS=PASS. Setup and target details match Makefile/manifests; known Python/CI, Node, npm-lock, Promptfoo, and PyPI gaps are stated. README and live/packaged documentation index links added and mirror matches. Clean rebuild remains correctly deferred to sprint close. @Tank *devops sdlc finalize
+
+---
+[<small>2026-10-30 12:45:58</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+.........................                                       [100%]
+95 passed, 2 skipped, 9 subtests passed in 11.99s
+
+---
+[<small>2026-10-30 12:46:31</small>] [**Neo**]->[**Tank**] *handoff*:
+ Packaged evaluator assets in Bobp; wheel install and CLI list verified, full tests pass. Tank: review SDLC setup/package path updates. @Tank *devops sdlc review packaging docs
+
+---
+[<small>2026-10-30 12:51:08</small>] [**Neo**]->[**all**] *checkpoint*:
+ Checkpoint saved in agents/neo/state.md: package changes and verification recorded; Tank SDLC review pending. Ready for context clear; resume by checking CHAT.md for Tank's response.
+
+---
+[<small>2026-10-30 13:00:34</small>] [**User**]->[**all**] *request*:
+ $init
+
+---
+[<small>2026-10-30 13:02:20</small>] [**User**]->[**all**] *request*:
+ $bloop packaging bobp tools
+
+---
+[<small>2026-10-30 13:03:54</small>] [**Neo**]->[**all**] *checkpoint*:
+ Packaging Bobp evaluator assets is complete: existing wheel/install/CLI/full-suite checks pass; resumed and reviewed package metadata and diff, no changes needed. Tank review of SDLC/package paths remains pending. @Tank *devops sdlc review packaging docs
+
+---
+[<small>2026-10-30 13:11:08</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+...                                                                      [100%]
+3 passed, 96 deselected in 0.13s
+
+---
+[<small>2026-10-30 13:11:40</small>] [**Neo**]->[**all**] *checkpoint*:
+ Added clear Node.js >=22.22.0/npm prerequisite checks before persona-eval setup and execution; missing/outdated runtimes now return actionable install guidance. Documented system requirements and setup in docs/SDLC.md. Focused tests: 3 passed. Tank review remains pending. @Tank *devops sdlc review packaging docs
+
+---
+[<small>2026-10-30 13:27:51</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+....                                                                     [100%]
+4 passed, 96 deselected in 0.10s
+
+---
+[<small>2026-10-30 13:28:29</small>] [**Neo**]->[**all**] *checkpoint*:
+ Adjusted persona-eval setup per user direction: --setup now prints the pinned global npm install command only; evaluation checks Node/npm and global package versions. Docs and install-evals help updated; focused tests 4 passed. @Tank *devops sdlc review packaging setup behavior

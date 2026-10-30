@@ -21,11 +21,11 @@ $(MERMAID_STAMP): $(MERMAID_DIR)/package.json
 install: ## Install bobp and dev dependencies into the uv-managed .venv
 	uv sync --python 3.15 --locked --extra dev
 
-install-evals: ## Install pinned Promptfoo and Codex SDK for persona evaluations
-	npm ci --prefix tools/persona-eval
+install-evals: ## Show how to install global Promptfoo dependencies for persona evaluations
+	uv run --python 3.15 --locked --extra dev bobp persona-eval --setup
 
-system-install: ## Install bobp globally using pipx (editable mode)
-	pipx install --editable . --force
+system-install: ## Install bobp as a uv-managed global tool (editable mode)
+	uv tool install --editable . --force
 
 test: install ## Run the test suite with locked dependencies
 	uv run --python 3.15 --locked --extra dev pytest --basetemp=build/pytest tests/ -q

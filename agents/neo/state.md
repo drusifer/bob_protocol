@@ -1,19 +1,20 @@
 # Agent State
 
 ## Context
-- User approved a local Promptfoo tool using Codex/ChatGPT subscription auth. No GitHub Actions or hooks; direct pushes remain.
+- User approved local Promptfoo evaluation using Codex/ChatGPT subscription auth. No GitHub Actions or commit hooks; direct pushes remain.
 - Bob owns persona skills; Trin owns evaluation/sign-off; Tank owns tooling and `docs/SDLC.md`.
-- Use the newest Python available through uv (currently 3.15.0; `.python-version` is `3.15`). Do not build Python from source. Prefer current compatible dependencies.
-- The eval catalog is stable and versioned. Suites create isolated target projects under `build/persona-eval/runtime/`, run local `bobp install`, then check installed skill use and score the produced artifact with its shared artifact rubric.
-- Keep pytest and subprocess temporary files under `build/`; do not write to `/tmp`.
-- Trin reviewed the first Bob eval. Skill-use passed; rubric grading was inconclusive because the grader ignored fixture `agents/PROJECT.md` (`via: disabled`) and over-interpreted inherited state requirements. Historical chat records multiple live attempts; do not run another live eval without user guidance.
+- Evaluator assets were moved into `bobp/tools/persona_eval_assets/`; `bobp/tools/persona_eval.py` loads the catalog/manifests with `importlib.resources`.
+- `bobp persona-eval --setup` explicitly installs locked Node dependencies under the target project's `build/persona-eval/toolchain`; evaluator scratch/reports remain under `build/`.
+- Verification: built wheel includes module/catalog/npm manifests; clean Python 3.15 venv installed wheel and successfully ran `bobp persona-eval --list`; full tests passed (95 passed, 2 skipped, 9 subtests). No additional live model evaluation was run.
+- Worktree still has uncommitted changes: `.gitignore`, `Makefile`, `docs/SDLC.md`, `pyproject.toml`, `bobp/tools/persona_eval.py`, `tests/test_persona_eval.py`; moved package assets under `bobp/tools/persona_eval_assets/`; removed old `tools/persona-eval/` assets; updated `agents/neo/state.md`, `agents/CHAT.md`, and generated `agents/CHAT.diagram.md`.
 
 ## Current Task
-**Status:** Implementation and live validation complete; handed to Trin for QA sign-off.
+**Status:** Packaging implementation complete; Node.js/npm prerequisite handling now prints global setup instructions without installing into target projects. Tank review remains pending.
 **Assigned to:** Neo
-**Progress:** `build_config` now includes the fixture capability declaration and scopes Via/state criteria to the installed target. Focused offline tests pass (6 passed, 87 deselected). One user-authorized live eval passed both installed-skill-use and artifact-rubric assertions. Runtime and report are retained under `build/persona-eval/`.
+**Progress:** Packaged evaluator assets and wired the installed Bobp command to setup/use them from arbitrary target projects. `bobp persona-eval --setup` now prints the pinned global npm install command and does not install packages or write into the target project; evaluation checks Node.js >=22.22.0, npm, exact global npm package versions, and PATH, with actionable errors. Updated `docs/SDLC.md` and the `install-evals` help description. Focused tests: 4 passed. Prior package verification: wheel install, installed CLI list, and full suite passed. Tank has not replied to the existing review handoff. Changes are not committed.
 
 ## Next Steps
-1. Trin reviews `build/persona-eval/bob-persona-authoring-20261030T131555Z-run1.json` and its retained project at `build/persona-eval/runtime/bob-persona-authoring-20261030T131555Z-run1/project`; verify the rubric against the produced `agents/commit-message-author/SKILL.md`.
-2. If Trin signs off, Morpheus reviews the evaluator design, then Tank documents Python/tooling and catalog-based evaluation policy in `docs/SDLC.md`.
-3. Keep additional live runs gated by the anti-loop rule and user guidance.
+1. Await Tank's review of the SDLC setup/package-path changes and prerequisite documentation.
+2. If Tank requests SDLC corrections, update `docs/SDLC.md` with Tank's ownership in mind and rerun only affected verification; otherwise record the review result.
+3. Preserve all existing uncommitted changes. Do not commit/push unless the user asks.
+4. Do not run another live Promptfoo eval without user guidance; prior live evals were gated by anti-loop guidance.

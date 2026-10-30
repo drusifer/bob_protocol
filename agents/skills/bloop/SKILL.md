@@ -1,8 +1,6 @@
 ---
 name: bloop
 description: Work-Loops conductor and catalog. Autonomous multi-persona execution loops for features (*impl), bugfixes (*fix), refactoring (*refactor), spikes (*spike), UAT (*uat), and deployments (*deploy).
-triggers: ["*bloop", "/bloop", "*work-loop"]
-requires: ["bob-protocol", "chat", "make", "prep-clear", "impl", "fix", "refactor", "spike", "uat", "deploy"]
 ---
 
 Top-level conductor and catalog for Bob Work-Loops (autonomous multi-persona execution chains).
@@ -15,6 +13,14 @@ TLDR:
     Anti-Loop Guard: Max 2 failures before Oracle consultation and user escalation.
 
 # Bloop — Work-Loops Conductor & Catalog
+
+## Triggers
+
+`*bloop`, `/bloop`, `*work-loop`
+
+## Requires
+
+`bob-protocol`, `chat`, `make`, `prep-clear`, `impl`, `fix`, `refactor`, `spike`, `uat`, `deploy`
 
 ## Overview
 

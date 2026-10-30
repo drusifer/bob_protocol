@@ -1,7 +1,6 @@
 ---
 name: personas
 description: Switch to a specialized agent persona or invoke a persona directly. Use to delegate work to the right specialist.
-triggers: ["*switch", "*invoke", "@Neo", "@Trin", "@Morpheus", "@Oracle", "@Mouse", "@Cypher", "@Bob", "@Smith", "@Tank"]
 ---
 
 One-line summary: Switch to or invoke a specialist persona to delegate work to the right agent.
@@ -12,6 +11,10 @@ TLDR:
     Nine personas available: Neo (SWE), Morpheus (lead), Trin (QA), Oracle (knowledge), Mouse (scrum), Cypher (PM), Bob (prompt eng), Smith (expert user), Tank (DevOps).
 
 # Personas Skill — Switching & Invocation
+
+## Triggers
+
+`*switch`, `*invoke`, `@Neo`, `@Trin`, `@Morpheus`, `@Oracle`, `@Mouse`, `@Cypher`, `@Bob`, `@Smith`, `@Tank`
 
 ## Available Personas
 

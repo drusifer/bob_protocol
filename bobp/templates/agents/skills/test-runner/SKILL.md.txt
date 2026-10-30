@@ -1,7 +1,6 @@
 ---
 name: test-runner
 description: Run tests using the project Makefile. Use for executing test suites, running specific tests, and validating code changes.
-triggers: ["*test", "*qa test"]
 ---
 
 One-line summary: Run the project test suite through the Makefile for consistent environment setup.
@@ -12,6 +11,10 @@ TLDR:
     Used by Neo (`*swe test`) after implementation changes and by Trin (`*qa test`) for full verification.
 
 # Test Runner Skill
+
+## Triggers
+
+`*test`, `*qa test`
 
 ## Overview
 

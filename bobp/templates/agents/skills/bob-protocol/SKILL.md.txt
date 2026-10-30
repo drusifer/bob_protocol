@@ -1,8 +1,6 @@
 ---
 name: bob-protocol
 description: Multi-persona coordination protocol. Enables AI to switch between specialized personas (Neo, Morpheus, Trin, Oracle, Mouse, Cypher, Bob, Smith, Tank) based on task needs. Use for *chat workflow, state management, and cross-agent communication.
-triggers: ["*chat"]
-requires: ["chat", "bloop", "sprint", "make", "init", "prep-clear"]
 ---
 
 Orchestrates multi-persona AI coordination through a shared chat log using the `*chat` trigger.
@@ -14,6 +12,14 @@ TLDR:
     Key rule: no third fix attempt without Oracle consult + user sign-off.
 
 # Bob Protocol — Multi-Persona Coordination
+
+## Triggers
+
+`*chat`
+
+## Requires
+
+`chat`, `bloop`, `sprint`, `make`, `init`, `prep-clear`
 
 ## Overview
 

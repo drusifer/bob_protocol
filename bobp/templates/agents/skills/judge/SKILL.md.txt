@@ -1,8 +1,6 @@
 ---
 name: judge
 description: Interactive loop to evaluate agent skill/tool/persona usage (e.g. *judge via, *judge make, *judge trin), catalog bugs/anti-patterns, and optimize agent prompt instructions.
-triggers: ["*judge"]
-requires: ["bob-protocol", "chat", "make"]
 ---
 
 Full workflow for evaluating the effectiveness of a target skill, tool, or persona, ensuring correct usage, correctness, cataloging bugs, and updating agent prompts to minimize token usage and optimize efficiency.
@@ -12,6 +10,14 @@ TLDR:
     Any defect, resource waste, or compliance failure must be cataloged and resolved, rather than accepted.
 
 # Judge — Evaluation & Optimization Loop
+
+## Triggers
+
+`*judge`
+
+## Requires
+
+`bob-protocol`, `chat`, `make`
 
 ```
 Trin (Usage Run) → Smith (UX/Token/Compliance Review & Bug log) → Neo (Bug Fixes) → Bob (Prompt/Skill Updates) → Trin (Verification Run)

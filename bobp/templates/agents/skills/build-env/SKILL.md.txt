@@ -1,7 +1,6 @@
 ---
 name: build-env
 description: Set up a project's build environment the way its language expects (Python pyproject.toml + .venv, JavaScript package.json + lockfile, Go, Rust, ...), with the Makefile as the single front door, and record it in docs/SDLC.md. Tank runs this for initial setup, when a language is added, to write or update the SDLC doc, and to check for drift at sprint close.
-triggers: ["*devops bootstrap", "*devops build-env", "*build-env", "*devops sdlc", "*devops sdlc-check"]
 ---
 
 One-line summary: Tank bootstraps a build environment using the language's own manifest and tools, isolated inside the project, and exposes it through a standard set of `make` targets.
@@ -15,6 +14,10 @@ TLDR:
     Tank owns docs/SDLC.md. No sprint starts without it; Tank checks the project against it at every sprint close.
 
 # Build Environment Skill
+
+## Triggers
+
+`*devops bootstrap`, `*devops build-env`, `*build-env`, `*devops sdlc`, `*devops sdlc-check`
 
 ## When to use
 

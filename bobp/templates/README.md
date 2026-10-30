@@ -6,9 +6,9 @@ A reusable Claude Code Skills framework that orchestrates a team of specialized 
 
 ## How It Works
 
-Each persona is a **Claude Code Skill** with:
-- YAML frontmatter defining `name`, `description`, and `triggers`
-- A command interface invoked by `*prefix command` syntax
+Each persona is an agent instruction file with standard YAML frontmatter for `name` and `description`:
+- A Markdown command interface documenting `*prefix command` invocations
+- Optional `Triggers` and `Requires` sections in the body for invocation aliases and prerequisite skills
 - State files in `agents/[persona]/` — the only memory that survives context clears and session restarts
 
 All coordination flows through `agents/CHAT.md` — a shared team log that every persona reads on entry.

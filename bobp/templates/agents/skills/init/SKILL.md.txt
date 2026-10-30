@@ -1,8 +1,6 @@
 ---
 name: init
 description: Initialize or resume a BobProtocol session. Validates agent discovery links, reads team chat context and project capabilities, handles cold-start recovery, posts persona status, and displays the command quick reference.
-triggers: ["*init", "/init", "/bob-protocol init", "*startup", "*resume", "*chat init"]
-requires: ["bob-protocol", "chat", "bob-tools", "prep-clear"]
 ---
 
 Formalizes the initialization and session resume procedure across all supported AI harnesses.
@@ -14,6 +12,10 @@ TLDR:
     Hard rule: Rapid Startup — NEVER run full test suites on init. Never auto-execute tasks without user direction.
 
 # Bob Protocol — Initialization & Startup Skill (`init`)
+
+## Requires
+
+`bob-protocol`, `chat`, `bob-tools`, `prep-clear`
 
 ## Overview
 

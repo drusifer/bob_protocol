@@ -1,8 +1,6 @@
 ---
 name: impl
 description: Feature implementation work-loop. Delivers new capabilities through Test-Driven Development (TDD), acceptance verification, and code review.
-triggers: ["*impl", "/impl"]
-requires: ["bob-protocol", "chat", "make", "prep-clear", "fix"]
 ---
 
 Feature implementation work-loop: executes bounded feature tasks using strict Test-Driven Development (TDD).
@@ -14,6 +12,14 @@ TLDR:
     If verification fails: delegates to `*fix` loop; max 2 failures before Oracle escalation.
 
 # Feature Implementation Work-Loop (`impl`)
+
+## Triggers
+
+`*impl`, `/impl`
+
+## Requires
+
+`bob-protocol`, `chat`, `make`, `prep-clear`, `fix`
 
 ## Overview
 

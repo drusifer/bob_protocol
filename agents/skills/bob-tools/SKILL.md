@@ -1,7 +1,6 @@
 ---
 name: bob-tools
 description: Use when working in a BobProtocol project and you need to understand or run the bobp CLI subcommands, especially chat, chat-diagram, make, setup-agent-links, and teardown-agent-links. This skill explains which commands to run, what each writes, and how to avoid flooding Codex context.
-triggers: ["bobp chat", "bobp make", "bobp setup-agent-links", "bobp teardown-agent-links", "bob tools", "BobProtocol tools"]
 ---
 
 One-line summary: Use BobProtocol's tools through the `bobp` CLI's stable subcommands — never reach for the implementation modules under `bobp.tools` directly.
@@ -14,6 +13,10 @@ TLDR:
     Use `bobp teardown-agent-links --dry-run` to inspect generated links before removing them.
 
 # BobProtocol Tools
+
+## Triggers
+
+`bobp chat`, `bobp make`, `bobp setup-agent-links`, `bobp teardown-agent-links`, `bob tools`, `BobProtocol tools`
 
 ## Tool Map
 

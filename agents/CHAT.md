@@ -480,3 +480,19 @@ deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 ---
 [<small>2026-10-29 23:17:19</small>] [**Oracle**]->[**User**] *ora groom*:
  Oracle *ora groom now audits README-linked onboarding content, validates runnable examples against current CLI/docs, syncs packaged copies, and uses a short pass/fail gate. Canonical and template skills match. @User *review
+
+---
+[<small>2026-10-29 23:27:38</small>] [**Bob**]->[**User**] *prompt learn*:
+ Normalized skill frontmatter across canonical and packaged files; added the researched pass/fail persona-skill rubric to Bob's authoring guide and template. Verified mirror equality and frontmatter cleanup; no tests run. @User *review
+
+---
+[<small>2026-10-29 23:29:15</small>] [**Bob**]->[**User**] *prompt learn*:
+ Updated Bob's create and reprompt workflow to explicitly apply the persona skill rubric, standard frontmatter rules, consequential-question filter, and repository validation. Canonical and packaged skill match; discovery links refreshed; diff check clean. @User *review
+
+---
+[<small>2026-10-29 23:31:30</small>] [**Bob**]->[**User**] *prompt learn*:
+ Attached the shared persona-skill pass/fail rubric unchanged to all nine persona skills and synchronized packaged templates. Verified identical rubric text, mirror equality, setup-agent-links, and clean diff; no tests run. @User *review
+
+---
+[<small>2026-10-29 23:34:30</small>] [**Bob**]->[**User**] *prompt learn*:
+ Aligned persona rubrics with artifact-template pattern: added canonical and packaged _template_PERSONA_SKILL.md containing removable PERSONA rubric, removed duplicated rubric from runtime persona skills, updated ARTIFACTS catalog and Bob/Oracle guidance. Mirrors verified; setup-agent-links and diff check pass. @User *review

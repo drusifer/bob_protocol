@@ -18,6 +18,7 @@ Template source lives in `bobp/templates/agents/templates/`; installed or dogfoo
 | Quality and test strategy | `_template_TEST_STRATEGY.md` | Trin | STRATEGY / Morpheus and Smith |
 | UAT plan and results | `_template_UAT_PLAN.md` | Trin | UAT / Smith or Morpheus |
 | User stories | `_template_USER_STORIES.md` | Cypher | STORIES / Smith at planning gate |
+| Persona skill | `_template_PERSONA_SKILL.md` | Bob | PERSONA / Bob at creation or material revision |
 | Agent working memory | `_template_state.md` | Each persona | STATE / mechanical handoff check |
 | Chat instructions | `_template_CHAT.md` | All | CHAT / `bobp chat` format check |
 | TLDR summaries | `_template_tldr.md` | All | TLDR / `bobp tldr` visibility check |

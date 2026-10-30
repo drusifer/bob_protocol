@@ -1,8 +1,6 @@
 ---
 name: sprint
 description: Sprint planning and execution container loop. Orchestrates SDLC verification, breaks stories into an ordered sequence of typed Work Loops in task.md, executes them, and manages sprint close.
-triggers: ["*plan sprint", "/sprint", "*sprint close", "*sprint retro", "*sprint launch"]
-requires: ["bob-protocol", "bloop", "chat", "make", "prep-clear", "epic", "story", "impl", "fix", "refactor", "spike", "uat", "deploy"]
 ---
 
 Sprint planning and execution container loop: orchestrates the sprint cadence from SDLC gate through work-loop execution to launch.
@@ -15,6 +13,14 @@ TLDR:
     Sprint Close: Tank SDLC check → Oracle groom & report → Smith acceptance → Team retro → Cypher launch.
 
 # Sprint — Planning & Cadence Container Loop
+
+## Triggers
+
+`*plan sprint`, `/sprint`, `*sprint close`, `*sprint retro`, `*sprint launch`
+
+## Requires
+
+`bob-protocol`, `bloop`, `chat`, `make`, `prep-clear`, `epic`, `story`, `impl`, `fix`, `refactor`, `spike`, `uat`, `deploy`
 
 ## Overview
 

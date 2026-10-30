@@ -198,4 +198,12 @@ sequenceDiagram
     Note right of Oracle: "Refreshed<br/>docs/WALKTHROUGH.md and<br/>its packaged copy: uv<br/>setup, native focused<br/>tests, Makefile<br/>explicitly optional,<br/>bounded regression<br/>guida…"
     Oracle->>User: "ora groom"
     Note right of Oracle: "Oracle *ora groom now<br/>audits README-linked<br/>onboarding content,<br/>validates runnable<br/>examples against current<br/>CLI/docs, syncs packaged<br/>copies,…"
+    Bob->>User: "prompt learn"
+    Note right of Bob: "Normalized skill<br/>frontmatter across<br/>canonical and packaged<br/>files, added the<br/>researched pass/fail<br/>persona-skill rubric to<br/>Bob's authoring gu…"
+    Bob->>User: "prompt learn"
+    Note right of Bob: "Updated Bob's create and<br/>reprompt workflow to<br/>explicitly apply the<br/>persona skill rubric,<br/>standard frontmatter<br/>rules, consequential-<br/>question…"
+    Bob->>User: "prompt learn"
+    Note right of Bob: "Attached the shared<br/>persona-skill pass/fail<br/>rubric unchanged to all<br/>nine persona skills and<br/>synchronized packaged<br/>templates. Verified<br/>ident…"
+    Bob->>User: "prompt learn"
+    Note right of Bob: "Aligned persona rubrics<br/>with artifact-template<br/>pattern: added canonical<br/>and packaged _template_P<br/>ERSONA_SKILL.md<br/>containing removable<br/>PERSON…"
 ```

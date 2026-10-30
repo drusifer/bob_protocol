@@ -16,7 +16,8 @@ sequenceDiagram
     participant User
     participant bob
     participant Tank
-    Note over Oracle,Tank: 📅 2026-08-09
+    participant Morpheus
+    Note over Oracle,Morpheus: 📅 2026-08-09
     Oracle->>Smith: "ora handoff"
     Note right of Oracle: "Sprint SPRINT_1 groomed<br/>and archived: agents/cha<br/>t_archive/CHAT_SPRINT_1.<br/>md + .diagram.md. Live<br/>CHAT.md reset to pointer<br/>header (first post-…"
     Smith->>All: "user approve"
@@ -31,11 +32,11 @@ sequenceDiagram
     Note right of Cypher: "Backlog: (1) sweep all<br/>agents/*.docs/SKILL.md +<br/>skills/*/SKILL.md for<br/>stale 'make chat MSG=...<br/>PERSONA=...' examples,<br/>replace with 'bobp ch…"
     Cypher->>All: "pm launch"
     Note right of Cypher: "SPRINT_1 'Chat Archive &<br/>Report' complete.<br/>Shipped: bobp chat-<br/>report<br/>(archive+combine), word-<br/>wrapped diagram labels,<br/>chat-merge conflict-ma…"
-    Note over Oracle,Tank: "Sprint summary<br/>Cypher: SPRINT_1 'Chat<br/>Archive & Report'<br/>complete. Shipped: bobp<br/>chat-report<br/>(archive+combine), word-<br/>wrapped diagram labels,<br/>chat-merge conflict-ma…"
-    Note over Oracle,Tank: 📅 2026-08-10
+    Note over Oracle,Morpheus: "Sprint summary<br/>Cypher: SPRINT_1 'Chat<br/>Archive & Report'<br/>complete. Shipped: bobp<br/>chat-report<br/>(archive+combine), word-<br/>wrapped diagram labels,<br/>chat-merge conflict-ma…"
+    Note over Oracle,Morpheus: 📅 2026-08-10
     Bob->>All: "prompt update"
     Note right of Bob: "Backlog item closed:<br/>swept all stale 'make<br/>chat MSG=...<br/>PERSONA=...' references<br/>(110+ across 24<br/>skill/persona docs, real<br/>+ bobp/templates c…"
-    Note over Oracle,Tank: 📅 2026-08-12
+    Note over Oracle,Morpheus: 📅 2026-08-12
     Bob->>All: "prompt fix"
     Note right of Bob: "Fixed chat_diagram.py:<br/>message labels were<br/>emitted unquoted, so a<br/>literal semicolon in<br/>chat text got parsed as<br/>a Mermaid statement<br/>terminat…"
     Bob->>All: "prompt fix"
@@ -48,12 +49,12 @@ sequenceDiagram
     Note right of Smith: "Implemented per user<br/>approval: per-message<br/>notes switched from Note<br/>over A,B to Note right<br/>of A. Verified fix<br/>against mermaid's<br/>renderer so…"
     Bob->>All: "prompt feature"
     Note right of Bob: "Added bobp chat-report<br/>--svg: renders the<br/>archive to a standalone<br/>.svg (real Chrome via<br/>mermaid-cli, new<br/>tools/mermaid_render/)<br/>and embeds…"
-    Note over Oracle,Tank: 📅 2026-10-12
+    Note over Oracle,Morpheus: 📅 2026-10-12
     Neo->>All: "state"
     Note right of Neo: "Persona folders moved<br/>from agents/<name>.docs/<br/>to agents/<name>/ in<br/>this repo and the<br/>packaged templates,<br/>tools support only the<br/>new layout…"
     Neo->>All: "state"
     Note right of Neo: "Correction to my last<br/>post: setup-agent-links<br/>DOES convert older<br/>.docs-style projects to<br/>agents/<name>/ (folders<br/>renamed, doc path refs<br/>rew…"
-    Note over Oracle,Tank: 📅 2026-10-14
+    Note over Oracle,Morpheus: 📅 2026-10-14
     User->>All: "request"
     Note right of User: "/bob-protocol init"
     Bob->>All: "ready"
@@ -142,10 +143,10 @@ sequenceDiagram
     Note right of bob: "Synchronized all user<br/>guides & documentation:<br/>root README, bobp/templa<br/>tes/README.md,<br/>agents/bob/HELP.md,<br/>STARTUP.md, &<br/>DOCUMENTATION_INDEX.…"
     bob->>All: "prompt"
     Note right of bob: "Created<br/>docs/WALKTHROUGH.md: a<br/>complete step-by-step<br/>user guide demonstrating<br/>how to build a<br/>restaurant reservation<br/>app (TableCraft) with B…"
-    Note over Oracle,Tank: 📅 2026-10-15
+    Note over Oracle,Morpheus: 📅 2026-10-15
     bob->>All: "checkpoint"
     Note right of bob: "Checkpoint saved in<br/>agents/bob/state.md.<br/>Working tree clean on<br/>main (6be68e8). 24<br/>skills active, test<br/>suite passing (76<br/>passed), walkthroug…"
-    Note over Oracle,Tank: 📅 2026-10-29
+    Note over Oracle,Morpheus: 📅 2026-10-29
     User->>All: "request"
     Note right of User: "User invoked $bob-<br/>protocol init,<br/>initializing Bob<br/>session, then resume the<br/>explicitly requested<br/>root AGENTS.md<br/>contributor guide."
     Bob->>All: "ready"
@@ -206,4 +207,53 @@ sequenceDiagram
     Note right of Bob: "Attached the shared<br/>persona-skill pass/fail<br/>rubric unchanged to all<br/>nine persona skills and<br/>synchronized packaged<br/>templates. Verified<br/>ident…"
     Bob->>User: "prompt learn"
     Note right of Bob: "Aligned persona rubrics<br/>with artifact-template<br/>pattern: added canonical<br/>and packaged _template_P<br/>ERSONA_SKILL.md<br/>containing removable<br/>PERSON…"
+    Bob->>Tank: "handoff"
+    Note right of Bob: "User requested formal<br/>project SDLC for agent-<br/>instruction changes with<br/>Promptfoo evaluation as<br/>a quality gate. Tank<br/>owns the missing<br/>docs/SD…"
+    Tank->>All: "init"
+    Note right of Tank: "Tank activated for SDLC<br/>setup. Current project<br/>uses Python 3.10+,<br/>pip/venv and pytest,<br/>plus a Node Mermaid<br/>validator, docs/SDLC.md<br/>is missi…"
+    User->>Tank: "request"
+    Note right of User: "User invoked Bloop for a<br/>Promptfoo persona<br/>evaluation tool and<br/>formal agent-change<br/>SDLC. Final direction:<br/>no GitHub Actions or<br/>hooks, direc…"
+    Tank->>Neo: "handoff"
+    Note right of Tank: "Tank research/setup<br/>complete: docs/SDLC.md<br/>is missing, current<br/>Python package uses<br/>pip/venv + pytest, Node<br/>24 available. Promptfoo<br/>Codex SD…"
+    Neo->>All: "init"
+    Note right of Neo: "Neo activated for<br/>focused implementation.<br/>I will build an explicit<br/>local Promptfoo persona<br/>evaluator and tests, no<br/>hooks or GitHub<br/>Actions.…"
+    Neo->>Tank: "note"
+    Note right of Neo: "Dependency policy<br/>clarification: declare<br/>justified minimum<br/>version floors, avoid<br/>unnecessary upper<br/>caps/exact stale pins,<br/>commit and refres…"
+    Neo->>All: "blocker"
+    Note right of Neo: "Paused persona-eval live<br/>validation after three<br/>runs. First exposed<br/>default Vertex grader<br/>with no credentials,<br/>switched to Codex agent-<br/>rubr…"
+    Neo->>All: "note"
+    Note right of Neo: "Correction: the<br/>suggested command is<br/>standalone cat .agents/s<br/>kills/NAME/SKILL.md, not<br/>an evaluation rerun yet."
+    Neo->>Oracle: "question"
+    Note right of Neo: "@Oracle *ora ask: advise<br/>whether to change<br/>persona-eval after<br/>repeated live failures<br/>where the rubric passes<br/>but skill-used misses<br/>the dire…"
+    Note over Oracle,Morpheus: 📅 2026-10-30
+    Neo->>All: "resume"
+    Note right of Neo: "User approved an eval<br/>catalog: deterministic<br/>harness checks, focused<br/>Promptfoo skill-<br/>use/action artifact<br/>evals, broader<br/>install/workflow sm…"
+    Neo->>Trin: "handoff"
+    Note right of Neo: "Evaluator and six<br/>focused tests are ready.<br/>Live run confirms Bob<br/>skill use, artifact<br/>rubric fails on<br/>checkpoint ambiguity and<br/>a Via section…"
+    Trin->>All: "init"
+    Note right of Trin: "Trin activated to review<br/>the saved persona-eval<br/>run and artifact-rubric<br/>findings. I’ll validate<br/>the result against the<br/>installed fixture an…"
+    Trin->>Neo: "handoff"
+    Note right of Trin: "QA review: bob skill-use<br/>passed. Artifact grade<br/>is inconclusive: grader<br/>claims via enabled, but<br/>retained fixture<br/>agents/PROJECT.md says<br/>dis…"
+    Neo->>All: "resume"
+    Note right of Neo: "Resuming after Trin<br/>review. Skill-use<br/>passed, artifact grader<br/>context needs explicit<br/>fixture capability and<br/>protocol scope. I’ll<br/>make that…"
+    Neo->>Trin: "handoff"
+    Note right of Neo: "Live Bob eval passed<br/>both skill-used and<br/>artifact PERSONA SKILL<br/>rubric after grounding<br/>judge in fixture<br/>agents/PROJECT.md (via<br/>disabled). R…"
+    Trin->>Morpheus: "handoff"
+    Note right of Trin: "QA PASS: live report<br/>confirms skill-used=bob<br/>and shared PERSONA SKILL<br/>rubric pass. Reviewed<br/>retained artifact<br/>against rubric and<br/>fixture ag…"
+    Morpheus->>Tank: "handoff"
+    Note right of Morpheus: "Morpheus review PASS:<br/>evaluator design is<br/>bounded and isolated<br/>under build/, uses a<br/>stable versioned catalog<br/>and local Codex auth,<br/>and avoi…"
+    Bob->>Morpheus: "learn"
+    Note right of Bob: "Morpheus eval attempt 1:<br/>installed *advise was<br/>used and the ADR showed<br/>domain<br/>ownership/invariants,<br/>BDD scenarios, options,<br/>and KISS/DRY ra…"
+    Bob->>Morpheus: "learn"
+    Note right of Bob: "Learning applied to<br/>Morpheus *advise: frame<br/>constraints and domain<br/>language, model<br/>concepts, bounded<br/>contexts, ownership and<br/>invariants, gr…"
+    Bob->>Trin: "handoff"
+    Note right of Bob: "Morpheus *advise<br/>implementation complete<br/>in live/packaged skills.<br/>Added a catalog suite,<br/>after clarifying<br/>optional Related<br/>behavior in shar…"
+    Trin->>Morpheus: "handoff"
+    Note right of Trin: "QA PASS: corrected<br/>Morpheus eval confirms<br/>actual *advise skill use<br/>and DECISION artifact<br/>pass. ADR includes<br/>domain<br/>ownership/invariants,<br/>ob…"
+    Morpheus->>Tank: "handoff"
+    Note right of Morpheus: "Morpheus review PASS:<br/>*advise method is role-<br/>consistent and non-<br/>duplicative. It<br/>distinguishes open-ended<br/>*guide from option<br/>recommendation…"
+    Tank->>Oracle: "handoff"
+    Note right of Tank: "docs/SDLC.md is drafted<br/>and self-checked against<br/>the template: actual<br/>uv/Node commands, all<br/>Make targets,<br/>dependencies, local<br/>Promptfoo per…"
+    Oracle->>Tank: "review"
+    Note right of Oracle: "SDLC review PASS:<br/>TRUE=PASS WHOLE=PASS<br/>CLEAN=PASS CLASS=PASS<br/>CHECK=PASS GAPS=PASS.<br/>Setup and target details<br/>match<br/>Makefile/manifests,<br/>known…"
 ```

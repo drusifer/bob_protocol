@@ -8,13 +8,16 @@ dynamic = ["version"]
 description = "CLI front-end for the Bob Protocol multi-persona AI development framework"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.10"
+requires-python = ">=3.10,<4"
 authors = [{ name = "Drew" }]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: OS Independent",
 ]
@@ -35,6 +38,9 @@ version = { attr = "bobp.__version__" }
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.uv]
+resolution = "highest"
 
 [tool.setuptools.packages.find]
 include = ["bobp*"]

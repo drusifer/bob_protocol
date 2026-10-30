@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "suites": [
+    {
+      "id": "bob-persona-authoring",
+      "persona": "bob",
+      "tags": ["skill-use", "persona-artifact"],
+      "request": "Use the Bob persona skill exposed at .agents/skills/bob/SKILL.md. A user wants a project-local BobProtocol persona that drafts conventional commit messages from staged diffs. It may explain or revise drafts but must never run git commit. Create a concise skill at agents/commit-message-author/SKILL.md, following the installed persona template and shared state, chat, and handoff protocol. List only direct shared-skill prerequisites. Make routine naming and formatting choices yourself.",
+      "artifact": "agents/commit-message-author/SKILL.md",
+      "rubric": "agents/templates/_template_PERSONA_SKILL.md"
+    },
+    {
+      "id": "morpheus-design-advice",
+      "persona": "morpheus",
+      "tags": ["skill-use", "architecture-decision"],
+      "request": "Use the Morpheus skill exposed at .agents/skills/morpheus/SKILL.md and its *advise method. A marketplace currently stores a single boolean Payment.refunded. It now needs multiple partial refunds, idempotent retries, provider processing states, and audit history; successful refunds must never exceed the captured amount. The existing Payments domain owns payment-provider interaction, and no new service is planned. Resolve whether refunds should remain fields on Payment, become a distinct Refund entity/aggregate in Payments, or move to a new service. Create docs/decisions/ADR-0001-refund-lifecycle.md using the installed decision template. Use the shared domain language, identify ownership and invariants, include concise Given/When/Then scenarios for key behavior, compare viable options and tradeoffs, and explain how KISS and DRY informed the recommendation. The decision is Proposed because the team has not approved it. Make routine choices yourself; do not commit or use network access.",
+      "artifact": "docs/decisions/ADR-0001-refund-lifecycle.md",
+      "rubric": "agents/templates/_template_DECISION.md"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "bob-protocol-persona-eval",
+  "private": true,
+  "description": "Promptfoo-based behavior evaluations for Bob Protocol personas",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "devDependencies": {
+    "@openai/codex-sdk": "0.156.1",
+    "promptfoo": "0.125.1"
+  }
+}

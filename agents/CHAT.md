@@ -496,3 +496,142 @@ deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 ---
 [<small>2026-10-29 23:34:30</small>] [**Bob**]->[**User**] *prompt learn*:
  Aligned persona rubrics with artifact-template pattern: added canonical and packaged _template_PERSONA_SKILL.md containing removable PERSONA rubric, removed duplicated rubric from runtime persona skills, updated ARTIFACTS catalog and Bob/Oracle guidance. Mirrors verified; setup-agent-links and diff check pass. @User *review
+
+---
+[<small>2026-10-29 23:37:43</small>] [**Bob**]->[**Tank**] *handoff*:
+ User requested formal project SDLC for agent-instruction changes with Promptfoo evaluation as a quality gate. Tank owns the missing docs/SDLC.md; context and request are ready. @Tank *devops sdlc agent-change lifecycle and eval gates
+
+---
+[<small>2026-10-29 23:37:43</small>] [**Tank**]->[**all**] *init*:
+ Tank activated for SDLC setup. Current project uses Python 3.10+, pip/venv and pytest, plus a Node Mermaid validator; docs/SDLC.md is missing. Researching Promptfoo agent evals and gated CI design.
+
+---
+[<small>2026-10-29 23:43:52</small>] [**User**]->[**Tank**] *request*:
+ User invoked Bloop for a Promptfoo persona evaluation tool and formal agent-change SDLC. Final direction: no GitHub Actions or hooks; direct evaluation CLI, local Codex subscription auth. Ownership: Tank enables, Trin owns QA gate, Bob owns persona skills. @Neo *impl persona evaluation CLI
+
+---
+[<small>2026-10-29 23:43:52</small>] [**Tank**]->[**Neo**] *handoff*:
+ Tank research/setup complete: docs/SDLC.md is missing, current Python package uses pip/venv + pytest, Node 24 available. Promptfoo Codex SDK can reuse ChatGPT login. Direct pushes; no Actions or hooks. Implementing direct evaluator CLI; Trin owns eval gate. @Neo *impl persona evaluation tool, focused tests, Promptfoo config
+
+---
+[<small>2026-10-29 23:44:48</small>] [**Neo**]->[**all**] *init*:
+ Neo activated for focused implementation. I will build an explicit local Promptfoo persona evaluator and tests; no hooks or GitHub Actions. User also requested latest Python; runtime scope is pending while tool design continues.
+
+---
+[<small>2026-10-29 23:49:25</small>] [**Neo**]->[**Tank**] *note*:
+ Dependency policy clarification: declare justified minimum version floors; avoid unnecessary upper caps/exact stale pins; commit and refresh the uv lock to the latest compatible set. Include this in the SDLC/build-env guidance. @Tank *devops sdlc dependency policy
+
+---
+[<small>2026-10-29 23:53:16</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make install | /home/drusifer/Projects/bob_protocol/build/build.out
+Installed 7 packages in 33ms
++ build==1.6.1
++ iniconfig==2.3.1
++ packaging==26.3
++ pluggy==1.7.0
++ pygments==2.21.0
++ pyproject-hooks==1.3.3
++ pytest==9.2.0
+
+---
+[<small>2026-10-29 23:59:12</small>] [**Neo**]->[**all**] *blocker*:
+ Paused persona-eval live validation after three runs. First exposed default Vertex grader with no credentials; switched to Codex agent-rubric, which passed. Next runs fail only skill-used: Codex reads the persona file but bundles cat with a search whose exit status is nonzero, so Promptfoo does not count it. Proposed next fix: require standalone successful , then retry once. @User guidance before another live run
+
+---
+[<small>2026-10-29 23:59:15</small>] [**Neo**]->[**all**] *note*:
+ Correction: the suggested command is standalone cat .agents/skills/NAME/SKILL.md, not an evaluation rerun yet.
+
+---
+[<small>2026-10-29 23:59:44</small>] [**Neo**]->[**Oracle**] *question*:
+ @Oracle *ora ask: advise whether to change persona-eval after repeated live failures where the rubric passes but skill-used misses the direct file read. Promptfoo parses successful command lines; last run combined cat with rg, resulting in a failed shell status. Should we issue one targeted standalone-cat retry or make rubric the only blocking assertion?
+
+---
+[<small>2026-10-30 00:09:42</small>] [**Neo**]->[**all**] *resume*:
+ User approved an eval catalog: deterministic harness checks; focused Promptfoo skill-use/action artifact evals; broader install/workflow smoke evals. Resume design around disposable test project, local bobp install, and Bob creating persona.md judged by the shared PERSONA SKILL rubric. No role-specific effectiveness rubrics. @Neo *impl focused catalog vertical slice
+
+---
+[<small>2026-10-30 00:23:42</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+......                                                                   [100%]
+6 passed, 87 deselected in 0.22s
+
+---
+[<small>2026-10-30 00:24:12</small>] [**Neo**]->[**Trin**] *handoff*:
+ Evaluator and six focused tests are ready. Live run confirms Bob skill use; artifact rubric fails on checkpoint ambiguity and a Via section while grader falsely says via enabled. Review report and fixture; no live retry yet. @Trin *qa review persona-eval result
+
+---
+[<small>2026-10-30 00:24:39</small>] [**Trin**]->[**all**] *init*:
+ Trin activated to review the saved persona-eval run and artifact-rubric findings. I’ll validate the result against the installed fixture and avoid another live model run during this review.
+
+---
+[<small>2026-10-30 00:25:08</small>] [**Trin**]->[**Neo**] *handoff*:
+ QA review: bob skill-use passed. Artifact grade is inconclusive: grader claims via enabled, but retained fixture agents/PROJECT.md says disabled; its state finding also needs grounded review. Six focused tests pass. Neo should ground grader in fixture. No live retry without user guidance.
+
+---
+[<small>2026-10-30 00:25:22</small>] [**Neo**]->[**all**] *resume*:
+ Resuming after Trin review. Skill-use passed; artifact grader context needs explicit fixture capability and protocol scope. I’ll make that offline fix, then request guidance before another live run.
+
+---
+[<small>2026-10-30 00:27:33</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+......                                                                   [100%]
+6 passed, 87 deselected in 0.25s
+
+---
+[<small>2026-10-30 09:17:13</small>] [**Neo**]->[**Trin**] *handoff*:
+ Live Bob eval passed both skill-used and artifact PERSONA SKILL rubric after grounding judge in fixture agents/PROJECT.md (via disabled). Report: build/persona-eval/bob-persona-authoring-20261030T131555Z-run1.json; retained project: build/persona-eval/runtime/bob-persona-authoring-20261030T131555Z-run1/project. Focused offline tests: 6 passed. @Trin *qa review persona-eval result
+
+---
+[<small>2026-10-30 09:17:50</small>] [**Trin**]->[**Morpheus**] *handoff*:
+ QA PASS: live report confirms skill-used=bob and shared PERSONA SKILL rubric pass. Reviewed retained artifact against rubric and fixture agents/PROJECT.md (via disabled); direct prerequisites and no-commit boundary are correct. Offline evaluator tests 6 passed; scratch/report/runtime are in build/. @Morpheus *lead review persona-eval design
+
+---
+[<small>2026-10-30 09:19:25</small>] [**Morpheus**]->[**Tank**] *handoff*:
+ Morpheus review PASS: evaluator design is bounded and isolated under build/, uses a stable versioned catalog and local Codex auth, and avoids target Makefile assumptions. Document local Trin/Promptfoo sign-off separately from existing CI (Python 3.10–3.12, pip; no subscription eval) and release workflow. No CI/action or hook changes. @Tank *devops sdlc write docs/SDLC.md
+
+---
+[<small>2026-10-30 09:27:26</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+........                                                                 [100%]
+8 passed, 87 deselected in 0.22s
+
+---
+[<small>2026-10-30 09:27:31</small>] [**Bob**]->[**Morpheus**] *learn*:
+ Morpheus eval attempt 1: installed *advise was used and the ADR showed domain ownership/invariants, BDD scenarios, options, and KISS/DRY rationale. Artifact rubric failed STATE only: optional Related was absent for a new ADR. Clarified shared DECISION rubric in both copies; focused tests and mirror checks pass. One corrected rerun now.
+
+---
+[<small>2026-10-30 09:28:55</small>] [**Bob**]->[**Morpheus**] *learn*:
+ Learning applied to Morpheus *advise: frame constraints and domain language; model concepts, bounded contexts, ownership and invariants; ground behavior in concrete user examples and observable Given/When/Then scenarios; compare options and explicitly weigh KISS with DRY. Recommend the simplest sound design with consequences and verification; ask only about consequential hard-to-change unknowns. Use *decide for a recorded binding decision.
+
+---
+[<small>2026-10-30 09:29:38</small>] [**Bob**]->[**Trin**] *handoff*:
+ Morpheus *advise implementation complete in live/packaged skills. Added a catalog suite; after clarifying optional Related behavior in shared DECISION rubric, live report passes skill-used and artifact checks. Report: build/persona-eval/morpheus-design-advice-20261030T132734Z-run1.json; ADR: build/persona-eval/runtime/morpheus-design-advice-20261030T132734Z-run1/project/docs/decisions/ADR-0001-refund-lifecycle.md. 8 focused tests pass. @Trin *qa review morpheus-advise
+
+---
+[<small>2026-10-30 09:30:15</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make lint | /home/drusifer/Projects/bob_protocol/build/build.out
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.13.0', npm: '11.21.1' }
+npm warn EBADENGINE }
+
+---
+[<small>2026-10-30 09:31:08</small>] [**Trin**]->[**Morpheus**] *handoff*:
+ QA PASS: corrected Morpheus eval confirms actual *advise skill use and DECISION artifact pass. ADR includes domain ownership/invariants, observable Given/When/Then scenarios, options, and KISS/DRY rationale. Full suite 88 passed, 7 skipped, 9 subtests; Mermaid lint passed (Node engine warning documented). @Morpheus *lead review advise method
+
+---
+[<small>2026-10-30 09:31:23</small>] [**Morpheus**]->[**Tank**] *handoff*:
+ Morpheus review PASS: *advise method is role-consistent and non-duplicative. It distinguishes open-ended *guide from option recommendation *advise and binding *decide; it applies domain modeling, BDD examples, KISS/DRY, and the consequential-question rule. Tank: finish SDLC accuracy/rubric review; report full test/lint status and clean-rebuild caveat. @Tank *devops sdlc verify docs/SDLC.md
+
+---
+[<small>2026-10-30 09:33:38</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make help | /home/drusifer/Projects/bob_protocol/build/build.out
+help            Show available make targets
+deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
+
+---
+[<small>2026-10-30 09:35:22</small>] [**Tank**]->[**Oracle**] *handoff*:
+ docs/SDLC.md is drafted and self-checked against the template: actual uv/Node commands, all Make targets, dependencies, local Promptfoo persona gate, direct-push policy, existing CI/release workflows, versioning, and known gaps. README setup now matches uv. Full tests 88 passed/7 skipped/9 subtests; Mermaid lint passed; clean distclean rebuild remains for sprint close. Please apply SDLC rubric. @Oracle *ora review docs/SDLC.md
+
+---
+[<small>2026-10-30 09:36:36</small>] [**Oracle**]->[**Tank**] *review*:
+ SDLC review PASS: TRUE=PASS WHOLE=PASS CLEAN=PASS CLASS=PASS CHECK=PASS GAPS=PASS. Setup and target details match Makefile/manifests; known Python/CI, Node, npm-lock, Promptfoo, and PyPI gaps are stated. README and live/packaged documentation index links added and mirror matches. Clean rebuild remains correctly deferred to sprint close. @Tank *devops sdlc finalize

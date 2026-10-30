@@ -48,6 +48,6 @@ The option table records comparative trade-offs; use this section only for conse
 - [ ] **PASS** — `WHY` (Does it state the context, problem, and decision drivers?): States architectural context, problem statement, and concrete decision drivers (forces, constraints, requirements).
 - [ ] **PASS** — `OPTS` (Were genuine alternative options evaluated?): Details at least two viable options (including "do nothing" if applicable) with balanced pros and cons.
 - [ ] **PASS** — `CONS` (Are trade-offs, consequences, and technical debt acknowledged?): Documents both positive outcomes (what is gained) and negative consequences (what is lost, technical debt accepted).
-- [ ] **PASS** — `STATE` (Is the lifecycle state and relationship to other decisions clear?): Has a clear status (Proposed, Accepted, Deprecated, Superseded) and date; links to any decision it replaces.
+- [ ] **PASS** — `STATE` (Is the lifecycle state and relationship to other decisions clear?): Has a clear status (Proposed, Accepted, Deprecated, Superseded) and date; links to decisions it supersedes or depends on when applicable. If there are no related decisions, omitting the optional Related field or stating "None" is valid.
 - [ ] **FAIL** — Any required PASS condition is unmet or unsupported; cite the missing evidence and smallest correction.
 <!-- RUBRIC-END -->

@@ -6,6 +6,7 @@
 - 2026-10-29: Completed the research-backed audit and applied its recommendations to all 16 canonical templates under `bobp/templates/agents/templates/`; synchronized live copies in `agents/templates/`.
 - 2026-10-29: Refreshed `docs/WALKTHROUGH.md` after review found stale Python setup and test guidance. It now uses uv, focused native pytest commands, bounded regression runs, and treats a target Makefile as optional. Synchronized `bobp/templates/docs/WALKTHROUGH.md`.
 - 2026-10-29: Enhanced Oracle's `*ora groom` instructions to include content freshness for README-linked onboarding docs, sequential tutorial checks, CLI/source validation, packaged-copy sync, and a concise pass/fail gate.
+- 2026-10-30: Reviewed Tank's new `docs/SDLC.md`; all six SDLC rubric checks pass. README and live/packaged documentation indexes link to the SDLC. Full tests and Mermaid lint pass; clean rebuild is explicitly deferred to sprint close.
 
 ### Key Findings
 - Root README lacked a contents list and documented `make test` directly; docs index had an outdated update date and referenced an archive file that does not exist.
@@ -21,18 +22,17 @@
 ## Current Task
 **Status:** Completed
 **Assigned to:** Oracle
-**Started:** 2026-10-29
-**Completed:** 2026-10-29
+**Started:** 2026-10-30
+**Completed:** 2026-10-30
 
 ### Task Description
-Strengthen Oracle's documentation-grooming workflow so important tutorial drift is caught next time.
+Groom and rubric-review the new project SDLC document.
 
 ### Progress
-- [x] Added README-linked onboarding freshness checks and a sequential reader-path review to `*ora groom`.
-- [x] Added CLI/source verification, safe focused validation, and packaged-copy sync requirements.
-- [x] Added a concise PASS/FAIL gate for accuracy, usability, consistency, and mirror sync.
-- [x] Synced the packaged Oracle skill and verified canonical/template copies match.
-- [x] Refreshed agent discovery links; `git diff --check` passes. No tests run (documentation-only changes).
+- [x] Checked exact setup commands, targets, dependency process, change classes, CI/release claims, and known deviations against repository files.
+- [x] Applied SDLC rubric: `TRUE=PASS WHOLE=PASS CLEAN=PASS CLASS=PASS CHECK=PASS GAPS=PASS`.
+- [x] Linked SDLC from README and synchronized the live/packaged documentation index.
+- [x] Confirmed `git diff --check`, SDLC section checks, and documentation-index mirror equality.
 
 ### Blockers
 None
@@ -42,13 +42,13 @@ None.
 
 ## Next Steps
 ### Immediate Next Action
-Await the next user request. Future `*ora groom` runs must check root-README-linked onboarding and tutorial docs for stale commands and assumptions.
+Return the SDLC review verdict to Tank. The clean rebuild is explicitly listed for Tank's sprint-close conformance check.
 
 ### Waiting On
-User.
+Tank handoff.
 
 ### Planned Work
-- [ ] None queued.
+- [x] None queued.
 
 ---
-*Last updated: 2026-10-29 23:18*
+*Last updated: 2026-10-30*

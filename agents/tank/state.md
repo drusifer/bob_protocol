@@ -1,49 +1,18 @@
 # Agent State
 
 ## Context
-### Recent Decisions
-- 2026-10-29: Per user direction, BobProtocol tools should be invoked as direct `bobp <tool>` commands; do not require a target project Makefile for trace annotation.
-
-### Key Findings
-None yet
-
-### Important Notes
-None yet
+- User approved a local Promptfoo persona gate using the Codex subscription; no new Actions or commit hooks. Direct pushes remain allowed.
+- Ownership: Bob authors personas; Trin owns evaluation/sign-off; Morpheus reviews architecture; Tank owns tools and `docs/SDLC.md`.
+- Development uses uv and Python 3.15 (latest patch available through uv); `pyproject.toml` retains `>=3.10,<4`, and Python requirements/lock resolve to current compatible versions.
+- `bobp persona-eval` runs versioned catalog suites in isolated projects installed by the current checkout's `bobp install`. Current suites cover Bob persona authoring and Morpheus design advice, judged by their shared artifact rubrics. Reports and pytest/subprocess scratch remain in `build/`.
+- Existing CI uses pip/Python 3.10–3.12 and does not run Promptfoo. Existing PyPI release workflow says trusted publishing is not configured. Mermaid package has no lockfile; Node 24.13 lint passes with an engine warning. These are documented deviations.
+- `docs/SDLC.md` is drafted; README development commands now use uv. Full suite: 88 passed, 7 skipped, 9 subtests; Mermaid lint passed. A clean `distclean` rebuild remains for sprint close to avoid deleting retained eval reports from `build/`.
 
 ## Current Task
-**Status:** Completed — handoff to Oracle
+**Status:** Completed; SDLC reviewed and approved.
 **Assigned to:** Tank
-**Started:** 2026-10-29
-
-### Task Description
-Restore a reliable Bobp trace-annotate workflow for the *judge process without inventing an obsolete Make target.
-
-### Progress
-- [x] Confirmed Makefile has no `judge-trace` target and Git history shows it was not restored after Make was returned to host projects.
-- [x] Confirmed `bobp trace-annotate` exists in the package/CLI but import fails because Jinja2 is undeclared.
-- [x] Added Jinja2 runtime dependency and updated packaged/live Judge, Trin, and Neo instructions to use direct `bobp trace-annotate`; clarified Claude-only transcript coverage.
-- [x] Removed the temporary Make wrapper per user direction; no target-project Makefile is required.
-- [x] Changed Bobp template instantiation so `install`/`clean` remove reviewer-only check blocks from generated state/chat files; updated cleanup test.
-- [x] Installed the project environment, verified target discovery and CLI help, exercised a synthetic Claude transcript, and ran the suite (76 passed, 7 skipped).
-- [x] Confirmed real trace cannot run in this Codex workspace because no Claude project directory exists.
-
-### Blockers
-None
-
-### Oracle Consultations
-None yet
+**Progress:** Checked every Make target, CI/release workflow, dependency layout, quality gate, branch/push convention, local eval behavior, and known gap. Oracle's SDLC review passed all six criteria. Full suite and lint pass. `git diff --check` clean.
 
 ## Next Steps
-### Immediate Next Action
-No immediate action. The direct Bobp CLI help resolves from the project environment, and active skill guidance no longer requires the Make wrapper.
-
-### Waiting On
-None
-
-### Planned Work
-- [x] Fixed the runtime dependency and generated-artifact check-block leak.
-- [x] Removed the wrapper and aligned all active canonical/live instructions with direct Bobp CLI usage.
-- [ ] Codex transcript support remains a separate scope item.
-
----
-*Last updated: [timestamp]*
+1. Report completion with test/lint results, live suite report paths, and the clean-rebuild caveat.
+2. Do not commit or push unless the user asks.

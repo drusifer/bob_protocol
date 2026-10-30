@@ -5,47 +5,47 @@
 # projects now lives in the `bobp` CLI (bobp install/update/pull/diff/clean) —
 # see bobp/templates/Makefile for what gets installed there.
 #
-# Always runs through the project .venv, never system/PATH python or pip.
-
-VENV := .venv
-PYTHON := $(VENV)/bin/python
-VENV_STAMP := $(VENV)/.install.stamp
+# Python commands run through uv and the project .venv. `.python-version` tracks
+# the latest available Python 3.15 patch; `uv.lock` records latest compatible deps.
 
 MERMAID_DIR := tools/mermaid_validate
 MERMAID_STAMP := $(MERMAID_DIR)/node_modules/.install.stamp
 MERMAID_DIAGRAMS := $(shell find agents -name '*.diagram.md' 2>/dev/null)
 
-.PHONY: install system-install test lint lint-mermaid build clean help
-
-$(VENV_STAMP): pyproject.toml
-	python3 -m venv $(VENV)
-	$(PYTHON) -m pip install --upgrade pip
-	$(PYTHON) -m pip install -e ".[dev]"
-	touch $(VENV_STAMP)
+.PHONY: install install-evals system-install test test-q lint lint-mermaid build clean distclean help
 
 $(MERMAID_STAMP): $(MERMAID_DIR)/package.json
 	cd $(MERMAID_DIR) && npm install
 	touch $(MERMAID_STAMP)
 
-install: $(VENV_STAMP) ## Install bobp in editable mode with dev dependencies (into .venv)
-	$(PYTHON) -m pip install -e ".[dev]"
+install: ## Install bobp and dev dependencies into the uv-managed .venv
+	uv sync --python 3.15 --locked --extra dev
+
+install-evals: ## Install pinned Promptfoo and Codex SDK for persona evaluations
+	npm ci --prefix tools/persona-eval
 
 system-install: ## Install bobp globally using pipx (editable mode)
 	pipx install --editable . --force
 
-test: $(VENV_STAMP) ## Run the test suite (via .venv). Mermaid E2E tests auto-skip if Node isn't set up — run `make lint` for those.
-	$(PYTHON) -m pytest tests/ -q
+test: install ## Run the test suite with locked dependencies
+	uv run --python 3.15 --locked --extra dev pytest --basetemp=build/pytest tests/ -q
+
+test-q: install ## Run a focused test selection (pass ARGS=... to pytest)
+	uv run --python 3.15 --locked --extra dev pytest --basetemp=build/pytest tests/ -q $(ARGS)
 
 lint: lint-mermaid ## Run all lint checks
 
 lint-mermaid: $(MERMAID_STAMP) ## Syntax-check every ```mermaid fence in agents/*.diagram.md against mermaid's real parser
 	node $(MERMAID_DIR)/validate.mjs $(MERMAID_DIAGRAMS)
 
-build: $(VENV_STAMP) ## Build the sdist and wheel into dist/
-	$(PYTHON) -m build
+build: install ## Build the sdist and wheel into dist/
+	uv run --python 3.15 --locked --extra dev python -m build
 
-clean: ## Remove build artifacts (keeps .venv — use `rm -rf .venv` to drop it too)
+clean: ## Remove build artifacts (keeps .venv)
 	rm -rf dist/ build/ *.egg-info
+
+distclean: clean ## Remove build artifacts and the local Python environment
+	rm -rf .venv
 
 help: ## Show available make targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'

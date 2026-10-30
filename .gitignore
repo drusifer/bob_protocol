@@ -28,3 +28,4 @@ dist/
 # Node deps for tools/mermaid_validate/ (installed via `make lint`)
 node_modules/
 package-lock.json
+!tools/persona-eval/package-lock.json

@@ -63,8 +63,8 @@ See **[STARTUP.md](STARTUP.md)** for LLM session startup instructions, **[docs/W
 ## Development
 
 ```bash
-pip install -e ".[dev]"
-bobp make test   # captured project test run
+uv sync --python 3.15 --locked --extra dev
+uv run bobp make test   # captured project test run
 ```
 
 ## Documentation and guides
@@ -73,6 +73,7 @@ bobp make test   # captured project test run
 - [Startup guide](STARTUP.md) — initialize or resume a Bob Protocol session
 - [Shorthand guide](SHORTHAND_GUIDE.md) — command and skill trigger reference
 - [Walkthrough](docs/WALKTHROUGH.md) — build an example application with the workflow
+- [SDLC](docs/SDLC.md) — toolchain, quality gates, and change lifecycle
 - [Packaged template README](bobp/templates/README.md) — framework scaffolding shipped by `bobp`
 
 ## License

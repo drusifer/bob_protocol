@@ -27,6 +27,7 @@ SUBCOMMANDS = {
     "chat-merge": "bobp.tools.chat_merge",
     "chat-report": "bobp.tools.chat_report",
     "make": "bobp.tools.make",
+    "persona-eval": "bobp.tools.persona_eval",
     "prep-tldr": "bobp.tools.prep_tldr",
     "session-trace": "bobp.tools.session_trace",
     "setup-agent-links": "bobp.tools.setup_agent_links",

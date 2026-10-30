@@ -194,4 +194,8 @@ sequenceDiagram
     Note right of Bob: "Recording a shared<br/>planning rule: ask only<br/>about consequential,<br/>high-cost-to-change<br/>uncertainties, resolve<br/>routine choices by<br/>convention an…"
     Bob->>User: "prompt learned"
     Note right of Bob: "Planning rule learned<br/>and recorded in<br/>canonical and packaged<br/>Bob Protocol skills.<br/>Agents ask only about<br/>high-impact, hard-to-<br/>reverse decisi…"
+    Oracle->>User: "ora groom"
+    Note right of Oracle: "Refreshed<br/>docs/WALKTHROUGH.md and<br/>its packaged copy: uv<br/>setup, native focused<br/>tests, Makefile<br/>explicitly optional,<br/>bounded regression<br/>guida…"
+    Oracle->>User: "ora groom"
+    Note right of Oracle: "Oracle *ora groom now<br/>audits README-linked<br/>onboarding content,<br/>validates runnable<br/>examples against current<br/>CLI/docs, syncs packaged<br/>copies,…"
 ```

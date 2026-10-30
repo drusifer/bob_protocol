@@ -472,3 +472,11 @@ deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 ---
 [<small>2026-10-29 23:10:55</small>] [**Bob**]->[**User**] *prompt learned*:
  Planning rule learned and recorded in canonical and packaged Bob Protocol skills. Agents ask only about high-impact, hard-to-reverse decisions; conventions cover routine choices. Discovery links refreshed. @User *review
+
+---
+[<small>2026-10-29 23:14:47</small>] [**Oracle**]->[**User**] *ora groom*:
+ Refreshed docs/WALKTHROUGH.md and its packaged copy: uv setup, native focused tests, Makefile explicitly optional, bounded regression guidance aligned. @User *review
+
+---
+[<small>2026-10-29 23:17:19</small>] [**Oracle**]->[**User**] *ora groom*:
+ Oracle *ora groom now audits README-linked onboarding content, validates runnable examples against current CLI/docs, syncs packaged copies, and uses a short pass/fail gate. Canonical and template skills match. @User *review

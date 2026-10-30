@@ -72,21 +72,20 @@ flowchart TD
 You start in a new directory for your restaurant reservation app, `tablecraft`:
 
 ```bash
-mkdir tablecraft && cd tablecraft
-git init
-python3 -m venv .venv
-source .venv/bin/activate
-pip install bobp
+uv init --name tablecraft tablecraft
+cd tablecraft
+uv add bobp
+uv add --dev pytest
 ```
 
 Scaffold the Bob Protocol framework into your project:
 
 ```bash
-bobp install .
-bobp setup-agent-links
+uv run bobp install .
+uv run bobp setup-agent-links
 ```
 
-This creates the `agents/` workspace, symlinks `.claude/skills/`, and configures team state files.
+This creates the `agents/` workspace, links discovered skills, and seeds team state files. `uv add` creates `uv.lock`; commit it to make the environment reproducible. Run Bobp CLI tools with `uv run bobp ...` unless the project's environment is activated.
 
 ### Starting Your Session
 
@@ -124,13 +123,13 @@ Grounded in Ryan Singer's *Shape Up* and Marty Cagan's *Inspired*, Cypher frames
 
 2. **Cypher hands off to Smith for Problem Validation**:
    ```bash
-   bobp chat "Epic shaped: problem framed with appetite. @Smith *user review epic" --persona Cypher --cmd "pm handoff" --to Smith
+   uv run bobp chat "Epic shaped: problem framed with appetite. @Smith *user review epic" --persona Cypher --cmd "pm handoff" --to Smith
    ```
 
 3. **Gate 1 — Smith Reviews Problem Formulation**:
    Smith confirms the problem statement reflects authentic diner and host pain points:
    ```bash
-   bobp chat "*user approve. Problem framing solves genuine dining friction. @Morpheus *lead arch epic" --persona Smith --cmd "user approve" --to Morpheus
+   uv run bobp chat "*user approve. Problem framing solves genuine dining friction. @Morpheus *lead arch epic" --persona Smith --cmd "user approve" --to Morpheus
    ```
 
 4. **Morpheus models the Domain (`docs/DOMAIN.md`)**:
@@ -239,9 +238,7 @@ User: @Mouse *plan sprint
 
 ### 3.1 Stage 0: SDLC Gate (Blocker)
 
-Mouse verifies that `docs/SDLC.md` exists. Tank confirms the build environment and Makefile front door:
-- `bobp make test`: runs pytest with output capture to `build/build.out`.
-- `bobp make lint`: runs ruff check and formatting.
+Mouse verifies that `docs/SDLC.md` exists. Tank confirms the project's native build and test commands. In this new Python project, tests run with `uv run pytest`; a `Makefile` is optional. `bobp make <target>` applies only when that target exists in the project's own Makefile.
 
 ### 3.2 Stage 1: Mouse Structures `task.md` into Typed Work Loops
 
@@ -261,7 +258,7 @@ Mouse breaks the stories into ordered, atomic **Work Loops**:
 
 Morpheus approves the task breakdown. Mouse signals the start of execution:
 ```bash
-bobp chat "Sprint 1 task board ready with typed Work Loops. Starting Phase 1. @Neo *impl Task 1.1" --persona Mouse --cmd "sm handoff" --to Neo
+uv run bobp chat "Sprint 1 task board ready with typed Work Loops. Starting Phase 1. @Neo *impl Task 1.1" --persona Mouse --cmd "sm handoff" --to Neo
 ```
 
 ---
@@ -290,11 +287,11 @@ def test_table_creation_rejects_zero_or_negative_capacity():
         Table(id="T1", capacity=0)
 ```
 
-Neo runs `bobp make test` to prove the test fails:
+Neo runs the focused test file to prove the test fails:
 ```text
-=== make test ===
+=== uv run pytest tests/unit/test_table.py -q ===
 ModuleNotFoundError: No module named 'tablecraft.domain.table'
-=== exit 1 ===
+=== 1 failed ===
 ```
 
 #### Step 2: Neo Writes Minimal Code (Green Phase)
@@ -314,22 +311,21 @@ class Table:
             raise ValueError("Capacity must be at least 1")
 ```
 
-Neo re-runs `bobp make test`:
+Neo re-runs the focused test:
 ```text
-=== make test ===
+=== uv run pytest tests/unit/test_table.py -q ===
 2 passed in 0.04s
-=== exit 0 ===
 ```
 
 #### Step 3: Trin Verifies Acceptance
 
-Trin runs the full suite and audits edge conditions:
+Trin runs the affected tests and audits edge conditions:
 ```bash
-bobp make test
+uv run pytest tests/unit/test_table.py -q
 ```
-Result: 100% green. Trin hands off to Morpheus:
+Run broader regression tests when changes span multiple areas or at sprint close. Trin hands off to Morpheus:
 ```bash
-bobp chat "Task 1.1 unit tests green. Acceptance verified. @Morpheus *lead review Task 1.1" --persona Trin --cmd "qa handoff" --to Morpheus
+uv run bobp chat "Task 1.1 unit tests green. Acceptance verified. @Morpheus *lead review Task 1.1" --persona Trin --cmd "qa handoff" --to Morpheus
 ```
 
 #### Step 4: Morpheus Reviews & Scores (`LOOP_IMPL` Rubric)
@@ -345,7 +341,7 @@ Morpheus inspects the diff: pure dataclass, strict validation, no leaky dependen
 
 ### 4.2 Context Checkpoint & Safe Reset (`*prep-clear`)
 
-Between Work Loops, Mouse checks LLM context consumption. If token saturation exceeds **60%**, the agent must execute the **Pre-Clear Protocol** before issuing `/clear` or `/compact`:
+Between Work Loops, Mouse checks LLM context consumption. As context approaches saturation (around **70%**) or before issuing `/clear` or `/compact`, the active persona executes the **Pre-Clear Protocol**:
 
 ```text
 User: *prep-clear
@@ -363,7 +359,7 @@ The active persona executes the canonical checkpoint:
    ```
 3. Posts a checkpoint message to `agents/CHAT.md`:
    ```bash
-   bobp chat "Checkpoint saved: Task 1.1 complete (100% tests green). Next: Task 1.2 Reservation entity. Ready for context clear." --persona Mouse --cmd checkpoint
+   uv run bobp chat "Checkpoint saved: Task 1.1 complete (focused tests green). Next: Task 1.2 Reservation entity. Ready for context clear." --persona Mouse --cmd checkpoint
    ```
 
 You can now safely type `/clear` in your harness! When restarting:
@@ -432,13 +428,18 @@ with self.connection:
     self._insert_reservation(reservation)
 ```
 
-Neo re-runs `bobp make test`. The reproduction test passes!
+Neo re-runs the focused concurrency test. The reproduction test passes!
+```bash
+uv run pytest tests/integration/test_concurrency.py -q
+```
 
 #### Step 2: Trin Runs Full Regression Sweep
 
-Trin runs the entire test suite:
+Trin runs affected tests first, then the full suite when the change is broad or at sprint close:
 ```bash
-bobp make test
+uv run pytest tests/integration/test_concurrency.py -q
+# Broader regression check, when appropriate:
+uv run pytest -q
 ```
 Result: 14 passed, 0 failures, zero regressions across prior phases.
 
@@ -519,6 +520,20 @@ By following Bob Protocol on TableCraft, you achieved:
 ---
 
 ### Command Quick Reference
+
+#### Bobp CLI Tools
+
+Bobp tools run directly and do not require a project Makefile:
+
+```bash
+uv run bobp chat "..." --persona Neo --cmd "swe handoff" --to Trin
+uv run bobp chat-diagram
+uv run bobp setup-agent-links
+```
+
+For project tasks, follow `docs/SDLC.md`. This example runs tests with `uv run pytest`; use `uv run bobp make <target>` only if the project has a Makefile and that target exists. `bobp make` wraps the project's Makefile; it does not create one.
+
+#### Workflow Triggers
 
 ```bash
 # Lifecycle

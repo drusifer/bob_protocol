@@ -4,6 +4,8 @@
 ### Recent Decisions
 - 2026-10-29: Documentation index's packaged mirror at `bobp/templates/agents/DOCUMENTATION_INDEX.md` must match the live index.
 - 2026-10-29: Completed the research-backed audit and applied its recommendations to all 16 canonical templates under `bobp/templates/agents/templates/`; synchronized live copies in `agents/templates/`.
+- 2026-10-29: Refreshed `docs/WALKTHROUGH.md` after review found stale Python setup and test guidance. It now uses uv, focused native pytest commands, bounded regression runs, and treats a target Makefile as optional. Synchronized `bobp/templates/docs/WALKTHROUGH.md`.
+- 2026-10-29: Enhanced Oracle's `*ora groom` instructions to include content freshness for README-linked onboarding docs, sequential tutorial checks, CLI/source validation, packaged-copy sync, and a concise pass/fail gate.
 
 ### Key Findings
 - Root README lacked a contents list and documented `make test` directly; docs index had an outdated update date and referenced an archive file that does not exist.
@@ -20,45 +22,33 @@
 **Status:** Completed
 **Assigned to:** Oracle
 **Started:** 2026-10-29
+**Completed:** 2026-10-29
 
 ### Task Description
-Judge the recent template/tooling work and make the trace command consistent with other direct Bobp CLI tools.
+Strengthen Oracle's documentation-grooming workflow so important tutorial drift is caught next time.
 
 ### Progress
-- [x] Added a root README contents list and links to key docs
-- [x] Updated documentation index date, archive listing, naming and directory guidance
-- [x] Synchronized the index with its packaged mirror
-- [x] Corrected README test command to `bobp make test`
-- [x] Verified local links resolve, index copies match, and `git diff --check` passes
-- [x] Audited updater copy rules, packaged file counts, and update tests; no omissions found within the documented refresh scope
-- [x] Reviewed all 16 templates and verified their packaged counterparts match
-- [x] Researched examples for ADRs, architecture, DDD, stories, test strategy, UAT, incident learning, and documentation style
-- [x] Wrote the audit report with per-template findings, rubric gaps, research references, and implementation status
-- [x] Updated all 16 canonical templates and synchronized all 16 live copies
-- [x] Verified one check block per template, matching packaged/live copies, and clean `git diff --check`
-- [x] Did not run tests for the docs-only template edits; noted that rubric calibration remains future review work
-- [x] Confirmed `bobp trace-annotate` is registered/tracked, but fails due to undeclared `jinja2`; documented `bobp make judge-trace` target is absent from Makefile/history
-- [x] Tank restored the `judge-trace` Make target, declared Jinja2, updated Judge/Trin instructions, and ensured template check blocks are stripped from generated CHAT/state files
-- [x] Ran the full suite: 76 passed, 7 skipped; synthetic trace smoke test produced the expected annotation
-- [x] Recorded that this Codex session cannot receive a numeric TES: the trace tool reads Claude JSONL only and no Claude project directory exists here
-- [x] Applied user clarification: removed the Make wrapper and changed Judge, Trin, and Neo guidance to invoke `bobp trace-annotate` directly; verified no active skill references the wrapper
+- [x] Added README-linked onboarding freshness checks and a sequential reader-path review to `*ora groom`.
+- [x] Added CLI/source verification, safe focused validation, and packaged-copy sync requirements.
+- [x] Added a concise PASS/FAIL gate for accuracy, usability, consistency, and mirror sync.
+- [x] Synced the packaged Oracle skill and verified canonical/template copies match.
+- [x] Refreshed agent discovery links; `git diff --check` passes. No tests run (documentation-only changes).
 
 ### Blockers
 None
 
 ### Oracle Consultations
-None yet
+None.
 
 ## Next Steps
 ### Immediate Next Action
-Tank: review `bobp/tools/trace_annotate.py`, `pyproject.toml`, and the Makefile. Decide whether the existing `bobp trace-annotate` CLI should be the judge workflow; address its undeclared Jinja dependency and align the judge/Trin skills. `docs/SDLC.md` is currently absent.
+Await the next user request. Future `*ora groom` runs must check root-README-linked onboarding and tutorial docs for stale commands and assumptions.
 
 ### Waiting On
-None
+User.
 
 ### Planned Work
-- [ ] Finish the direct CLI command consistency update and verify no active guidance references `bobp make judge-trace`.
-- [ ] Calibrate revised template checks against representative completed artifacts later.
+- [ ] None queued.
 
 ---
-*Last updated: 2026-10-29*
+*Last updated: 2026-10-29 23:18*

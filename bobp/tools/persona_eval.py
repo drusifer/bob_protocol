@@ -254,11 +254,20 @@ def build_config(
 ) -> dict[str, Any]:
     """Build an eval that checks actual installed skill use and artifact quality."""
     artifact = suite["artifact"]
-    task = (
-        f"{suite['request']}\n\n"
-        "Create the requested artifact in the specified path. Do not commit changes "
-        "or use network access. Choose routine conventions without asking the user."
-    )
+    if suite.get("evaluation_scope") == "personality-behavior":
+        task = (
+            f"{suite['request']}\n\n"
+            "This is a response-only evaluation. Answer the scenario in your final response; do not "
+            "create a deliverable or change your installed skill. Follow required state/chat protocol "
+            "only if it applies. Do not commit changes or use network access. Choose routine conventions "
+            "without asking the user."
+        )
+    else:
+        task = (
+            f"{suite['request']}\n\n"
+            "Create the requested artifact in the specified path. Do not commit changes "
+            "or use network access. Choose routine conventions without asking the user."
+        )
     judge_provider = {
         "id": "openai:codex-sdk",
         "config": {
@@ -282,6 +291,19 @@ def build_config(
             "do not demand extra persona-specific checkpoint mechanics unless the linked "
             "shared protocol requires them."
         )
+    if suite.get("evaluation_scope") == "personality-behavior":
+        target_skill_text = (project / artifact).read_text(encoding="utf-8")
+        rubric_text = (
+            "Evaluate only this persona-upgrade scope. Inspect the existing target persona skill at "
+            f"{artifact}: its Personality Traits & Values section must explicitly state the shared "
+            "baseline traits courteous, succinct, and respectful; include a role-fitting demeanor; "
+            "and list 3–5 useful, role-specific working values. Then evaluate the provider's final "
+            "response to the scenario against the persona's role and the additional behavior criteria "
+            f"below. The full target skill content is included as evidence; do not rely on a workspace "
+            f"read. Do not score unrelated legacy instructions, responsibilities, or command-interface "
+            f"criteria.\n\nTarget skill content for {artifact}:\n```markdown\n{target_skill_text}\n```"
+            f"\n\nAdditional behavior criteria:\n{suite['behavior_criteria']}"
+        )
     return {
         "description": f"BobProtocol eval catalog: {suite['id']}",
         "tags": {"suite": suite["id"], "persona": suite["persona"]},
@@ -304,14 +326,23 @@ def build_config(
         ],
         "tests": [
             {
-                "description": f"{suite['id']} uses its installed skill and produces a rubric-compliant artifact",
+                "description": (
+                    f"{suite['id']} uses its installed skill and demonstrates the required behavior"
+                    if suite.get("evaluation_scope") == "personality-behavior"
+                    else f"{suite['id']} uses its installed skill and produces a rubric-compliant artifact"
+                ),
                 "assert": [
                     {"type": "skill-used", "value": suite["persona"]},
                     {
                         "type": "agent-rubric",
                         "value": (
-                            f"Review the generated artifact at {artifact}. It must exist. "
-                            "Judge it against every pass/fail criterion in the following "
+                            (
+                                f"The target skill at {artifact} already exists; inspect its personality section "
+                                "and assess the provider's final response to the scenario. "
+                                if suite.get("evaluation_scope") == "personality-behavior"
+                                else f"Review the generated artifact at {artifact}. It must exist. "
+                            )
+                            + "Judge the applicable pass/fail criteria in the following "
                             "artifact rubric. Judge paths and commands against this "
                             "installed target project. The following is the authoritative "
                             "capability declaration from that fixture's agents/PROJECT.md; "

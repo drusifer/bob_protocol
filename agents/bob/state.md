@@ -16,6 +16,9 @@
 - 2026-10-30: Made `*judge` the Bloop Agent/Skill Quality work-loop. Added Promptfoo-specific runner, evidence triage, owner routing, fresh-fixture verification, fixed-criteria guidance, holdout recommendation, and shared anti-loop stopping rule. Added Judge to Bloop's catalog and synchronized both packaged skills.
 - 2026-10-30: Ran `*bloop judge bob`. First single run passed, but manual audit found it omitted the shared courteous/succinct/respectful baseline, so strengthened Bob creation guidance and PERSONA rubric. `--repeat 3` yielded one raw pass and two false positives: one `skill-used` assertion contradicted provider metadata/tool trace, and one grader treated transitive `bloop` as a direct dependency despite explicit rubric context. All three generated artifacts explicitly retain all baseline traits and satisfy the persona rubric on review. Updated Judge to record evidence-backed false-positive overrides separately from raw results; packaged copy synced.
 
+- 2026-10-30: Upgraded Cypher, Morpheus, Mouse, Neo, Oracle, Smith, Tank, and Trin to the shared courteous/succinct/respectful baseline with five role-specific working values each. Preserved role/command content; canonical and packaged skills are synchronized.
+- 2026-10-30: Added focused Promptfoo behavior suites for those eight upgrades and verified each with three fresh passing runs (24/24). Failure review identified two under-specified scenarios rather than persona defects: Mouse needed task scope details and explicit scope-based level reasons; Neo needed the legitimate-zero boundary called out. Updated those fixture requests without weakening criteria; retained initial reports for audit. Detailed report paths are in `agents/bob/persona_eval_2026-10-30.md`.
+
 ## Current Task
 **Status:** Completed
 **Assigned to:** Bob
@@ -23,21 +26,22 @@
 **Completed:** 2026-10-30
 
 ### Task Description
-Run `*bloop judge bob` and use the eval evidence to improve and verify Bob's persona-authoring behavior.
+Upgrade the remaining team personas to the shared personality and values standard and verify them with Promptfoo.
 
 ### Progress
-- [x] Ran Bob's catalogued persona-authoring eval in a fresh fixture; initial Promptfoo report passed.
-- [x] Reviewed generated artifact, found the shared demeanor baseline was omitted, and strengthened Bob's creation instructions and the measurable PERSONA rubric.
-- [x] Ran three fresh verification fixtures; all generated skills explicitly include courteous, succinct, and respectful.
-- [x] Adjudicated two raw failures as evaluator false positives using provider trace and explicit direct-dependency instructions; one raw run passed.
-- [x] Updated Judge to record evidence-backed overrides separately from raw scores; canonical and packaged copies match and diff check is clean.
+- [x] Added explicit courteous/succinct/respectful baseline and role-specific demeanor/values to Cypher, Morpheus, Mouse, Neo, Oracle, Smith, Tank, and Trin.
+- [x] Preserved existing responsibilities, authority, and command interfaces.
+- [x] Synced all eight packaged skill copies; `git diff --check` passes and canonical/package parity verified.
+- [x] Added focused behavior eval suites; each persona passes three fresh Promptfoo runs (24/24 total).
+- [x] Reviewed initial repeat failures and clarified Mouse and Neo scenarios while keeping their behavior criteria intact.
+- [x] Recorded run IDs, report paths, and scenario corrections in `agents/bob/persona_eval_2026-10-30.md`.
 
 ### Blockers
-Promptfoo raw result for the three-run verification was 1/3 pass; remaining two failures were validated false positives, not Bob artifact defects.
+No remaining blockers. Promptfoo evals verify one representative role behavior and the personality section per persona; they do not establish coverage of every command or workflow.
 
 ## Next Steps
 ### Immediate Next Action
-No further action; await the user's next request. Preserve reports under `build/persona-eval/` for audit.
+No further action; await the user's next request.
 
 ### Waiting On
 User.

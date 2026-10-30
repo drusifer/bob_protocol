@@ -8,7 +8,7 @@ Formalized in `agents/skills/init/SKILL.md` & `agents/skills/prep-clear/SKILL.md
 
 | Command / Trigger | Action | Primary Handler |
 |-------------------|--------|-----------------|
-| `/init`, `*init`, `/bob-protocol init` | Initialize session, sync links, display quick reference | Bob (`*prompt`) |
+| `/init`, `*init`, `/bob-protocol init` | Read chat/state, check discovery links, post initialization, and display quick reference | Bob (`*prompt`) |
 | `*resume` | Cold-start recovery from last CHAT.md handoff | Last active persona |
 | `*prep-clear`, `/prep-clear`, `*checkpoint` | Reconcile state, write resume plan, prepare for `/clear` | Active persona |
 | `*startup`, `*chat init` | Startup protocol alias | Bob (`*prompt`) |
@@ -37,6 +37,7 @@ Multi-persona automated workflow loops decomposed into two hierarchical tiers: *
 | `*spike <unknown>` | `skills/spike` | Neo / Morpheus → Oracle | Disposable exploration; zero production code; outputs finding/decision | *XP Installed* (Jeffries) / *Shape Up* |
 | `*uat <phase>` | `skills/uat` | Trin → Smith → (Neo if defect) | End-to-end acceptance + UX heuristic evaluation; defect halts to `*fix` | *Agile Testing* (Crispin & Gregory) |
 | `*deploy <target>` | `skills/deploy` | Tank → Trin smoke | Automated release via Makefile; live smoke test before pass | *Continuous Delivery* (Humble & Farley) |
+| `*judge <persona-or-skill>` | `skills/judge` | Trin → Smith → Neo or Bob → Trin | Evaluate a fixed scenario with evidence, then verify a focused fix in a fresh run | Eval-driven development |
 | `*qa <scope>` | `skills/trin` | Trin → Morpheus | Test suite execution & codebase health verification | *Working Effectively with Legacy Code* |
 | `*review <target>` | `skills/morpheus` | Morpheus → Trin | Architectural alignment, maintainability, and quality review | *Clean Architecture* (Martin) |
 
@@ -83,6 +84,7 @@ Invoke a persona directly — bypasses `*chat` routing.
 | `*ora tldr [glob]` | Write/update TL;DR blocks in project files |
 | `*ora groom` | Audit and organise the knowledge base |
 | `*ora archive` | Archive old CHAT.md messages (>50-100 messages) |
+| `*ora report <moniker>` | Archive the sprint chat and reset the current log through `bobp chat-report` |
 
 ### Cypher — Product Manager
 | Trigger | Action |

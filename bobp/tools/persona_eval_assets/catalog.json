@@ -4,7 +4,10 @@
     {
       "id": "bob-persona-authoring",
       "persona": "bob",
-      "tags": ["skill-use", "persona-artifact"],
+      "tags": [
+        "skill-use",
+        "persona-artifact"
+      ],
       "request": "Use the Bob persona skill exposed at .agents/skills/bob/SKILL.md. A user wants a project-local BobProtocol persona that drafts conventional commit messages from staged diffs. It may explain or revise drafts but must never run git commit. Create a concise skill at agents/commit-message-author/SKILL.md, following the installed persona template and shared state, chat, and handoff protocol. List only direct shared-skill prerequisites. Make routine naming and formatting choices yourself.",
       "artifact": "agents/commit-message-author/SKILL.md",
       "rubric": "agents/templates/_template_PERSONA_SKILL.md"
@@ -12,10 +15,117 @@
     {
       "id": "morpheus-design-advice",
       "persona": "morpheus",
-      "tags": ["skill-use", "architecture-decision"],
+      "tags": [
+        "skill-use",
+        "architecture-decision"
+      ],
       "request": "Use the Morpheus skill exposed at .agents/skills/morpheus/SKILL.md and its *advise method. A marketplace currently stores a single boolean Payment.refunded. It now needs multiple partial refunds, idempotent retries, provider processing states, and audit history; successful refunds must never exceed the captured amount. The existing Payments domain owns payment-provider interaction, and no new service is planned. Resolve whether refunds should remain fields on Payment, become a distinct Refund entity/aggregate in Payments, or move to a new service. Create docs/decisions/ADR-0001-refund-lifecycle.md using the installed decision template. Use the shared domain language, identify ownership and invariants, include concise Given/When/Then scenarios for key behavior, compare viable options and tradeoffs, and explain how KISS and DRY informed the recommendation. The decision is Proposed because the team has not approved it. Make routine choices yourself; do not commit or use network access.",
       "artifact": "docs/decisions/ADR-0001-refund-lifecycle.md",
       "rubric": "agents/templates/_template_DECISION.md"
+    },
+    {
+      "id": "cypher-personality",
+      "persona": "cypher",
+      "tags": [
+        "skill-use",
+        "personality-upgrade"
+      ],
+      "request": "Use the Cypher persona skill exposed at .agents/skills/cypher/SKILL.md. A user asks for CSV export in the report list but provides no format details. Reply with the intended user outcome, one reversible assumption if appropriate, and two observable acceptance criteria. Be brief; do not create files.",
+      "artifact": "agents/cypher/SKILL.md",
+      "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+      "evaluation_scope": "personality-behavior",
+      "behavior_criteria": "Keeps the response user-outcome focused; states assumptions without inventing user research; makes both acceptance criteria independently verifiable."
+    },
+    {
+      "id": "morpheus-personality",
+      "persona": "morpheus",
+      "tags": [
+        "skill-use",
+        "personality-upgrade"
+      ],
+      "request": "Use the Morpheus persona skill exposed at .agents/skills/morpheus/SKILL.md. The Payments domain currently stores `refunded: bool`; it now needs partial refunds, idempotent retries, processing states, and audit history. Successful refunds must not exceed the captured amount. Recommend a design within the existing Payments domain, explain one tradeoff, and state the key invariant. Be brief; do not create files.",
+      "artifact": "agents/morpheus/SKILL.md",
+      "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+      "evaluation_scope": "personality-behavior",
+      "behavior_criteria": "Reasons from domain boundaries and invariants; recommends the simplest design that supports the stated lifecycle; names a meaningful tradeoff without claiming authority beyond architecture advice."
+    },
+    {
+      "id": "mouse-personality",
+      "persona": "mouse",
+      "tags": [
+        "skill-use",
+        "personality-upgrade"
+      ],
+      "request": "Use the Mouse persona skill exposed at .agents/skills/mouse/SKILL.md. Plan these three sprint tasks: define the columns and CSV escaping rules for the existing filtered/sorted report list; add an authenticated HTTP endpoint that serializes those rows; add an integration test for the header, filtered rows, and a field containing a comma. The contract blocks implementation, and the test follows implementation. Assign L1\u2013L4 complexity levels, give a short scope-based reason for each, and show order plus blockers. Do not use time or seniority to set levels. Be concise; do not edit files.",
+      "artifact": "agents/mouse/SKILL.md",
+      "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+      "evaluation_scope": "personality-behavior",
+      "behavior_criteria": "Sequences work by dependency and makes the blocker visible. For each L-level, gives a short reason tied to the stated scope, dependency, or uncertainty; does not use duration or persona seniority."
+    },
+    {
+      "id": "neo-personality",
+      "persona": "neo",
+      "tags": [
+        "skill-use",
+        "personality-upgrade"
+      ],
+      "request": "Use the Neo persona skill exposed at .agents/skills/neo/SKILL.md. Review this Python helper: `def parse_count(text): return int(text) if text.isdigit() else 0`. Invalid input is currently silently treated as a valid zero. Give a minimal safer code change and two focused tests: one proving the legitimate input `0` remains valid, and one proving malformed input such as `nope` is rejected. Keep the answer concise; do not edit files.",
+      "artifact": "agents/neo/SKILL.md",
+      "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+      "evaluation_scope": "personality-behavior",
+      "behavior_criteria": "Favors a small, correct change; distinguishes invalid input from a legitimate zero; proposes tests for valid and invalid boundaries rather than speculative redesign."
+    },
+    {
+      "id": "oracle-personality",
+      "persona": "oracle",
+      "tags": [
+        "skill-use",
+        "personality-upgrade"
+      ],
+      "request": "Use the Oracle persona skill exposed at .agents/skills/oracle/SKILL.md. Two project notes conflict: Note A says the CLI requires Node 20; Note B says Node 22. Neither note names an owner or date. Summarize what is known, what remains uncertain, and the smallest source-of-truth check to resolve it. Do not invent facts; keep it concise.",
+      "artifact": "agents/oracle/SKILL.md",
+      "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+      "evaluation_scope": "personality-behavior",
+      "behavior_criteria": "Separates supplied facts from unknowns, preserves source uncertainty, and proposes a traceable resolution step rather than guessing which note is correct."
+    },
+    {
+      "id": "smith-personality",
+      "persona": "smith",
+      "tags": [
+        "skill-use",
+        "personality-upgrade"
+      ],
+      "request": "Use the Smith persona skill exposed at .agents/skills/smith/SKILL.md. A CLI displays `Export failed.` after a user selects CSV, with no recovery guidance. Identify the main usability issue and propose a clearer error message that helps the user recover. Keep the review respectful and brief; do not edit files.",
+      "artifact": "agents/smith/SKILL.md",
+      "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+      "evaluation_scope": "personality-behavior",
+      "behavior_criteria": "Uses the user's perspective and a relevant usability principle; criticizes the interface rather than the user; proposes clear, actionable recovery wording."
+    },
+    {
+      "id": "tank-personality",
+      "persona": "tank",
+      "tags": [
+        "skill-use",
+        "personality-upgrade"
+      ],
+      "request": "Use the Tank persona skill exposed at .agents/skills/tank/SKILL.md. A deployment workflow uses the mutable `latest` image tag and stores a cloud token directly in YAML. Recommend declarative corrections and one verification step for each risk. Be concise; do not change files.",
+      "artifact": "agents/tank/SKILL.md",
+      "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+      "evaluation_scope": "personality-behavior",
+      "behavior_criteria": "Surfaces both supply-chain/reproducibility and secret-handling risks; recommends repeatable, secure changes and observable checks without alarmism."
+    },
+    {
+      "id": "trin-personality",
+      "persona": "trin",
+      "tags": [
+        "skill-use",
+        "personality-upgrade"
+      ],
+      "request": "Use the Trin persona skill exposed at .agents/skills/trin/SKILL.md. Acceptance criterion: `Uploaded reports are available to users.` Identify the ambiguity and give three concrete tests with expected outcomes, including one failure case. Be concise; do not create files.",
+      "artifact": "agents/trin/SKILL.md",
+      "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+      "evaluation_scope": "personality-behavior",
+      "behavior_criteria": "Does not guess expected behavior; identifies the missing observable contract; provides reproducible tests with explicit expected results, including failure behavior."
     }
   ]
 }

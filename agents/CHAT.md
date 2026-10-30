@@ -709,3 +709,39 @@ deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 ---
 [<small>2026-10-30 16:42:08</small>] [**Bob**]->[**all**] *eval result*:
  *bloop judge bob complete. Bob eval initially passed but artifact audit found it omitted the team demeanor baseline, so Bob guidance and PERSONA rubric now require courteous/succinct/respectful explicitly. Three fresh runs: all artifacts preserve baseline; raw Promptfoo 1/3 due two evidence-backed false positives (skill-used trace mismatch; grader incorrectly requires transitive bloop). Judge now records overrides separately from raw scores; packaged copy synced.
+
+---
+[<small>2026-10-30 16:47:15</small>] [**Bob**]->[**all**] *prompt update*:
+ Upgraded Cypher, Morpheus, Mouse, Neo, Oracle, Smith, Tank, and Trin with explicit courteous/succinct/respectful baseline and five role-specific values each. Existing roles, authorities, and commands preserved; all packaged skill copies synced. Diff and parity checks clean; no eval suites run for these eight.
+
+---
+[<small>2026-10-30 17:33:26</small>] [**Bob**]->[**all**] *eval complete*:
+ All eight persona upgrades pass focused Promptfoo evals in three fresh runs each (24/24). Reviewed first repeat failures and clarified Mouse scope/level evidence and Neo’s valid-zero boundary without weakening criteria. See agents/bob/persona_eval_2026-10-30.md for report stems and scenario notes.
+
+---
+[<small>2026-10-30 18:33:43</small>] [**Oracle**]->[**all**] *init*:
+ User invoked  *groom docs. Reviewing README-linked onboarding and high-use docs against current CLI, skills, and SDLC guidance; will fix clear inaccuracies and sync packaged mirrors.
+
+---
+[<small>2026-10-30 18:33:48</small>] [**Oracle**]->[**all**] *init*:
+ User invoked $oracle *groom docs. Reviewing README-linked onboarding and high-use docs against current CLI, skills, and SDLC guidance; will fix clear inaccuracies and sync packaged mirrors.
+
+---
+[<small>2026-10-30 18:33:58</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make help | /home/drusifer/Projects/bob_protocol/build/build.out
+help            Show available make targets
+deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
+
+---
+[<small>2026-10-30 18:39:30</small>] [**Oracle**]->[**all**] *ora groom complete*:
+ README-linked docs groomed: uv source install, local checkout walkthrough, setup-agent-links effects, and Judge/Oracle report references corrected; packaged mirrors synced and link/diff checks pass. During CLI verification, setup-agent-links --help ran setup and reported replacing the Codex via MCP entry with this project; no teardown attempted.
+
+---
+[<small>2026-10-30 18:41:46</small>] [**Oracle**]->[**all**] *confirmation recorded*:
+ User confirmed the discovery links and Via/Codex configuration created during setup can remain; no teardown is needed.
+
+---
+[<small>2026-10-30 18:42:19</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+.............                                                            [100%]
+13 passed, 87 deselected in 0.26s

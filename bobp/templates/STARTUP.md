@@ -7,9 +7,12 @@ See instructions here -> `agents/skills/init/SKILL.md` & `agents/skills/prep-cle
 ## On Startup (Fresh Session)
 
 1. Read `agents/CHAT.md` — last 10-20 messages for current team context
-2. If `agents/PROJECT.md` exists — read it for project capabilities (e.g. `via: enabled`)
-3. Display the quick reference below
-4. Wait for user input — do not auto-execute tasks
+2. Load the active persona's `agents/[persona]/state.md`
+3. If `agents/PROJECT.md` exists, read it for project capabilities (e.g. `via: enabled`)
+4. Check that agent discovery links are present; run `bobp setup-agent-links` only when links are missing, stale, or after repository updates
+5. Post the persona's initialization message to `agents/CHAT.md`
+6. Display the quick reference below
+7. Wait for user input — do not auto-execute tasks
 
 ## Cold Start Recovery (After Context Clear or Session Restart)
 
@@ -68,6 +71,7 @@ If `CHAT.md` has no clear handoff, ask the user: *"I'm resuming — what should 
 *user review / *user test / *user approve  # Smith
 *prompt / *reprompt / *learn         # Bob
 *devops deploy / *devops infra / *devops sdlc  # Tank
+*judge <persona-or-skill>            # Evaluate and improve a persona, skill, or tool
 ```
 
 ### Make Targets (Single Front Door via bobp make)

@@ -35,6 +35,14 @@ def test_repository_catalog_has_matching_persona_suites() -> None:
     assert {suite["id"] for suite in suites} == {
         "bob-persona-authoring",
         "morpheus-design-advice",
+        "cypher-personality",
+        "morpheus-personality",
+        "mouse-personality",
+        "neo-personality",
+        "oracle-personality",
+        "smith-personality",
+        "tank-personality",
+        "trin-personality",
     }
     morpheus = next(suite for suite in suites if suite["persona"] == "morpheus")
     assert morpheus["artifact"] == "docs/decisions/ADR-0001-refund-lifecycle.md"

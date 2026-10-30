@@ -7,6 +7,8 @@
 - 2026-10-29: Refreshed `docs/WALKTHROUGH.md` after review found stale Python setup and test guidance. It now uses uv, focused native pytest commands, bounded regression runs, and treats a target Makefile as optional. Synchronized `bobp/templates/docs/WALKTHROUGH.md`.
 - 2026-10-29: Enhanced Oracle's `*ora groom` instructions to include content freshness for README-linked onboarding docs, sequential tutorial checks, CLI/source validation, packaged-copy sync, and a concise pass/fail gate.
 - 2026-10-30: Reviewed Tank's new `docs/SDLC.md`; all six SDLC rubric checks pass. README and live/packaged documentation indexes link to the SDLC. Full tests and Mermaid lint pass; clean rebuild is explicitly deferred to sprint close.
+- 2026-10-30: Groomed README-linked onboarding docs against current CLI and SDLC: root README now uses uv, walkthrough uses the local source checkout while Bobp is unpublished, and setup-agent-links side effects are explicit. Added `*judge` and `*ora report` to command references; synchronized shipped copies. Whitespace, local links, and five mirror checks pass.
+- 2026-10-30: During CLI verification, mistakenly invoked `bobp setup-agent-links --help`; the subcommand ignored `--help` and ran setup. Output reported 33 links created and replacement of the existing Codex `via` MCP entry with this project. No teardown was run because it could remove intended links; disclosed in team chat and final report.
 
 ### Key Findings
 - Root README lacked a contents list and documented `make test` directly; docs index had an outdated update date and referenced an archive file that does not exist.
@@ -26,23 +28,24 @@
 **Completed:** 2026-10-30
 
 ### Task Description
-Groom and rubric-review the new project SDLC document.
+Groom README-linked onboarding and command-reference documentation against current project behavior.
 
 ### Progress
-- [x] Checked exact setup commands, targets, dependency process, change classes, CI/release claims, and known deviations against repository files.
-- [x] Applied SDLC rubric: `TRUE=PASS WHOLE=PASS CLEAN=PASS CLASS=PASS CHECK=PASS GAPS=PASS`.
-- [x] Linked SDLC from README and synchronized the live/packaged documentation index.
-- [x] Confirmed `git diff --check`, SDLC section checks, and documentation-index mirror equality.
+- [x] Reviewed root README links: startup guide, walkthrough, shorthand guide, SDLC, documentation index, and packaged README.
+- [x] Checked install and setup commands against current uv/CLI help, `docs/SDLC.md`, and the Bob tools skill.
+- [x] Replaced stale pip/PyPI examples, clarified the local editable checkout walkthrough and user-level setup effects, and documented Judge and Oracle report triggers.
+- [x] Synchronized packaged docs and help copies; local Markdown links, `git diff --check`, and all five mirror checks pass.
+- [x] Logged the accidental `setup-agent-links --help` execution and its reported Codex/Via config effect.
 
 ### Blockers
-None
+No documentation blockers. User confirmed the setup-created discovery links and Via/Codex configuration can remain; no teardown is needed.
 
 ### Oracle Consultations
 None.
 
 ## Next Steps
 ### Immediate Next Action
-Return the SDLC review verdict to Tank. The clean rebuild is explicitly listed for Tank's sprint-close conformance check.
+Report the grooming results and the setup-command side effect to the user; no further documentation action is queued.
 
 ### Waiting On
 Tank handoff.

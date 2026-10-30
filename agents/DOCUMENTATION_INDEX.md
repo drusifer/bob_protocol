@@ -21,7 +21,7 @@ Type `*help` for complete command reference with examples.
 - **[HELP.md](bob/HELP.md)** - Quick reference for all 9 personas and commands
 
 ### Tools
-- **`bobp` CLI** - Agent tooling subcommands (`bobp chat`, `bobp make`, `bobp setup-agent-links`, …); run `bobp --help` for the full list
+- **`bobp` CLI** - Agent tooling subcommands (`bobp chat`, `bobp make`, `bobp setup-agent-links`, …); run `bobp --help` for the full list. Link setup creates project and harness links and may update user-level Codex/Via configuration; see the `bob-tools` skill before running it.
 
 ---
 
@@ -114,7 +114,7 @@ Shipped as `bobp` CLI subcommands, not project-local scripts:
 
 - `bobp chat` - Post messages to CHAT.md
 - `bobp make <target>` - Run this project's own `make <target>`, captured to build/build.out and posted to CHAT.md
-- `bobp setup-agent-links` - Create `.claude/skills/` symlinks (run once on setup)
+- `bobp setup-agent-links` - Create Claude/Codex discovery links, root instruction links, and missing project capabilities; when available, configure Via MCP and the project index. This can update user-level Codex configuration. Run after install/update or skill changes; see `skills/bob-tools/SKILL.md` for details.
 
 ---
 

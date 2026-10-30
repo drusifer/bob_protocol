@@ -69,12 +69,15 @@ flowchart TD
 
 ## Step 0: Setup & Session Initialization
 
-You start in a new directory for your restaurant reservation app, `tablecraft`:
+This walkthrough currently uses BobProtocol from the local source checkout
+because the project is not yet published to PyPI. From the root of that
+checkout, create a new directory for your restaurant reservation app,
+`tablecraft`:
 
 ```bash
 uv init --name tablecraft tablecraft
 cd tablecraft
-uv add bobp
+uv add --editable ..
 uv add --dev pytest
 ```
 
@@ -85,7 +88,13 @@ uv run bobp install .
 uv run bobp setup-agent-links
 ```
 
-This creates the `agents/` workspace, links discovered skills, and seeds team state files. `uv add` creates `uv.lock`; commit it to make the environment reproducible. Run Bobp CLI tools with `uv run bobp ...` unless the project's environment is activated.
+`bobp install` creates the `agents/` workspace and seeds team files. Link setup
+creates project and harness discovery links; it can also write to the user's
+Codex skills directory and register the Via MCP server in Codex. If `via` is
+installed, it configures the project MCP entry and index. Review the command's
+output and restart Codex after setup. `uv add` creates `uv.lock`; commit it to
+make the environment reproducible. Run Bobp CLI tools with `uv run bobp ...`
+unless the project's environment is activated.
 
 ### Starting Your Session
 

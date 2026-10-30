@@ -18,7 +18,7 @@ Formalized in `agents/skills/init/SKILL.md` & `agents/skills/prep-clear/SKILL.md
 
 | Command / Trigger | Action | Primary Handler |
 |-------------------|--------|-----------------|
-| `*init`, `/init`, `*startup` | Initialize session, sync links, display quick reference | Bob (`*prompt`) |
+| `*init`, `/init`, `*startup` | Read chat/state, check links, post initialization, display quick reference | Bob (`*prompt`) |
 | `*resume` | Cold-start recovery from last CHAT.md handoff | Last active persona |
 | `*prep-clear`, `/prep-clear`, `*checkpoint` | Reconcile state, write resume plan, prepare for `/clear` | Active persona |
 
@@ -44,17 +44,19 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*spike <topic>` | Oracle survey → Neo prototype → Morpheus decision | **Disposable**: timeboxed, zero prod code, `FINDING.md` / ADR |
 | `*uat <scope>` | Trin matrix → Smith UX audit → Cypher sign-off | **Real-World**: live running software, UX evaluation |
 | `*deploy <env>` | Tank Makefile deploy → Trin live smoke test | **Pipeline as Code**: automated release via `bobp make deploy` |
+| `*judge <persona-or-skill>` | Trin → Smith → Neo or Bob → Trin | Evaluate with a fixed scenario and rubric, then verify a focused change in a fresh run |
 
 ---
 
 ## The Team
 
 ### Bob — Prompt Engineer
-`agents/bob/SKILL.md` · prefix: `*new` / `*reprompt` / `*learn`
+`agents/bob/SKILL.md` · prefix: `*prompt` (create) / `*reprompt` / `*learn`; `*new` is a creation alias
 
 | Command | Action |
 |---------|--------|
 | `*new <desc>` | Create a new agent |
+| `*prompt <desc>` | Create a new agent (`*new` alias) |
 | `*reprompt <instructions>` | Update existing agents |
 | `*learn <lesson>` | Broadcast lesson to all agents |
 | `*help` | Show this reference |
@@ -102,6 +104,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*ora distill <file>` | Break down a large doc with TL;DR + ToC |
 | `*ora tldr` | Write/update TLDR blocks in all files |
 | `*ora archive` | Archive old CHAT.md messages |
+| `*ora report <moniker>` | Archive the full sprint chat and reset the current log |
 
 ### Trin — QA Guardian
 `agents/trin/SKILL.md` · prefix: `*qa`

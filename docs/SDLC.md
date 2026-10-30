@@ -48,7 +48,7 @@ uv run bobp persona-eval --list
 uv run bobp persona-eval <persona-or-suite>
 ```
 
-Each eval uses a versioned catalog suite, a fresh fixture under `build/persona-eval/runtime/`, and local `bobp install`. It checks installed skill use, then grades the generated artifact with its shared artifact-type rubric. Reports and pytest scratch stay under `build/`, never `/tmp`. Prompts and rubrics are stable; model output and grading are probabilistic. Run one fresh case by default, use `--repeat N` for higher-impact changes, and record failures rather than retrying until green. The catalog currently covers Bob persona authoring and Morpheus design advice. Trin adds/selects a matching suite before signing off when changed behavior lacks coverage. This local subscription-backed eval is a required persona-change gate; CI does not run it.
+Each eval uses a versioned catalog suite, a fresh fixture under `build/persona-eval/runtime/`, and local `bobp install`. It checks installed skill use, then grades either a generated artifact with its shared artifact-type rubric or a focused persona behavior against its installed skill and role-specific criteria. Reports and pytest scratch stay under `build/`, never `/tmp`. Prompts and rubrics are stable; model output and grading are probabilistic. Run one fresh case by default, use `--repeat N` for higher-impact changes, and record failures rather than retrying until green. The catalog covers Bob authoring, Morpheus design advice, and focused personality-behavior suites for the other eight personas. Trin adds/selects a matching suite before signing off when changed behavior lacks coverage. This local subscription-backed eval is a required persona-change gate; CI does not run it.
 
 ## 4. Dependencies
 

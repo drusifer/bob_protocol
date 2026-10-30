@@ -23,11 +23,13 @@ needed to scaffold the framework into any project.
 ```bash
 git clone git@github.com:drusifer/bob_protocol.git
 cd bob_protocol
-pip install -e .
+uv sync --python 3.15 --locked --extra dev
+uv run bobp --help
 ```
 
-This installs the `bobp` command and the `bobp` Python package (including
-`bobp.tools`, the modules backing each subcommand).
+This creates the locked development environment in `.venv/` and runs the
+packaged CLI from that environment. To install `bobp` as a uv-managed user
+tool, run `uv run bobp make system-install` from the checkout.
 
 ## What's in here
 

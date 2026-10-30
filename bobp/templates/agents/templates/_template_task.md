@@ -22,6 +22,23 @@ Morpheus reviews this at Step 3a using the PLAN rubric.
 
 ## Sprint Execution Phases
 
+### Task complexity levels
+
+Assign every executable task one level during planning. The level describes the task's complexity
+and scope, not urgency, duration, importance, or the owner's seniority. A persona may work at any
+level; select the smallest level supported by the evidence. Levels guide execution depth, and higher
+levels do not mean better performance.
+
+| Level | Observable task characteristics | Expected execution shape |
+|---|---|---|
+| **L1 — bounded** | One clear deliverable; known pattern; one component or artifact; no unresolved dependency or design choice. | Complete the deliverable directly; make the smallest relevant check; report the result. |
+| **L2 — multi-step** | Several connected steps or files within one bounded area; acceptance is clear; established patterns apply; limited dependencies. | Sequence the steps; verify the stated acceptance; mention any material assumption or dependency. |
+| **L3 — cross-boundary** | Multiple components/personas, an external interface, meaningful ambiguity, or a consequential trade-off. | Resolve or record the boundary/trade-off; coordinate required owners; verify integration and relevant failure cases. |
+| **L4 — systemic** | Broad or high-impact change spanning subsystems/teams, substantial uncertainty, migration, or difficult-to-reverse consequences. | Stage decisions and delivery; identify affected stakeholders and risks; define rollback/mitigation and evidence at each gate. |
+
+Use the lowest level whose characteristics cover the task. If a task has separable parts at different
+levels, split it. Do not inflate a level because a task is important or estimate its level from time.
+
 <!-- Phase 0 is REQUIRED if Morpheus flagged a build-environment change (new language, package manager,
      dependency mechanism, or runtime change). Otherwise omit Phase 0. -->
 ### Phase 0: Build Environment (Conditional)
@@ -57,5 +74,6 @@ Morpheus reviews this at Step 3a using the PLAN rubric.
 - [ ] **PASS** — `VERIF` (Does every task specify an observable verification command?): Each task specifies an exact command (e.g. `bobp make test`, `via query ...`) or concrete inspection step.
 - [ ] **PASS** — `ALIGN` (Do tasks implement the approved stories and architecture without creep?): Each implementation task names its parent story/decision; enabling and closeout work states why it has no story link.
 - [ ] **PASS** — `OWNER` (Is every task assigned to the correct specialist persona?): Every task names one accountable owner, and the owner is responsible for the stated deliverable.
+- [ ] **PASS** — `LEVEL` (Does each task have a justified complexity level?): Every executable task states L1–L4; its listed scope/dependencies/uncertainty match the level definition, and separable differently leveled work is split.
 - [ ] **FAIL** — Any required PASS condition is unmet or unsupported; cite the missing evidence and smallest correction.
 <!-- RUBRIC-END -->

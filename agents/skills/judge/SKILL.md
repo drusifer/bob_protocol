@@ -1,15 +1,15 @@
 ---
 name: judge
-description: Interactive loop to evaluate agent skill/tool/persona usage (e.g. *judge via, *judge make, *judge trin), catalog bugs/anti-patterns, and optimize agent prompt instructions.
+description: Work-loop to evaluate and improve agent skills, personas, and tools using Promptfoo scenarios or usage traces (e.g. *judge bob, *judge via).
 ---
 
-Full workflow for evaluating the effectiveness of a target skill, tool, or persona, ensuring correct usage, correctness, cataloging bugs, and updating agent prompts to minimize token usage and optimize efficiency.
+Work-loop for evaluating the effectiveness of a target skill, tool, or persona, using repeatable evidence to identify behavior defects, improve prompts or code, and verify the fix without tuning to a single output.
 
 TLDR:
-    The loop runs: Trin (runs target scenarios / compiles session traces) → Smith (judges token waste, compliance, and catalogs bugs) → Neo (fixes code/script bugs) → Bob (updates prompts/skills) → Trin (verification run).
-    Any defect, resource waste, or compliance failure must be cataloged and resolved, rather than accepted.
+    The loop runs: Trin (runs Promptfoo scenarios or compiles a valid tool trace) → Smith (validates failures and catalogs defects) → Neo (fixes harness/tool bugs) or Bob (updates prompts/skills) → Trin (fresh verification run).
+    Keep scenarios/rubrics fixed while fixing the target; change them only when evidence proves they are invalid.
 
-# Judge — Evaluation & Optimization Loop
+# Judge — Agent, Skill & Tool Quality Work-Loop
 
 ## Triggers
 
@@ -23,6 +23,11 @@ TLDR:
 Trin (Usage Run) → Smith (UX/Token/Compliance Review & Bug log) → Neo (Bug Fixes) → Bob (Prompt/Skill Updates) → Trin (Verification Run)
 ```
 
+`*judge` is the quality loop for agent skills and tools in the Bloop catalog. For persona skills with
+catalogued Promptfoo suites, Promptfoo is the runner and grader; Trin owns the run and evidence review,
+Smith validates the interpretation, and Bob or Neo makes the corresponding change. For targets without
+a Promptfoo suite, use the applicable real workflow and trace-annotation path below.
+
 ---
 
 ## Target-Specific Contexts
@@ -31,8 +36,26 @@ When executing `*judge <target>`, the loop evaluates the specified target (e.g.,
 - **`via`**: Focuses on database queries, query efficiency (avoiding fallback file reads/grep), qualified matches, result counts, and CLI parser reliability.
 - **`make`**: Focuses on use of Makefile targets, avoidance of raw commands, captured logs, and verbosity flags.
 - **`trin`** (or other personas): Focuses on adherence to persona role, handoff instructions, State Management Protocol compliance, and coordination clarity.
+- **Persona/skill with a catalogued Promptfoo suite**: Run `uv run bobp persona-eval <suite-or-persona>`; inspect the saved JSON report and generated fixture, especially each failed assertion's `gradingResult.reason`. Do not use Claude transcript TES as a substitute for this artifact evaluation.
 - **Workflow Loops (`impl`, `fix`, `refactor`, `spike`, `uat`, `deploy`, `epic`, `story`, `sprint`, `bloop`)**: Evaluates loop execution against the canonical Loop Effectiveness Rubrics (`LOOP_<TARGET>`) defined in each loop's `SKILL.md` and indexed in `agents/templates/ARTIFACTS.md`.
 - **Other tools/skills**: Focuses on correct parameter passing, error handling, avoidance of failure loops, and optimal token utilization.
+
+---
+
+## Promptfoo Persona/Skill Evaluation Path
+
+Use this path when `bobp persona-eval --list` shows a suite for the target.
+
+1. **Trin — Run the fixed scenario.** Run `uv run bobp persona-eval <suite-id>` (or the persona selector). Default to one fresh fixture. For a material change, use `--repeat 3` and require every run to pass. Record the report and fixture paths.
+2. **Trin — Triage evidence.** Inspect the output artifact and each assertion's pass/fail result and grader reason. Distinguish target defects from a flawed scenario, rubric, evaluator, or missing fixture capability. Do not accept a grader claim without checking the cited artifact evidence. If the report conflicts with inspectable evidence (for example, a skill-use trace contradicts a failed usage assertion, or a model grader contradicts an explicit rubric instruction), record the raw failure, evidence, and a reviewer-approved false-positive override; route recurring grader/harness defects to Neo rather than changing the target prompt.
+3. **Smith — Validate the failure.** Confirm that the criterion is relevant, observable, and supported by the scenario. If the scenario or rubric is invalid, correct it with a recorded rationale before resuming; do not weaken a valid criterion to make the target pass.
+4. **Neo or Bob — Make one focused change.** Neo fixes evaluator, tool, or packaging defects. Bob updates persona/skill instructions for target-behavior defects. Keep the test request and rubric fixed during target fixes; preserve the failed report as the before result.
+5. **Trin — Verify in a fresh fixture.** Rerun the same suite after the change. A pass requires every required assertion to pass, or to have an explicit reviewer-approved false-positive override backed by artifact/trace evidence; report raw and adjudicated outcomes separately. For a material change, also complete the three-run repeat and pass at least one relevant holdout suite when available. A rerun without a target or validated test change is not progress.
+6. **Close or escalate.** On pass, record the before/after reports, specific behavior change, and remaining limits. If the same failure persists for two focused fix-and-verify iterations, stop, post the evidence, consult Oracle, and ask the user before another attempt, following the shared anti-loop rule.
+
+Promptfoo runs and scores scenarios; `*judge` coordinates diagnosis, ownership, changes, and verification. A
+failed rubric result is feedback to inspect, not an instruction to edit until green. Keep a holdout case
+separate from the scenario used to diagnose and fix the target to reduce test-specific overfitting.
 
 ---
 
@@ -136,7 +159,7 @@ Trin *qa verify judge <target>
 - Trin re-executes the target scenarios/actions using the updated skills and prompts.
 - Generates a new session trace report.
 - **If verifying inside the same live session** (see the live-vs-completed note in Step 1): confirm the specific previously-cataloged bug entries are gone from the new trace and that no real detections were lost — do not require a fresh TES >= 90 on the now-larger trace before closing the loop.
-- **Handoff to Smith for Re-scoring (Looping)**: Hand off to Smith to re-evaluate the new session trace. The loop continues (**Trin -> Smith -> [Neo ->] Bob -> Trin**) until Smith issues a `TES >= 90` verdict (or after 5 consecutive iterations without score improvement).
+- **Handoff to Smith for Re-scoring (Looping)**: Hand off to Smith to re-evaluate the new session trace. The loop continues (**Trin -> Smith -> [Neo ->] Bob -> Trin**) after a focused correction; if the same failure persists for two iterations, follow the shared anti-loop rule and stop for Oracle/user guidance. Do not use repeated unchanged runs to chase `TES >= 90`.
 
 ### Handoff (Trigger Next Scoring Iteration):
 ```bash

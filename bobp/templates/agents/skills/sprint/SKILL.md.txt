@@ -147,6 +147,7 @@ Mouse *sm plan sprint
 ```
 - Write sprint tasks to root `task.md` using `agents/templates/_template_task.md` (delete rubric block)
 - Break sprint into phases of **1-3 tasks each** (no larger — context overflow risk)
+- Assign each executable task an L1–L4 complexity level using the task-template definitions. Base it on observable scope, dependencies, and uncertainty; use the lowest fitting level and split separable work with different levels. The level sets execution depth, not priority, duration, or persona rank.
 - If Morpheus flagged a build-environment change, make it **Phase 0**, assigned to Tank
   (`*devops bootstrap` or `*devops sdlc`), before any Neo phase — Neo cannot build on an
   environment that does not exist yet. Deploy tasks, by contrast, stay last.
@@ -165,7 +166,7 @@ bobp chat "Sprint planned. Phases ready for review. @Morpheus *lead review sprin
 Morpheus *lead review sprint plan
 ```
 - Verify phase breakdown aligns with architecture decisions
-- Apply the PLAN rubric and report its verdict line (`rubric PLAN: SIZE=A GATE=A VERIF=A ALIGN=A OWNER=A`); any Weak rejects, naming criterion and fix — see `agents/templates/ARTIFACTS.md`
+- Apply the PLAN rubric and report its verdict line (`rubric PLAN: SIZE=A GATE=A VERIF=A ALIGN=A OWNER=A LEVEL=A`); any Weak rejects, naming criterion and fix — see `agents/templates/ARTIFACTS.md`
 - Approve or request adjustment to Mouse
 
 **Handoff (approved):**

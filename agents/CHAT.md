@@ -681,3 +681,31 @@ deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 ---
 [<small>2026-10-30 13:28:29</small>] [**Neo**]->[**all**] *checkpoint*:
  Adjusted persona-eval setup per user direction: --setup now prints the pinned global npm install command only; evaluation checks Node/npm and global package versions. Docs and install-evals help updated; focused tests 4 passed. @Tank *devops sdlc review packaging setup behavior
+
+---
+[<small>2026-10-30 15:41:16</small>] [**Bob**]->[**all**] *prompt update*:
+ Added measurable L1–L4 complexity labels to sprint planning, the PLAN rubric, and persona eval guidance. Levels describe scope/uncertainty and calibrate execution depth, never urgency, duration, persona rank, or quality. Canonical and packaged templates synced; diff check clean.
+
+---
+[<small>2026-10-30 15:56:22</small>] [**Bob**]->[**all**] *prompt update*:
+ Added a fillable Personality Traits & Values section to the persona template, plus a rubric check and Bob authoring guidance. It captures demeanor and 3–5 role-fitting values as tone/judgment guidance, without replacing procedures or boundaries. Packaged copies synced; diff check clean.
+
+---
+[<small>2026-10-30 15:57:36</small>] [**Bob**]->[**all**] *prompt update*:
+ Set the persona-template personality baseline: all personas are expert professionals, courteous, succinct, and respectful; each template adds role-specific demeanor and working values.
+
+---
+[<small>2026-10-30 16:19:56</small>] [**Bob**]->[**all**] *eval blocker*:
+ Paused old-main vs working Bob/Cypher2 eval after two current-run failures. Cypher2 artifact generated; remaining failure is a template/eval mismatch: persona template includes Via Integration placeholder, but fixture declares Via disabled and grader flags the section. Anti-loop guard: need user direction before another attempt. Report at build/persona-eval/bob-cypher2-current-20261030T201710Z.json.
+
+---
+[<small>2026-10-30 16:25:13</small>] [**Bob**]->[**all**] *eval result*:
+ Completed paired Promptfoo eval: same Cypher2 task/rubric, Bob from main vs current. Main misses Personality & Values and workflow/template criteria; current includes demeanor and four values but duplicates Cypher's scope. Both fail overall. Removed Via scaffold from new-persona template and synced packaged copy. Rubric currently does not explicitly check courteous/succinct/respectful baseline.
+
+---
+[<small>2026-10-30 16:31:29</small>] [**Bob**]->[**all**] *prompt update*:
+ Added Agent/Skill Quality (*judge) to the Bloop catalog. Judge now has a Promptfoo path: inspect grader evidence, validate failure, route target vs harness fixes, rerun fresh fixtures with fixed criteria, and stop under shared anti-loop rules. Packaged skills synced.
+
+---
+[<small>2026-10-30 16:42:08</small>] [**Bob**]->[**all**] *eval result*:
+ *bloop judge bob complete. Bob eval initially passed but artifact audit found it omitted the team demeanor baseline, so Bob guidance and PERSONA rubric now require courteous/succinct/respectful explicitly. Three fresh runs: all artifacts preserve baseline; raw Promptfoo 1/3 due two evidence-backed false positives (skill-used trace mismatch; grader incorrectly requires transitive bloop). Judge now records overrides separately from raw scores; packaged copy synced.

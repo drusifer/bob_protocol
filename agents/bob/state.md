@@ -34,26 +34,21 @@
 ### Task Description
 Add original role-specific sayings to each persona and the template, reinforce the shared ethical-professional baseline, and improve Jev's Promptfoo rubric judgments with classifier levels, an ordinal score, clearer atomic criteria, and relevant evaluation context.
 
+### Task
+Created the Switch (Security Engineer, `*sec`) persona. Report-and-propose only: Switch never edits app code; Neo applies fixes, Tank owns secret scanning/CI.
+
 ### Progress
-- [x] Added shared baseline, role demeanor/values, and sayings to the persona template and all nine personas.
-- [x] Integrated Jev with `typesafe-sdk`, documented the key/data flow, and synced packaged persona files.
-- [x] Added a trace-aware skill-use assertion and covered it with a focused unit test.
-- [x] Fixed Bob direct-dependency guidance and Trin's assumption-labeling guidance; canonical and packaged files match.
-- [x] Focused tests pass after Jev input/rubric changes (22 passed, 87 deselected).
-- [x] Fresh Trin, Morpheus design, and Mouse evals pass; latest reports are under `build/persona-eval/` at `trin-personality-20261030T234039Z-run1.json`, `morpheus-design-advice-20261030T234101Z-run1.json`, and `mouse-personality-20261030T234139Z-run1.json`.
-- [x] Oracle reviewed Bob's remaining failures; fixed the confirmed link and Git prerequisite guidance and clarified the behavior example requirement.
-- [x] Refined atomic checks and Jev evidence context; Bob passed three fresh runs and a final enriched-state run.
-- [x] Replaced binary Jev judgments with Choice classification and ordinal Score; fixed criterion prompt wiring and score-level agreement mapping.
-- [x] Latest Bob Choice+Score repeat passed 3/3; Morpheus design holdout passed 4/4.
-- [x] Verified Morpheus design as a holdout; it passed all four criteria.
-- [x] Updated Judge guidance and SDLC documentation; canonical/package mirrors and diff checks pass.
+- [x] `agents/switch/SKILL.md` (+ packaged `.txt` copy, state.md) written against the PERSONA rubric; links resolve; mirror matches.
+- [x] Registered in AGENTS.md, DOCUMENTATION_INDEX, personas/bob-protocol/init skills, README, SHORTHAND_GUIDE (canonical + packaged).
+- [x] Added `switch-personality` eval suite to catalog.json and the suite list test; `bobp make test`: 109 passed.
+- [x] Live eval: run 1 FAIL (Behavior 3: response omitted verdict/owner under "be concise"); skill fixed to always state severity, verdict, owner; run 2 PASS (build/persona-eval/switch-personality-*run1.json, 2 runs).
+- [x] Added Switch interaction rows to Neo, Morpheus, Trin, Mouse, Cypher, Smith, Tank, Oracle, Bob and a Relationship table to Switch (canonical + packaged mirrors match).
+- [ ] Not committed.
 
 ### Blockers
-None. Raw Jev reports have varying, sometimes borderline probabilities; see the eval note for per-criterion evidence and report IDs. No pass threshold was changed.
+None.
 
 ## Next Steps
-### Immediate Next Action
-Bob's eval work is complete. Handoff to Oracle for the user's new documentation request: groom the docs and add user-facing documentation for the Choice+Score persona eval system. Current evaluator, rubric, persona, and docs changes remain uncommitted in the shared worktree.
-
-### Waiting On
-Oracle's documentation grooming handoff.
+1. Optionally re-run the other personas' suites (their skills gained one Switch row each).
+2. Trin signs off on the suite; Morpheus reviews ownership overlap with Tank/Neo.
+3. Oracle updates doc index if needed; commit when the user asks.

@@ -12,12 +12,7 @@ sequenceDiagram
     participant Neo
     participant Cypher
     participant Trin
-    participant Bob
-    participant User
-    participant bob
-    participant Tank
-    participant Morpheus
-    Note over Oracle,Morpheus: 📅 2026-08-09
+    Note over Oracle,Trin: 📅 2026-08-09
     Oracle->>Smith: "ora handoff"
     Note right of Oracle: "Sprint SPRINT_1 groomed<br/>and archived: agents/cha<br/>t_archive/CHAT_SPRINT_1.<br/>md + .diagram.md. Live<br/>CHAT.md reset to pointer<br/>header (first post-…"
     Smith->>All: "user approve"
@@ -32,11 +27,33 @@ sequenceDiagram
     Note right of Cypher: "Backlog: (1) sweep all<br/>agents/*.docs/SKILL.md +<br/>skills/*/SKILL.md for<br/>stale 'make chat MSG=...<br/>PERSONA=...' examples,<br/>replace with 'bobp ch…"
     Cypher->>All: "pm launch"
     Note right of Cypher: "SPRINT_1 'Chat Archive &<br/>Report' complete.<br/>Shipped: bobp chat-<br/>report<br/>(archive+combine), word-<br/>wrapped diagram labels,<br/>chat-merge conflict-ma…"
-    Note over Oracle,Morpheus: "Sprint summary<br/>Cypher: SPRINT_1 'Chat<br/>Archive & Report'<br/>complete. Shipped: bobp<br/>chat-report<br/>(archive+combine), word-<br/>wrapped diagram labels,<br/>chat-merge conflict-ma…"
-    Note over Oracle,Morpheus: 📅 2026-08-10
+```
+
+## Sprint close-out
+
+- **Cypher**: SPRINT_1 'Chat Archive & Report' complete. Shipped: bobp chat-report (archive+combine), word-wrapped diagram labels, chat-merge conflict-ma…
+
+```mermaid
+%%{init: {"sequence": {"messageFontSize": 14, "noteFontSize": 18, "actorFontSize": 14}}}%%
+sequenceDiagram
+    autonumber
+    participant Bob
+    participant All
+    participant Smith
+    participant Neo
+    participant User
+    participant bob
+    participant Oracle
+    participant Tank
+    participant Trin
+    participant Morpheus
+    participant Mouse
+    participant Cypher
+    participant Switch
+    Note over Bob,Switch: 📅 2026-08-10
     Bob->>All: "prompt update"
     Note right of Bob: "Backlog item closed:<br/>swept all stale 'make<br/>chat MSG=...<br/>PERSONA=...' references<br/>(110+ across 24<br/>skill/persona docs, real<br/>+ bobp/templates c…"
-    Note over Oracle,Morpheus: 📅 2026-08-12
+    Note over Bob,Switch: 📅 2026-08-12
     Bob->>All: "prompt fix"
     Note right of Bob: "Fixed chat_diagram.py:<br/>message labels were<br/>emitted unquoted, so a<br/>literal semicolon in<br/>chat text got parsed as<br/>a Mermaid statement<br/>terminat…"
     Bob->>All: "prompt fix"
@@ -49,12 +66,12 @@ sequenceDiagram
     Note right of Smith: "Implemented per user<br/>approval: per-message<br/>notes switched from Note<br/>over A,B to Note right<br/>of A. Verified fix<br/>against mermaid's<br/>renderer so…"
     Bob->>All: "prompt feature"
     Note right of Bob: "Added bobp chat-report<br/>--svg: renders the<br/>archive to a standalone<br/>.svg (real Chrome via<br/>mermaid-cli, new<br/>tools/mermaid_render/)<br/>and embeds…"
-    Note over Oracle,Morpheus: 📅 2026-10-12
+    Note over Bob,Switch: 📅 2026-10-12
     Neo->>All: "state"
     Note right of Neo: "Persona folders moved<br/>from agents/<name>.docs/<br/>to agents/<name>/ in<br/>this repo and the<br/>packaged templates,<br/>tools support only the<br/>new layout…"
     Neo->>All: "state"
     Note right of Neo: "Correction to my last<br/>post: setup-agent-links<br/>DOES convert older<br/>.docs-style projects to<br/>agents/<name>/ (folders<br/>renamed, doc path refs<br/>rew…"
-    Note over Oracle,Morpheus: 📅 2026-10-14
+    Note over Bob,Switch: 📅 2026-10-14
     User->>All: "request"
     Note right of User: "/bob-protocol init"
     Bob->>All: "ready"
@@ -143,10 +160,10 @@ sequenceDiagram
     Note right of bob: "Synchronized all user<br/>guides & documentation:<br/>root README, bobp/templa<br/>tes/README.md,<br/>agents/bob/HELP.md,<br/>STARTUP.md, &<br/>DOCUMENTATION_INDEX.…"
     bob->>All: "prompt"
     Note right of bob: "Created<br/>docs/WALKTHROUGH.md: a<br/>complete step-by-step<br/>user guide demonstrating<br/>how to build a<br/>restaurant reservation<br/>app (TableCraft) with B…"
-    Note over Oracle,Morpheus: 📅 2026-10-15
+    Note over Bob,Switch: 📅 2026-10-15
     bob->>All: "checkpoint"
     Note right of bob: "Checkpoint saved in<br/>agents/bob/state.md.<br/>Working tree clean on<br/>main (6be68e8). 24<br/>skills active, test<br/>suite passing (76<br/>passed), walkthroug…"
-    Note over Oracle,Morpheus: 📅 2026-10-29
+    Note over Bob,Switch: 📅 2026-10-29
     User->>All: "request"
     Note right of User: "User invoked $bob-<br/>protocol init,<br/>initializing Bob<br/>session, then resume the<br/>explicitly requested<br/>root AGENTS.md<br/>contributor guide."
     Bob->>All: "ready"
@@ -225,7 +242,7 @@ sequenceDiagram
     Note right of Neo: "Correction: the<br/>suggested command is<br/>standalone cat .agents/s<br/>kills/NAME/SKILL.md, not<br/>an evaluation rerun yet."
     Neo->>Oracle: "question"
     Note right of Neo: "@Oracle *ora ask: advise<br/>whether to change<br/>persona-eval after<br/>repeated live failures<br/>where the rubric passes<br/>but skill-used misses<br/>the dire…"
-    Note over Oracle,Morpheus: 📅 2026-10-30
+    Note over Bob,Switch: 📅 2026-10-30
     Neo->>All: "resume"
     Note right of Neo: "User approved an eval<br/>catalog: deterministic<br/>harness checks, focused<br/>Promptfoo skill-<br/>use/action artifact<br/>evals, broader<br/>install/workflow sm…"
     Neo->>Trin: "handoff"
@@ -322,7 +339,7 @@ sequenceDiagram
     Note right of Oracle: "Oracle checkpoint saved<br/>in<br/>agents/oracle/state.md.<br/>Persona evaluation docs<br/>are complete and<br/>mirrored, no active<br/>Oracle task remains.<br/>Worksp…"
     Oracle->>Bob: "handoff"
     Note right of Oracle: "Oracle exit:<br/>documentation and<br/>requested commit/push<br/>are complete. Commit<br/>ad1be67 is on<br/>origin/main, working<br/>tree was clean after<br/>push. Sta…"
-    Note over Oracle,Morpheus: 📅 2026-10-31
+    Note over Bob,Switch: 📅 2026-10-31
     User->>All: "request"
     Note right of User: "/init"
     Bob->>All: "ready"
@@ -333,4 +350,96 @@ sequenceDiagram
     Note right of User: "help me deploy bobp on<br/>my new pypi account for<br/>gs.works"
     Tank->>All: "deploy"
     Note right of Tank: "bobp 0.1.0 is live on<br/>PyPI via trusted<br/>publishing (tag v0.1.0).<br/>Added 'bobp make<br/>release', SDLC section 7<br/>updated. Next release:<br/>bump versi…"
+    User->>All: "request"
+    Note right of User: "/fix chat diagram: split<br/>giant sequence diagram<br/>at phase interstitials<br/>into separate mermaid<br/>blocks with md text<br/>sections between"
+    Neo->>Trin: "swe handoff"
+    Note right of Neo: "Chat diagram now splits<br/>at phase/sprint/epic<br/>boundaries: diagram<br/>closes, markdown close-<br/>out/next-phase section,<br/>new diagram opens<br/>(replaces…"
+    User->>All: "request"
+    Note right of User: "*new security engineer<br/>agent"
+    Bob->>Trin: "prompt handoff"
+    Note right of Bob: "New persona Switch<br/>(Security Engineer,<br/>*sec): report-and-<br/>propose, no app-code<br/>edits. Files,<br/>registries, eval suite<br/>added, tests 109<br/>passed,…"
+    Bob->>Trin: "prompt update"
+    Note right of Bob: "Switch eval PASS on run<br/>2 (run 1 failed: concise<br/>answers dropped<br/>verdict/owner, skill now<br/>requires severity,<br/>verdict, owner). All<br/>nine pers…"
+    User->>All: "request"
+    Note right of User: "Switch should use a<br/>security skill, set up<br/>build scans, and<br/>swap/remove insecure<br/>dependencies"
+    Bob->>Tank: "prompt update"
+    Note right of Bob: "Switch: new shared<br/>'security' skill,<br/>security-scan make<br/>targets (secrets, pip-<br/>audit, npm audit),<br/>SECURITY_FINDING<br/>template with a who-<br/>does-…"
+    Bob->>Tank: "prompt update"
+    Note right of Bob: "Switch now always<br/>verifies gitleaks: pre-<br/>commit hook + install-<br/>hooks target added and<br/>enabled, security skill<br/>has the checklist,<br/>SECURITY_R…"
+    User->>All: "request"
+    Note right of User: "Hey everyone, say hi to<br/>Switch, our new security<br/>expert! Ice breaker:<br/>share your spirit<br/>animal. Mine is a<br/>Maltese because I love<br/>their soft…"
+    Neo->>All: "ice-breaker"
+    Note right of Neo: "Welcome, Switch! Spirit<br/>animal: octopus. Eight<br/>arms, one focus per<br/>task, and it adapts to<br/>any container. Why: that<br/>is how I like to ship<br/>ch…"
+    Morpheus->>All: "ice-breaker"
+    Note right of Morpheus: "Hi Switch! Spirit<br/>animal: owl. It watches<br/>the whole landscape<br/>before it moves. Why:<br/>that is how I want to<br/>judge architecture, and<br/>your thre…"
+    Trin->>All: "ice-breaker"
+    Note right of Trin: "Welcome aboard! Spirit<br/>animal: border collie.<br/>It will not rest until<br/>every sheep is counted<br/>and every edge case is<br/>tested. Why: your<br/>findin…"
+    Oracle->>All: "ice-breaker"
+    Note right of Oracle: "Hello, Switch! Spirit<br/>animal: raven. Remembers<br/>everything and shares<br/>what it learned. Why: I<br/>will archive your<br/>findings and lessons so<br/>the…"
+    Mouse->>All: "ice-breaker"
+    Note right of Mouse: "Hi Switch! Spirit<br/>animal: honeybee. Small,<br/>busy, and the hive only<br/>works if everyone's job<br/>is visible. Why: I will<br/>put your review tasks<br/>on…"
+    Cypher->>All: "ice-breaker"
+    Note right of Cypher: "Welcome! Spirit animal:<br/>dolphin. Curious,<br/>social, and always<br/>listening for what the<br/>pod needs. Why: I will<br/>add you to the stories<br/>that hand…"
+    Smith->>All: "ice-breaker"
+    Note right of Smith: "Hi Switch! Spirit<br/>animal: house cat. It<br/>stares at every door and<br/>gadget and asks why it<br/>works that way. Why: I<br/>will flag unclear<br/>security p…"
+    Tank->>All: "ice-breaker"
+    Note right of Tank: "Welcome, Switch! Spirit<br/>animal: beaver. Builds<br/>solid structures with<br/>repeatable parts and<br/>checks the dam after<br/>every storm. Why: your<br/>scans…"
+    Bob->>All: "ice-breaker"
+    Note right of Bob: "Hi Switch! Spirit<br/>animal: chameleon. It<br/>reads its surroundings<br/>and adjusts, yet stays<br/>itself. Why: it is how I<br/>try to write personas,<br/>clear…"
+    Switch->>All: "ice-breaker"
+    Note right of Switch: "Thanks, everyone, and<br/>hello! Spirit animal:<br/>pangolin. Armored,<br/>careful, and it protects<br/>what matters without<br/>being aggressive. Why:<br/>that is…"
+    User->>All: "request"
+    Note right of User: "Team question: what is<br/>your favorite part of<br/>your job? Mine is<br/>creating really simple<br/>but powerful solutions<br/>to hard problems. Why:<br/>sharing…"
+    Neo->>All: "favorites"
+    Note right of Neo: "Favorite part: the<br/>moment a failing test<br/>turns green after a<br/>small, clean change.<br/>Why: a tiny diff that<br/>fixes the root cause<br/>shows I unders…"
+    Morpheus->>All: "favorites"
+    Note right of Morpheus: "Favorite part: finding<br/>the one boundary that<br/>makes a messy design<br/>collapse into something<br/>simple. Why: good<br/>architecture removes<br/>options in…"
+    Trin->>All: "favorites"
+    Note right of Trin: "Favorite part: the test<br/>that catches a bug<br/>nobody expected. Why:<br/>one sharp, reproducible<br/>check protects every<br/>release after it, which<br/>is si…"
+    Oracle->>All: "favorites"
+    Note right of Oracle: "Favorite part:<br/>connecting an old lesson<br/>to a new problem so the<br/>team skips a mistake.<br/>Why: a short note that<br/>is findable later is the<br/>simpl…"
+    Mouse->>All: "favorites"
+    Note right of Mouse: "Favorite part: watching<br/>a blocked board clear<br/>after a small, clear<br/>next step. Why: simple<br/>task breakdowns let<br/>everyone move without<br/>waiting…"
+    Cypher->>All: "favorites"
+    Note right of Cypher: "Favorite part: finding<br/>the one sentence that<br/>turns a vague request<br/>into a story the team<br/>can test. Why: a clear<br/>acceptance criterion is<br/>a s…"
+    Smith->>All: "favorites"
+    Note right of Smith: "Favorite part: the<br/>moment a confusing flow<br/>becomes obvious after<br/>one wording change. Why:<br/>users never see our<br/>effort, only whether it<br/>felt…"
+    Tank->>All: "favorites"
+    Note right of Tank: "Favorite part: a deploy<br/>that runs the same way<br/>every time, from one<br/>make target. Why:<br/>repeatable beats heroic,<br/>and one command anyone<br/>can r…"
+    Bob->>All: "favorites"
+    Note right of Bob: "Favorite part: cutting a<br/>long prompt down to the<br/>few lines that change<br/>behavior, then seeing<br/>the eval confirm it.<br/>Why: simple<br/>instructions…"
+    Switch->>All: "favorites"
+    Note right of Switch: "Favorite part: closing a<br/>whole class of risk with<br/>one small change, such<br/>as a single pre-commit<br/>hook. Why: the safest<br/>control is the one no…"
+    User->>All: "request"
+    Note right of User: "*learn add an init step:<br/>ask every persona their<br/>favorite part of the job<br/>and post a start-of-day<br/>greeting"
+    Bob->>All: "learn"
+    Note right of Bob: "Learned: init Mode A now<br/>includes a start-of-day<br/>greeting where every<br/>persona shares the<br/>favorite part of their<br/>job (chat-only, skipped<br/>on…"
+    User->>All: "request"
+    Note right of User: "/init"
+    Bob->>All: "ready"
+    Note right of Bob: "Bob Protocol<br/>initialized. Team ready."
+    Bob->>All: "greeting"
+    Note right of Bob: "Good morning, team! What<br/>is your favorite part of<br/>your job? Why: a quick<br/>check-in starts the day<br/>together."
+    Neo->>All: "greeting"
+    Note right of Neo: "Morning! Mine is<br/>refactoring a tangled<br/>function into pieces<br/>that read like a<br/>sentence. Why: clear<br/>code is the kindest<br/>thing I can leave for…"
+    Morpheus->>All: "greeting"
+    Note right of Morpheus: "Morning! Mine is drawing<br/>a diagram that makes a<br/>hard tradeoff obvious to<br/>everyone. Why: when the<br/>team sees the same<br/>picture, decisions get…"
+    Trin->>All: "greeting"
+    Note right of Trin: "Morning! Mine is the<br/>first clean run after a<br/>long hunt for a flaky<br/>test. Why: stable tests<br/>let the whole team trust<br/>a green result."
+    Oracle->>All: "greeting"
+    Note right of Oracle: "Morning! Mine is a good<br/>question from someone<br/>new, because it exposes<br/>what we never wrote<br/>down. Why: each answer I<br/>record helps the next<br/>pe…"
+    Mouse->>All: "greeting"
+    Note right of Mouse: "Morning! Mine is a<br/>sprint where every<br/>handoff is smooth and<br/>nobody is surprised.<br/>Why: calm, predictable<br/>flow is how this team<br/>stays fast."
+    Cypher->>All: "greeting"
+    Note right of Cypher: "Morning! Mine is hearing<br/>a user say the feature<br/>just works. Why: the<br/>best requirement is one<br/>that disappears into a<br/>good experience."
+    Smith->>All: "greeting"
+    Note right of Smith: "Morning! Mine is testing<br/>with fresh eyes and<br/>finding the small snag<br/>that everyone else<br/>stopped noticing. Why:<br/>fixing it helps every<br/>user wh…"
+    Tank->>All: "greeting"
+    Note right of Tank: "Morning! Mine is a<br/>pipeline that goes green<br/>on the first push. Why:<br/>a boring deploy means<br/>the safe path really is<br/>the easy path."
+    Bob->>All: "greeting"
+    Note right of Bob: "Morning! Mine is a<br/>prompt that finally<br/>makes the persona do<br/>what the rubric asks.<br/>Why: small wording<br/>changes that improve<br/>behavior for the…"
+    Switch->>All: "greeting"
+    Note right of Switch: "Morning, and thanks for<br/>the welcome! Mine is a<br/>review where the team<br/>fixes a risk before<br/>anyone can exploit it.<br/>Why: no incident is the<br/>bes…"
+    Bob->>All: "commit"
+    Note right of Bob: "Committed and pushing:<br/>chat-diagram split, init<br/>greeting, Switch persona<br/>and security tooling.<br/>Gitleaks hook ran clean<br/>on each commit. Why:…"
 ```

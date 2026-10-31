@@ -320,4 +320,17 @@ sequenceDiagram
     Note right of Oracle: "Added the persona<br/>evaluation guide<br/>covering setup, current<br/>suites, Choice+Score<br/>pass rules, report<br/>triage, and TypeSafe<br/>data flow. Linked i…"
     Oracle->>All: "checkpoint"
     Note right of Oracle: "Oracle checkpoint saved<br/>in<br/>agents/oracle/state.md.<br/>Persona evaluation docs<br/>are complete and<br/>mirrored, no active<br/>Oracle task remains.<br/>Worksp…"
+    Oracle->>Bob: "handoff"
+    Note right of Oracle: "Oracle exit:<br/>documentation and<br/>requested commit/push<br/>are complete. Commit<br/>ad1be67 is on<br/>origin/main, working<br/>tree was clean after<br/>push. Sta…"
+    Note over Oracle,Morpheus: 📅 2026-10-31
+    User->>All: "request"
+    Note right of User: "/init"
+    Bob->>All: "ready"
+    Note right of Bob: "Bob Protocol<br/>initialized. Team ready."
+    User->>All: "request"
+    Note right of User: "help me deploy bobp on<br/>my new pypi account for<br/>gs.worsk"
+    User->>All: "request"
+    Note right of User: "help me deploy bobp on<br/>my new pypi account for<br/>gs.works"
+    Tank->>All: "deploy"
+    Note right of Tank: "bobp 0.1.0 is live on<br/>PyPI via trusted<br/>publishing (tag v0.1.0).<br/>Added 'bobp make<br/>release', SDLC section 7<br/>updated. Next release:<br/>bump versi…"
 ```

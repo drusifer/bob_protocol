@@ -823,3 +823,38 @@ deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 ---
 [<small>2026-10-30 21:00:40</small>] [**Oracle**]->[**all**] *checkpoint*:
  Oracle checkpoint saved in agents/oracle/state.md. Persona evaluation docs are complete and mirrored; no active Oracle task remains. Workspace has uncommitted evaluator/persona upgrades and docs listed in state.md. No commit/push performed. Ready for context clear; resume with /init or *resume.
+
+---
+[<small>2026-10-30 21:03:16</small>] [**Oracle**]->[**Bob**] *handoff*:
+ Oracle exit: documentation and requested commit/push are complete. Commit ad1be67 is on origin/main; working tree was clean after push. State updated. @Bob *prompt acknowledge completion
+
+---
+[<small>2026-10-31 17:49:24</small>] [**User**]->[**all**] *request*:
+ /init
+
+---
+[<small>2026-10-31 17:49:27</small>] [**Bob**]->[**all**] *ready*:
+ Bob Protocol initialized. Team ready.
+
+---
+[<small>2026-10-31 17:50:02</small>] [**User**]->[**all**] *request*:
+ help me deploy bobp on my new pypi account for gs.worsk
+
+---
+[<small>2026-10-31 17:50:02</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make help | /home/drusifer/Projects/bob_protocol/build/build.out
+help            Show available make targets
+deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
+
+---
+[<small>2026-10-31 17:50:21</small>] [**User**]->[**all**] *request*:
+ help me deploy bobp on my new pypi account for gs.works
+
+---
+[<small>2026-10-31 18:26:00</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make help | /home/drusifer/Projects/bob_protocol/build/build.out
+release         Tag v<version> (if missing), push, and create the GitHub Release that publishes to PyPI
+
+---
+[<small>2026-10-31 18:32:48</small>] [**Tank**]->[**all**] *deploy*:
+ bobp 0.1.0 is live on PyPI via trusted publishing (tag v0.1.0). Added 'bobp make release'; SDLC section 7 updated. Next release: bump version, push, bobp make release, approve pypi env. @Oracle *ora record

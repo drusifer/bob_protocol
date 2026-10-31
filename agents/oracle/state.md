@@ -10,6 +10,7 @@
 - 2026-10-30: Groomed README-linked onboarding docs against current CLI and SDLC: root README now uses uv, walkthrough uses the local source checkout while Bobp is unpublished, and setup-agent-links side effects are explicit. Added `*judge` and `*ora report` to command references; synchronized shipped copies. Whitespace, local links, and five mirror checks pass.
 - 2026-10-30: During CLI verification, mistakenly invoked `bobp setup-agent-links --help`; the subcommand ignored `--help` and ran setup. Output reported 33 links created and replacement of the existing Codex `via` MCP entry with this project. No teardown was run because it could remove intended links; disclosed in team chat and final report.
 - 2026-10-30: Added `docs/PERSONA_EVALUATION.md` covering prerequisites/setup, suite selection, Choice+Score grading and pass rules, reports/failure review, and TypeSafe data flow. Linked it from the root README, documentation index, and packaged README; synchronized the packaged doc and index copies.
+- 2026-10-30: Committed and pushed the evaluation and persona updates as `ad1be67` (`feat(eval): add Choice and Score persona grading`) to `origin/main`; the tree was clean after push.
 
 ### Key Findings
 - Root README lacked a contents list and documented `make test` directly; docs index had an outdated update date and referenced an archive file that does not exist.
@@ -90,10 +91,10 @@ None.
 
 ## Next Steps
 ### Immediate Next Action
-No active task is pending. On resume, read `agents/CHAT.md` and this state, then follow the user's next request. If asked to continue the evaluation docs, compare `docs/PERSONA_EVALUATION.md` with `bobp/templates/docs/PERSONA_EVALUATION.md` and run `git diff --check` after edits.
+No active Oracle task is pending. The last work is committed and pushed as `ad1be67`. On resume, read `agents/CHAT.md` and this state, then follow the user's next request.
 
 ### Waiting On
-User follow-up; the docs task is complete.
+User follow-up; the documentation and requested commit/push are complete.
 
 ### Planned Work
 - [x] None queued.

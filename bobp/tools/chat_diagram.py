@@ -17,6 +17,7 @@ TLDR:
 """
 
 import argparse
+import html
 import re
 import sys
 import textwrap
@@ -112,6 +113,17 @@ def _note_text_for(entry):
     return _wrap_label(_clean_message(_first_line(entry.body)))
 
 
+def _md_escape(text):
+    """Make chat-derived text safe to embed in a Markdown section.
+
+    Chat text is untrusted (agents paste content from many sources), so HTML
+    is entity-escaped and Markdown link/image/code syntax is backslash-escaped.
+    The result renders as literal text and cannot add tags, links, or images.
+    """
+    text = html.escape(text, quote=False)
+    return re.sub(r"([\\`*_\[\]!])", r"\\\1", text)
+
+
 def _recap_details(entries):
     """Deterministic recap lines (`**Persona**: message`) for a loop boundary.
 
@@ -126,7 +138,7 @@ def _recap_details(entries):
     ]
     selected = (outcomes or entries)[-3:]
     return [
-        f"- **{e.persona}**: {_clean_message(_first_line(e.body))}"
+        f"- **{_md_escape(e.persona)}**: {_md_escape(_clean_message(_first_line(e.body)))}"
         for e in selected
         if _first_line(e.body)
     ]
@@ -267,11 +279,11 @@ def build_blocks(entries, include_builds=False):
         if _is_phase_marker(e):
             flush()
             if phase_entries and phase_label:
-                text(_recap_section(f"Phase {phase_label} close-out", phase_entries))
+                text(_recap_section(f"Phase {_md_escape(phase_label)} close-out", phase_entries))
             phase_label = re.sub(r"^phase\s+", "", e.cmd, flags=re.IGNORECASE).strip()
             phase_entries = []
-            start = [f"## Phase {phase_label} starts"]
-            goal = _clean_message(_first_line(e.body))
+            start = [f"## Phase {_md_escape(phase_label)} starts"]
+            goal = _md_escape(_clean_message(_first_line(e.body)))
             if goal:
                 start += ["", goal]
             text("\n".join(start))
@@ -287,7 +299,7 @@ def build_blocks(entries, include_builds=False):
         if close_kind:
             flush()
             if close_kind == "Sprint" and phase_entries and phase_label:
-                text(_recap_section(f"Phase {phase_label} close-out", phase_entries[:-1]))
+                text(_recap_section(f"Phase {_md_escape(phase_label)} close-out", phase_entries[:-1]))
                 phase_entries = []
                 phase_label = None
             summary_entries = (epic_entries or [e]) if close_kind == "Epic" else [e]
@@ -297,7 +309,7 @@ def build_blocks(entries, include_builds=False):
 
     flush()
     if phase_entries and phase_label:
-        text(_recap_section(f"Phase {phase_label} so far", phase_entries))
+        text(_recap_section(f"Phase {_md_escape(phase_label)} so far", phase_entries))
     return blocks
 
 

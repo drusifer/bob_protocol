@@ -156,6 +156,20 @@ class BuildDiagramTests(unittest.TestCase):
         self.assertIn('Mouse->>All: "phase 2"', blocks[4][1])
         self.assertNotIn('"phase 2"', blocks[1][1])
 
+    def test_chat_text_is_escaped_in_markdown_sections(self):
+        """SEC-003: chat text must not inject HTML, links, or images into the rendered file."""
+        entries = [
+            chat_diagram.Entry("2026-04-12 12:00:00", "Mouse", "all", "phase <b>1</b>", "Goal <b>x</b> ![t](https://example.invalid/p.png)"),
+            chat_diagram.Entry("2026-04-12 12:10:00", "Tr<in>", "Mouse", "qa handoff",
+                               "UAT passed <img src=https://example.invalid/x.png> [click](https://example.invalid) `code` & more"),
+            chat_diagram.Entry("2026-04-12 12:30:00", "Mouse", "all", "phase 2", "next"),
+        ]
+        text = "\n".join(b for k, b in chat_diagram.build_blocks(entries) if k == "text")
+        for raw in ("<b>", "<img", "<in>", "![t](", "[click](", "`code`"):
+            self.assertNotIn(raw, text)
+        self.assertIn("UAT passed", text)
+        self.assertIn("&lt;img", text)
+
     def test_each_diagram_block_is_self_contained(self):
         entries = [
             chat_diagram.Entry("2026-04-12 12:00:00", "Mouse", "all", "phase 1", "Parser"),

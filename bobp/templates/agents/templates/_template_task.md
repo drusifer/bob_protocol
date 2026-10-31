@@ -48,13 +48,15 @@ levels, split it. Do not inflate a level because a task is important or estimate
 *Phase goal: {One sentence on what this phase delivers}*
 - [ ] **Task 1.1:** {Write tests & implement core interface/logic}. (*Owner: Neo | Trace: {STORY-ID / ADR-ID} | Verification: `bobp make test`*)
 - [ ] **Task 1.2:** {Run UAT & verify phase acceptance criteria}. (*Owner: Trin | Trace: {STORY-ID / acceptance criterion} | Verification: UAT scenario verdict and evidence in `agents/CHAT.md`*)
-- [ ] **Task 1.3:** {Code review & architectural compliance check}. (*Owner: Morpheus | Trace: {STORY-ID / ADR-ID} | Verification: review checklist/result recorded in CHAT.md*)
+- [ ] **Task 1.3:** {Security review of the phase diff against the design threat model}. (*Owner: Switch | Trace: {STORY-ID / finding ID or N/A — quick pass} | Verification: `security gate (phase 1): ...` verdict line in `agents/CHAT.md`*)
+- [ ] **Task 1.4:** {Code review & architectural compliance check}. (*Owner: Morpheus | Trace: {STORY-ID / ADR-ID} | Verification: review checklist/result recorded in CHAT.md*)
 
 ### Phase 2: {Second Vertical Slice / Integration}
 *Phase goal: {One sentence on what this phase delivers}*
 - [ ] **Task 2.1:** {Implementation task}. (*Owner: Neo | Trace: {STORY-ID / ADR-ID} | Verification: `{exact verification command}`*)
 - [ ] **Task 2.2:** {UAT verification}. (*Owner: Trin | Trace: {STORY-ID / acceptance criterion} | Verification: UAT scenario verdict and evidence in `agents/CHAT.md`*)
-- [ ] **Task 2.3:** {Review & handoff}. (*Owner: Morpheus | Trace: {STORY-ID / ADR-ID} | Verification: review checklist/result recorded in CHAT.md*)
+- [ ] **Task 2.3:** {Security review of the phase diff against the design threat model}. (*Owner: Switch | Trace: {STORY-ID / finding ID or N/A — quick pass} | Verification: `security gate (phase 2): ...` verdict line in `agents/CHAT.md`*)
+- [ ] **Task 2.4:** {Review & handoff}. (*Owner: Morpheus | Trace: {STORY-ID / ADR-ID} | Verification: review checklist/result recorded in CHAT.md*)
 
 ---
 

@@ -120,12 +120,12 @@ See instructions here -> `agents/skills/bob-protocol/SKILL.md`
 | Persona | Relationship |
 |---------|-------------|
 | **Neo** (*swe) | Receives completed implementations from Neo for UAT. If tests fail, returns failure report to Neo with specific test output. Trin's gate is a hard stop — Neo does not hand off to Morpheus until Trin passes. |
-| **Morpheus** (*lead) | Sends UAT pass/fail results to Morpheus for code review. Morpheus reviews quality and architecture after Trin's gate clears. |
+| **Morpheus** (*lead) | Sends UAT pass results to Switch for the security review, then Morpheus reviews quality and architecture after both gates clear; failures return to Neo. |
 | **Mouse** (*sm) | Reports phase gate status to Mouse. If Trin is blocked, posts `*qa blocked` to CHAT.md immediately so Mouse can surface the impediment. |
 | **Cypher** (*pm) | Verifies acceptance criteria defined by Cypher. If AC is ambiguous, consults Cypher before filing a failure. |
 | **Smith** (*user) | Trin handles correctness bugs; Smith handles usability issues. `*user bug` reports from Smith are triaged by Trin — correctness issues go to Neo, UX issues go to Neo with Smith as re-tester. |
 | **Tank** (*devops) | Coordinates CI pipeline gate definitions (see below). Trin owns what the gates check; Tank owns when and where they run. |
-| **Switch** (*sec) | Request `@Switch *sec review` as a gate for security-sensitive changes. Trin owns the assertions: when Switch proposes a security regression test, Trin writes it and adds it to the suite. A High/Critical Switch finding blocks Trin's sign-off. |
+| **Switch** (*sec) | After UAT passes, Trin hands the phase to `@Switch *sec review <phase>` before Morpheus's review. Trin owns the assertions: when Switch proposes a security regression test, Trin writes it and adds it to the suite. A Blocked security gate sends the phase back through `*fix` and a fresh UAT. |
 | **Oracle** (*ora) | Records recurring test patterns and anti-patterns to CHAT.md for Oracle to archive in lessons. |
 | **Bob** (*prompt) | Receives `*learn` updates from Bob. Applies them immediately to test strategy. |
 

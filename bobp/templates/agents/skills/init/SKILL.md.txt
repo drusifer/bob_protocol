@@ -128,7 +128,7 @@ When resuming after context clear (prepared via `agents/skills/prep-clear/SKILL.
 ### Bloop Workflow Loops
 ```
 *fix <bug>           → Neo fix → Trin UAT → Morpheus review
-*impl <feature>      → Neo impl → Trin UAT → Morpheus review
+*impl <feature>      → Neo impl → Trin UAT → Switch security review → Morpheus review
 *qa <thing>          → Trin test → Morpheus review
 *review <thing>      → Morpheus review → Trin (if needed)
 *plan sprint         → Cypher → Smith gate → Morpheus → Smith gate → Mouse

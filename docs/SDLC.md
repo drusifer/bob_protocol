@@ -84,7 +84,7 @@ Requests come from the user. Use Bob Protocol planning loops for multi-step work
 
 ## 7. Versioning and release
 
-Update `bobp.__version__` in `bobp/__init__.py` for a release. `bobp make build` creates `dist/`; `deploy-forgejo` uses a script in the external pi-patch checkout. The existing GitHub release workflow attempts PyPI publication on a published release, but its configuration says trusted-publisher setup is incomplete; verify it before use.
+Update `bobp.__version__` in `bobp/__init__.py` for a release. `bobp make build` creates `dist/`; `deploy-forgejo` uses a script in the external pi-patch checkout. Public PyPI releases use trusted publishing: `bobp make release` (section 3) tags `v<version>` and creates the GitHub Release, which triggers `.github/workflows/release.yml`. The publish job runs in the GitHub environment `pypi`, which requires reviewer approval; PyPI trusts repo `drusifer/bob_protocol`, workflow `release.yml`, environment `pypi`. Versions are immutable on PyPI, so bump `__version__` and push to `main` before each release. `bobp 0.1.0` was published this way on 2026-10-31 and verified with `pip install bobp`.
 
 ## 8. CI and deployment
 
@@ -94,7 +94,7 @@ Update `bobp.__version__` in `bobp/__init__.py` for a release. `bobp make build`
 
 - Local development uses uv/Python 3.15; CI still uses pip/Python 3.10–3.12 and does not cover the newest runtime.
 - Mermaid has no npm lockfile. Local Node 24.13.0 passes lint but emits a transitive dependency engine warning requiring Node 24.15.0 (or 22.22.2+).
-- Promptfoo's Codex target provider uses local subscription auth; Jev grading uses the external TypeSafe API and is not run in CI. PyPI trusted publishing is not configured.
+- Promptfoo's Codex target provider uses local subscription auth; Jev grading uses the external TypeSafe API and is not run in CI. PyPI trusted publishing is configured (section 7).
 - Full tests and lint passed in the existing uv environment; the clean `distclean` rebuild remains for Tank's sprint-close conformance check.
 
 ## 10. Conformance check

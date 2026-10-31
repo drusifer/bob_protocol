@@ -31,7 +31,7 @@ sequenceDiagram
 
 ## Sprint close-out
 
-- **Cypher**: SPRINT_1 'Chat Archive & Report' complete. Shipped: bobp chat-report (archive+combine), word-wrapped diagram labels, chat-merge conflict-ma…
+- **Cypher**: SPRINT\_1 'Chat Archive &amp; Report' complete. Shipped: bobp chat-report (archive+combine), word-wrapped diagram labels, chat-merge conflict-ma…
 
 ```mermaid
 %%{init: {"sequence": {"messageFontSize": 14, "noteFontSize": 18, "actorFontSize": 14}}}%%
@@ -448,4 +448,28 @@ sequenceDiagram
     Note right of Oracle: "Docs groomed: README<br/>(PyPI install +<br/>security/release<br/>commands), walkthrough +<br/>mirror (Switch, 10<br/>personas, 25 skills,<br/>PyPI 0.1.0 predates…"
     Bob->>All: "commit"
     Note right of Bob: "Version bumped to 0.2.0,<br/>docs groomed. Pushing so<br/>'bobp make release' can<br/>tag v0.2.0. Why: release<br/>requires HEAD to match<br/>origin/main."
+    User->>All: "request"
+    Note right of User: "security review"
+    User->>All: "request"
+    Note right of User: "*sec review (no target<br/>given: defaulting to<br/>changes since v0.1.0<br/>plus the release<br/>workflow)"
+    Switch->>All: "sec review"
+    Note right of Switch: "SEC review of 0.2.0: No<br/>blocking findings,<br/>release can proceed.<br/>Open: SEC-002 Medium<br/>(Tank: SHA-pin actions,<br/>least-privilege<br/>permissions),…"
+    User->>All: "request"
+    Note right of User: "update sprint loops:<br/>Switch sec gate for<br/>design review and<br/>implementation review<br/>after coding phases"
+    Bob->>All: "prompt update"
+    Note right of Bob: "Sprint loops now include<br/>Switch security gates:<br/>design gate after<br/>Smith's arch approval<br/>(*sec threat) and an<br/>implementation gate<br/>after Trin…"
+    User->>All: "request"
+    Note right of User: "fix security review<br/>findings (SEC-002,<br/>SEC-003, SEC-004,<br/>SEC-001 awaits user)"
+    Switch->>All: "sec fix"
+    Note right of Switch: "Fixed SEC-003 (escape<br/>chat text in recap<br/>Markdown + test),<br/>SEC-002 (SHA-pinned<br/>actions, read-only<br/>token, Dependabot) and<br/>SEC-004 (CI gitlea…"
+    Switch->>Tank: "sec accept"
+    Note right of Switch: "SEC-001 accepted by the<br/>user, recorded in<br/>agents/switch/accepted-<br/>risks.json. security-<br/>scan-npm now uses<br/>tools/npm_audit_gate.py:<br/>accepted a…"
+    Switch->>All: "sec update"
+    Note right of Switch: "Risk acceptances now<br/>require an expiry date<br/>(max 90 days). Gate<br/>blocks again after<br/>expiry and warns 14 days<br/>ahead, SEC-001<br/>acceptance expir…"
+    Switch->>All: "sec update"
+    Note right of Switch: "Secrets (gitleaks) and<br/>Python dependency (pip-<br/>audit) findings are hard<br/>blocks: no ignore,<br/>allowlist, or<br/>acceptance, ever. Only<br/>the npm dev-…"
+    Switch->>All: "sec update"
+    Note right of Switch: "Corrected: only gitleaks<br/>is a hard block. Python<br/>(pip-audit) and npm<br/>advisories now share<br/>tools/audit_gate.py and<br/>accepted-risks.json:<br/>user…"
+    Bob->>All: "commit"
+    Note right of Bob: "Pushing security fixes:<br/>SEC-003 escape, CI<br/>hardening, Switch sprint<br/>gates, audit gate with<br/>expiring acceptances.<br/>Why: close the review<br/>find…"
 ```

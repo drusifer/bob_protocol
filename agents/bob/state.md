@@ -35,6 +35,8 @@
 Add original role-specific sayings to each persona and the template, reinforce the shared ethical-professional baseline, and improve Jev's Promptfoo rubric judgments with classifier levels, an ordinal score, clearer atomic criteria, and relevant evaluation context.
 
 ### Task
+Latest (2026-10-31): *reprompt — added Switch security gates to the sprint loops: design gate 2b (`*sec threat`, after Smith's architecture approval) and implementation gate 5a (`*sec review <phase>`, after Trin UAT, before Morpheus review) in sprint + impl skills, task template (new Switch task per phase), and Switch/Mouse/Morpheus/Trin/Smith/init text. Switch eval re-run. Uncommitted.
+
 Created the Switch (Security Engineer, `*sec`) persona. Report-and-propose only: Switch never edits app code; Neo applies fixes, Tank owns secret scanning/CI.
 
 ### Progress

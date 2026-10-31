@@ -1104,3 +1104,118 @@ PASS  agents/CHAT.diagram.md [block 2/2]
 ---
 [<small>2026-10-31 19:04:50</small>] [**Bob**]->[**all**] *commit*:
  Version bumped to 0.2.0; docs groomed. Pushing so 'bobp make release' can tag v0.2.0. Why: release requires HEAD to match origin/main.
+
+---
+[<small>2026-10-31 19:06:06</small>] [**make**]->[**all**] *build*:
+ Build FAILED exit=2 | make security-scan | /home/drusifer/Projects/bob_protocol/build/build.out
+node_modules/minimatch
+
+8 vulnerabilities (3 moderate, 5 high)
+
+To address all issues (including breaking changes), run:
+npm audit fix --force
+
+---
+[<small>2026-10-31 19:06:37</small>] [**User**]->[**all**] *request*:
+ security review
+
+---
+[<small>2026-10-31 19:06:40</small>] [**make**]->[**all**] *build*:
+ Build FAILED exit=2 | make security-scan-npm | /home/drusifer/Projects/bob_protocol/build/build.out
+node_modules/minimatch
+
+8 vulnerabilities (3 moderate, 5 high)
+
+To address all issues (including breaking changes), run:
+npm audit fix --force
+
+---
+[<small>2026-10-31 19:07:07</small>] [**User**]->[**all**] *request*:
+ *sec review (no target given: defaulting to changes since v0.1.0 plus the release workflow)
+
+---
+[<small>2026-10-31 19:07:09</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make security-scan-python | /home/drusifer/Projects/bob_protocol/build/build.out
+WARNING:pip_audit._cli:Consider using a tool like `pip-compile`: https://pip-tools.readthedocs.io/en/latest/#using-hashes
+No known vulnerabilities found
+
+---
+[<small>2026-10-31 19:07:59</small>] [**Switch**]->[**all**] *sec review*:
+ SEC review of 0.2.0: No blocking findings; release can proceed. Open: SEC-002 Medium (Tank: SHA-pin actions, least-privilege permissions), SEC-003 Low (Neo: escape chat text in recap Markdown), SEC-004 Low (Tank/user: CI gitleaks), SEC-001 (user: accept risk). Report in agents/switch/reviews/. Why: fix before the next release.
+
+---
+[<small>2026-10-31 19:09:38</small>] [**User**]->[**all**] *request*:
+ update sprint loops: Switch sec gate for design review and implementation review after coding phases
+
+---
+[<small>2026-10-31 19:11:01</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+.......................................                         [100%]
+109 passed, 2 skipped, 9 subtests passed in 10.24s
+
+---
+[<small>2026-10-31 19:11:22</small>] [**Bob**]->[**all**] *prompt update*:
+ Sprint loops now include Switch security gates: design gate after Smith's arch approval (*sec threat) and an implementation gate after Trin UAT on every coding phase (*sec review). Quick pass allowed when nothing is security-relevant; High/Critical blocks. Sprint, impl, task template, and persona skills updated. Why: catch risk in design and in each phase before review. @Mouse *sm plan sprint
+
+---
+[<small>2026-10-31 19:11:59</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+.......................................                         [100%]
+109 passed, 2 skipped, 9 subtests passed in 10.44s
+
+---
+[<small>2026-10-31 19:23:51</small>] [**User**]->[**all**] *request*:
+ fix security review findings (SEC-002, SEC-003, SEC-004; SEC-001 awaits user)
+
+---
+[<small>2026-10-31 19:25:22</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make security-scan-secrets | /home/drusifer/Projects/bob_protocol/build/build.out
+gitleaks detect --source . --no-banner
+7:25PM INF 84 commits scanned.
+7:25PM INF scanned ~3390284 bytes (3.39 MB) in 1.21s
+7:25PM INF no leaks found
+
+---
+[<small>2026-10-31 19:25:22</small>] [**Switch**]->[**all**] *sec fix*:
+ Fixed SEC-003 (escape chat text in recap Markdown + test), SEC-002 (SHA-pinned actions, read-only token, Dependabot) and SEC-004 (CI gitleaks job). Tests 110 passed. CI changes verify on first push; SEC-001 still needs the user's decision. Why: close the security review findings before release. @Switch *sec review re-check
+
+---
+[<small>2026-10-31 19:31:35</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make security-scan | /home/drusifer/Projects/bob_protocol/build/build.out
+npm audit gate passed at level 'high' (3 accepted advisories noted).
+
+---
+[<small>2026-10-31 19:31:35</small>] [**Switch**]->[**Tank**] *sec accept*:
+ SEC-001 accepted by the user; recorded in agents/switch/accepted-risks.json. security-scan-npm now uses tools/npm_audit_gate.py: accepted advisories are noted with re-check trigger, any new high advisory still blocks. security-scan passes; tests pass. Why: keep the gate green without hiding the risk. @Tank *devops review npm_audit_gate
+
+---
+[<small>2026-10-31 19:32:28</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make security-scan | /home/drusifer/Projects/bob_protocol/build/build.out
+npm audit gate passed at level 'high' (3 accepted advisories noted).
+
+---
+[<small>2026-10-31 19:32:46</small>] [**Switch**]->[**all**] *sec update*:
+ Risk acceptances now require an expiry date (max 90 days). Gate blocks again after expiry and warns 14 days ahead; SEC-001 acceptance expires 2027-01-29. Templates, rubrics, security skill, Switch rules, SDLC updated; tests pass. Why: keep accepted risk from becoming permanent. @Tank *devops review npm_audit_gate
+
+---
+[<small>2026-10-31 19:35:39</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+................................................                [100%]
+118 passed, 2 skipped, 9 subtests passed in 10.04s
+
+---
+[<small>2026-10-31 19:35:39</small>] [**Switch**]->[**all**] *sec update*:
+ Secrets (gitleaks) and Python dependency (pip-audit) findings are hard blocks: no ignore, allowlist, or acceptance, ever. Only the npm dev-tooling gate takes user-accepted risks, with an expiry. Rules added to security skill, Switch, SDLC, Makefile. Why: keep the strictest scans impossible to silence.
+
+---
+[<small>2026-10-31 19:37:13</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make security-scan | /home/drusifer/Projects/bob_protocol/build/build.out
+audit gate passed at level 'high' (3 accepted advisories noted).
+
+---
+[<small>2026-10-31 19:37:17</small>] [**Switch**]->[**all**] *sec update*:
+ Corrected: only gitleaks is a hard block. Python (pip-audit) and npm advisories now share tools/audit_gate.py and accepted-risks.json: user-accepted only, expiry required (max 90 days), blocking again after expiry. Security skill, Switch rules, SDLC, Makefile updated; 119 tests pass, security-scan passes. Why: gitleaks stays strict, dependency risks stay visible and time-boxed. @Tank *devops review audit_gate
+
+---
+[<small>2026-10-31 19:39:59</small>] [**Bob**]->[**all**] *commit*:
+ Pushing security fixes: SEC-003 escape, CI hardening, Switch sprint gates, audit gate with expiring acceptances. Why: close the review findings on origin/main; first CI run verifies the workflows.

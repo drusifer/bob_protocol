@@ -51,7 +51,7 @@ flowchart TD
     end
 ```
 
-### The 9 Specialist Personas
+### The 10 Specialist Personas
 
 | Persona | Role | Prefix | Primary Focus |
 |:---|:---|:---|:---|
@@ -62,6 +62,7 @@ flowchart TD
 | **Neo** | Senior Software Engineer | `*swe` | Test-driven development (TDD), surgical bugfixing, refactoring |
 | **Oracle** | Knowledge Officer | `*ora` | Lessons learned, knowledge base queries, documentation grooming |
 | **Smith** | Expert User & UX Advocate | `*user` | Usability audits, ergonomics, review gates (STORIES, ARCH, UAT) |
+| **Switch** | Security Engineer | `*sec` | Security reviews, threat models, build-time scans, dependency fixes |
 | **Tank** | DevOps Engineer | `*devops` | SDLC governance (`docs/SDLC.md`), Makefile targets, CI/CD, deploys |
 | **Trin** | QA Guardian & SDET | `*qa` | Quality strategy, test execution, regression sweeps, UAT verification |
 
@@ -69,8 +70,9 @@ flowchart TD
 
 ## Step 0: Setup & Session Initialization
 
-This walkthrough currently uses BobProtocol from the local source checkout
-because the project is not yet published to PyPI. From the root of that
+This walkthrough uses BobProtocol from the local source checkout so that it
+matches the current `main` branch (the 0.1.0 release on PyPI predates the Switch
+security persona). From the root of that
 checkout, create a new directory for your restaurant reservation app,
 `tablecraft`:
 
@@ -104,11 +106,11 @@ Open your agent harness (Claude Code, Gemini CLI, Cursor, or Codex) and initiali
 User: *init
 ```
 
-**Bob** initializes the environment, confirms symlink discovery (24 shared skills), reads `agents/CHAT.md`, and prints the team quick reference:
+**Bob** initializes the environment, confirms symlink discovery (25 shared skills), reads `agents/CHAT.md`, and prints the team quick reference:
 
 ```text
 [bob]->[all] *init*:
- Bob Protocol initialized. 9 personas online, 24 skills active, test runner ready. why? Ready for project execution.
+ Bob Protocol initialized. 10 personas online, 25 skills active, test runner ready. why? Ready for project execution.
 ```
 
 ---

@@ -7,18 +7,27 @@ agent harnesses. It wraps the loose collection of helper scripts
 into a single `bobp` command, and ships the persona/skill/template content
 needed to scaffold the framework into any project.
 
-> Status: pre-release, not yet published to PyPI. Install from source for now.
+> Status: `bobp` 0.1.0 is published on PyPI (`pip install bobp` or `uv tool install bobp`). The `main` branch is ahead of that release (for example, it adds the Switch security persona); install from source to use it before the next release.
 
 ## Contents
 
-- [Install from source](#install-from-source)
+- [Install](#install)
 - [What's in here](#whats-in-here)
 - [Bob Protocol overview](#bob-protocol-overview)
 - [Development](#development)
 - [Documentation and guides](#documentation-and-guides)
 - [License](#license)
 
-## Install (from source)
+## Install
+
+From PyPI (latest release):
+
+```bash
+uv tool install bobp   # or: pip install bobp
+bobp --help
+```
+
+From source (latest `main`):
 
 ```bash
 git clone git@github.com:drusifer/bob_protocol.git
@@ -67,7 +76,12 @@ See **[STARTUP.md](STARTUP.md)** for LLM session startup instructions, **[docs/W
 ```bash
 uv sync --python 3.15 --locked --extra dev
 uv run bobp make test   # captured project test run
+uv run bobp make install-hooks    # enable the gitleaks pre-commit hook (once per clone)
+uv run bobp make security-scan     # secrets + dependency audits
+uv run bobp make release           # tag v<version> and publish via GitHub Release to PyPI
 ```
+
+See [docs/SDLC.md](docs/SDLC.md) for the full toolchain, gates, and release process.
 
 ## Documentation and guides
 

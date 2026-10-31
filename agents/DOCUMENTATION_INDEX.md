@@ -75,6 +75,7 @@ Bob Protocol organizes autonomous workflows into hierarchical loops and supporti
 - **[skills/make/SKILL.md](skills/make/SKILL.md)** - Project Makefile execution with build output capture
 - **[skills/make-discover/SKILL.md](skills/make-discover/SKILL.md)** - Makefile target self-discovery guide
 - **[skills/personas/SKILL.md](skills/personas/SKILL.md)** - Persona switching and direct specialist delegation
+- **[skills/security/SKILL.md](skills/security/SKILL.md)** - Build-time security scans, gitleaks setup, and safe handling of vulnerable dependencies (used by Switch)
 - **[skills/render/SKILL.md](skills/render/SKILL.md)** - Render cloud infrastructure and deployment management
 - **[skills/test-runner/SKILL.md](skills/test-runner/SKILL.md)** - Bounded test execution and quiet test runners
 - **[skills/via/SKILL.md](skills/via/SKILL.md)** - Strict symbol lookup and relationship queries

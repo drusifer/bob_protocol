@@ -12,7 +12,7 @@ MERMAID_DIR := tools/mermaid_validate
 MERMAID_STAMP := $(MERMAID_DIR)/node_modules/.install.stamp
 MERMAID_DIAGRAMS := $(shell find agents -name '*.diagram.md' 2>/dev/null)
 
-.PHONY: install install-evals system-install test test-q lint lint-mermaid build clean distclean help
+.PHONY: release install install-evals system-install test test-q lint lint-mermaid build clean distclean help
 
 $(MERMAID_STAMP): $(MERMAID_DIR)/package.json
 	cd $(MERMAID_DIR) && npm install
@@ -59,3 +59,19 @@ FORGEJO_VERSION ?= $(shell git describe --tags --always --dirty)
 .PHONY: deploy-forgejo
 deploy-forgejo: build ## Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 	$(FORGEJO_PUBLISH) pypi dist
+
+# ── Publish to public PyPI via GitHub trusted publishing ───────────────────────
+# Creating a GitHub Release triggers .github/workflows/release.yml, which builds
+# and publishes to PyPI (OIDC; no token). Needs `gh` authenticated with
+# permission to create releases. Version comes from bobp/__init__.py.
+VERSION := $(shell sed -n 's/^__version__ = "\(.*\)"/\1/p' bobp/__init__.py)
+
+release: test ## Tag v<version> (if missing), push, and create the GitHub Release that publishes to PyPI
+	@test -n "$(VERSION)" || { echo "cannot read version"; exit 1; }
+	@test "$$(git rev-parse --abbrev-ref HEAD)" = main || { echo "release must run from main"; exit 1; }
+	@git diff --quiet HEAD -- pyproject.toml bobp uv.lock || { echo "uncommitted changes in package files"; exit 1; }
+	@git fetch -q origin main && test "$$(git rev-parse HEAD)" = "$$(git rev-parse origin/main)" || { echo "HEAD must match origin/main (push first)"; exit 1; }
+	@git rev-parse -q --verify refs/tags/v$(VERSION) >/dev/null || git tag -a v$(VERSION) -m "bobp $(VERSION)"
+	git push origin v$(VERSION)
+	@gh release view v$(VERSION) >/dev/null 2>&1 && { echo "release v$(VERSION) already exists"; exit 1; } || true
+	gh release create v$(VERSION) --generate-notes --title "bobp $(VERSION)"

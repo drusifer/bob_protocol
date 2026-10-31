@@ -39,6 +39,7 @@ Run project targets with `bobp make <target>`; prefix with `uv run` when the loc
 | `distclean` | Run `clean` and remove `.venv/` |
 | `help` | List available targets |
 | `deploy-forgejo` | Publish through the external pi-patch script |
+| `release` | Run tests, tag `v<version>` (version from `bobp/__init__.py`), push the tag, and create the GitHub Release; the release workflow publishes to PyPI by trusted publishing. Needs `gh` authorized to create releases; runs only from `main` matching `origin/main`; refuses if the release exists |
 
 There is no `format` or application `run` target. `lint` checks Mermaid only; Python lint/type checks and secret scanning are not configured.
 

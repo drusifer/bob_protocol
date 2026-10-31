@@ -68,7 +68,7 @@ Mark each area **Pass**, **Finding** (link the SEC ID), or **N/A** (give the rea
 ## Sign-off
 
 - **Re-review needed:** {Yes, trigger / No}
-- **Risk acceptance:** {None | Accepted by {user} on {date}, per finding ID}
+- **Risk acceptance:** {None | Accepted by {user} on {date}, **expires {YYYY-MM-DD}**, per finding ID. Expired acceptances are listed as open.}
 - **Verification:** {Tests and scans run after fixes, with results, or Pending}
 
 <!-- RUBRIC-START -->
@@ -81,6 +81,6 @@ Mark each area **Pass**, **Finding** (link the SEC ID), or **N/A** (give the rea
 - [ ] **PASS** — Every finding in the table has its own `_template_SECURITY_FINDING.md` file with severity, evidence, and a Next Action table.
 - [ ] **PASS** — The Next Action table names a persona, concrete action, and trigger for each row; a Blocked verdict states who unblocks it and how.
 - [ ] **PASS** — Verdict follows the findings: any open High or Critical gives Blocked, and Incomplete is used when coverage gaps prevent a conclusion.
-- [ ] **PASS** — No secrets, working exploits, or private data appear; risk acceptance is recorded only by the user.
+- [ ] **PASS** — No secrets, working exploits, or private data appear; risk acceptance is recorded only by the user and every acceptance has an expiry date.
 - [ ] **FAIL** — Any required field, area, or evidence is missing or contradictory; cite the gap and smallest correction.
 <!-- RUBRIC-END -->

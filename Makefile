@@ -61,7 +61,9 @@ deploy-forgejo: build ## Build and publish the bobp wheel/sdist to pi-patch Forg
 	$(FORGEJO_PUBLISH) pypi dist
 
 # ── Security scans (owned by Switch; run before release) ───────────────────────
-# Each scan exits non-zero on findings. Needs gitleaks, uv, and npm on PATH;
+# Each scan exits non-zero on findings. Secrets findings (gitleaks) are a hard
+# block with no ignore file; npm and Python dependency gates honor only
+# user-accepted, expiring risks (tools/audit_gate.py). Needs gitleaks, uv, and npm on PATH;
 # pip-audit runs through uvx. Mermaid's tools have no lockfile, so they cannot
 # be audited reproducibly (documented gap in docs/SDLC.md).
 security-scan: security-scan-secrets security-scan-python security-scan-npm ## Scan for leaked secrets and vulnerable dependencies
@@ -75,13 +77,13 @@ security-scan-secrets: ## Scan git history for committed secrets (gitleaks, git-
 	@command -v gitleaks >/dev/null || { echo "gitleaks is not installed: https://github.com/gitleaks/gitleaks#installing"; exit 1; }
 	gitleaks detect --source . --no-banner
 
-security-scan-python: install ## Audit locked Python dependencies for known vulnerabilities (pip-audit)
+security-scan-python: install ## Audit locked Python dependencies (pip-audit; user-accepted, expiring advisories are noted, not blocking)
 	@mkdir -p build
 	uv export --locked --extra dev --no-hashes --no-emit-project -o build/requirements-audit.txt
-	uvx pip-audit -r build/requirements-audit.txt --disable-pip --no-deps
+	python3 tools/audit_gate.py --ecosystem python --requirements build/requirements-audit.txt --accepted agents/switch/accepted-risks.json
 
-security-scan-npm: ## Audit the packaged persona-eval npm lockfile (high severity and above)
-	npm audit --prefix bobp/tools/persona_eval_assets --audit-level=high
+security-scan-npm: ## Audit the packaged persona-eval npm lockfile (high and above; user-accepted advisories are noted, not blocking)
+	python3 tools/audit_gate.py --ecosystem npm --prefix bobp/tools/persona_eval_assets --accepted agents/switch/accepted-risks.json --level high
 
 # ── Publish to public PyPI via GitHub trusted publishing ───────────────────────
 # Creating a GitHub Release triggers .github/workflows/release.yml, which builds

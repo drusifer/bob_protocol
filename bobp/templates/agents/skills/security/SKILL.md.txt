@@ -72,4 +72,8 @@ Setup procedure:
 
 ## 4. Accepting risk
 
-Only the user accepts risk. Record the accepted finding with its reason, scope, and a re-check trigger (for example, "re-run when promptfoo publishes a release that bumps glob"). An accepted High finding stays visible in `agents/switch/state.md`.
+**Hard block — never accepted: secrets.** `security-scan-secrets` (gitleaks) has no acceptance path. A finding means remove the secret and rotate the credential. No `.gitleaksignore`, allowlist, or baseline; Switch never adds one, and a change that does is a High finding.
+
+**Acceptable with expiry — dependency advisories (npm and Python).** `tools/audit_gate.py` backs both `security-scan-npm` and `security-scan-python`. Only the user may accept an advisory, always with an expiry (below). The preferred fix is still to upgrade, swap, or remove the package; Python advisories count as blocking (pip-audit gives no severity) until fixed or accepted. Never add `--ignore-vuln` or an ignore file outside the gate.
+
+Only the user accepts risk. **Every acceptance has an expiration date** (`expires`, YYYY-MM-DD, at most 90 days after it is granted; default 90). After that date the acceptance no longer counts: the gate blocks again until the user renews it with a fresh review or the risk is fixed. Switch warns 14 days ahead, lists expired acceptances as open in every review, and never records an acceptance without an expiry. Record an accepted advisory (npm or Python; match by GHSA, PYSEC, or CVE id) in `agents/switch/accepted-risks.json` (id, package, finding, who and when, reason, `expires`, re-check trigger); `tools/audit_gate.py` then notes it instead of failing the scan, and any new advisory still blocks. Record the accepted finding with its reason, scope, and a re-check trigger (for example, "re-run when promptfoo publishes a release that bumps glob"). An accepted High finding stays visible in `agents/switch/state.md`.

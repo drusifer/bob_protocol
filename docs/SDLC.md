@@ -40,7 +40,7 @@ Run project targets with `bobp make <target>`; prefix with `uv run` when the loc
 | `help` | List available targets |
 | `deploy-forgejo` | Publish through the external pi-patch script |
 | `install-hooks` | Enable `.githooks/pre-commit` (gitleaks on staged changes) with `git config core.hooksPath .githooks`; run once per clone. Needs gitleaks on `PATH` |
-| `security-scan` | Run `security-scan-secrets` (gitleaks, git-aware), `security-scan-python` (pip-audit on the exported `uv.lock`), and `security-scan-npm` (npm audit, high and above, on the packaged persona-eval lockfile). Needs gitleaks, uv, and npm on `PATH`. Mermaid tools have no lockfile and are not audited. Owned by Switch; run before release |
+| `security-scan` | Run `security-scan-secrets` (gitleaks, git-aware), `security-scan-python` (pip-audit on the exported `uv.lock`), and `security-scan-npm` (npm audit, high and above, on the packaged persona-eval lockfile, through `tools/audit_gate.py`, which blocks only advisories not listed in `agents/switch/accepted-risks.json`; accepted advisories are printed with reason, expiry, and re-check trigger; every acceptance must carry an `expires` date no more than 90 days out, after which it stops counting and the scan blocks again). Secrets (gitleaks) findings are a hard block with no ignore or acceptance path; npm and Python dependency advisories pass only when the user has accepted them in `agents/switch/accepted-risks.json` with an expiry, through `tools/audit_gate.py`. Needs gitleaks, uv, and npm on `PATH`. Mermaid tools have no lockfile and are not audited. Owned by Switch; run before release |
 | `release` | Run tests, tag `v<version>` (version from `bobp/__init__.py`), push the tag, and create the GitHub Release; the release workflow publishes to PyPI by trusted publishing. Needs `gh` authorized to create releases; runs only from `main` matching `origin/main`; refuses if the release exists |
 
 There is no `format` or application `run` target. `lint` checks Mermaid only; Python lint/type checks and secret scanning are not configured.
@@ -91,7 +91,7 @@ Update `bobp.__version__` in `bobp/__init__.py` for a release. `bobp make build`
 
 ## 8. CI and deployment
 
-`.github/workflows/ci.yml` runs pytest and a CLI help check on pushes to `main` and pull requests using pip and Python 3.10–3.12. `.github/workflows/release.yml` handles published releases. No new Actions workflow or commit hook is part of the local persona-eval gate.
+`.github/workflows/ci.yml` runs pytest and a CLI help check on pushes to `main` and pull requests using pip and Python 3.10–3.12, plus a `secrets` job that scans full git history with a pinned, checksum-verified gitleaks binary as a server-side backstop for the local pre-commit hook. All workflows use a read-only token by default, every action is pinned to a commit SHA (Dependabot's weekly `github-actions` updates keep the pins current), and only the publish job requests `id-token: write`. `.github/workflows/release.yml` handles published releases. No new Actions workflow or commit hook is part of the local persona-eval gate.
 
 ## 9. Known deviations
 

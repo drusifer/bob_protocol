@@ -38,7 +38,7 @@ check block when used. File as `agents/switch/findings/<YYYY-MM-DD>-<slug>.md`.
 
 ## Risk Acceptance
 
-{Not accepted | Accepted by {user} on {date}: reason, scope, and re-check trigger}
+{Not accepted | Accepted by {user} on {date}, **expires {YYYY-MM-DD}** (at most 90 days out): reason, scope, and re-check trigger. After the expiry date the acceptance no longer counts: the user renews it or the risk is fixed.}
 
 <!-- RUBRIC-START -->
 ## Check — SECURITY FINDING
@@ -47,6 +47,6 @@ check block when used. File as `agents/switch/findings/<YYYY-MM-DD>-<slug>.md`.
 - [ ] **PASS** — The Next Action table has at least one row; each row names a single persona, a concrete action, and a trigger or deadline.
 - [ ] **PASS** — Evidence is reproducible or checkable, separates observation from interpretation, and contains no secrets or working exploit.
 - [ ] **PASS** — Impact states reachability and scope; the recommendation gives the smallest fix and how to verify it.
-- [ ] **PASS** — Risk acceptance is recorded only by the user, with reason, scope, and re-check trigger; otherwise it says Not accepted.
+- [ ] **PASS** — Risk acceptance is recorded only by the user, with reason, scope, re-check trigger, and an expiry date no more than 90 days out; otherwise it says Not accepted.
 - [ ] **FAIL** — A required field is empty, the next owner or action is vague, or a High/Critical finding has no verdict of Blocked; cite the gap and smallest correction.
 <!-- RUBRIC-END -->

@@ -1,0 +1,35 @@
+{
+  "accepted": [
+    {
+      "id": "GHSA-c475-qrg2-pj4r",
+      "package": "basic-ftp",
+      "finding": "SEC-001",
+      "accepted_by": "user",
+      "date": "2026-10-31",
+      "reason": "Availability-only; needs a malicious FTP server and an ftp:// proxy-config fetch that persona evals never make.",
+      "recheck": "When promptfoo publishes a release newer than 0.125.1, or Bobp installs eval packages with overrides.",
+      "expires": "2027-01-29"
+    },
+    {
+      "id": "GHSA-3g3m-2fjr-6pw4",
+      "package": "glob",
+      "finding": "SEC-001",
+      "accepted_by": "user",
+      "date": "2026-10-31",
+      "reason": "Aborted walk keeps reading directories (wasted I/O only); patterns come from our own eval config.",
+      "recheck": "When promptfoo publishes a release newer than 0.125.1.",
+      "expires": "2027-01-29"
+    },
+    {
+      "id": "GHSA-g3hv-75wg-m249",
+      "package": "minimatch",
+      "finding": "SEC-001",
+      "accepted_by": "user",
+      "date": "2026-10-31",
+      "reason": "Needs an attacker-supplied glob pattern; ours come from the repo's own eval config.",
+      "recheck": "When promptfoo publishes a release newer than 0.125.1.",
+      "expires": "2027-01-29"
+    }
+  ],
+  "policy": "Every acceptance needs an `expires` date (YYYY-MM-DD, at most 90 days out). After it passes the acceptance no longer counts and the gate blocks until the user renews or the risk is fixed."
+}

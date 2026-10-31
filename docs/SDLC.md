@@ -39,6 +39,8 @@ Run project targets with `bobp make <target>`; prefix with `uv run` when the loc
 | `distclean` | Run `clean` and remove `.venv/` |
 | `help` | List available targets |
 | `deploy-forgejo` | Publish through the external pi-patch script |
+| `install-hooks` | Enable `.githooks/pre-commit` (gitleaks on staged changes) with `git config core.hooksPath .githooks`; run once per clone. Needs gitleaks on `PATH` |
+| `security-scan` | Run `security-scan-secrets` (gitleaks, git-aware), `security-scan-python` (pip-audit on the exported `uv.lock`), and `security-scan-npm` (npm audit, high and above, on the packaged persona-eval lockfile). Needs gitleaks, uv, and npm on `PATH`. Mermaid tools have no lockfile and are not audited. Owned by Switch; run before release |
 | `release` | Run tests, tag `v<version>` (version from `bobp/__init__.py`), push the tag, and create the GitHub Release; the release workflow publishes to PyPI by trusted publishing. Needs `gh` authorized to create releases; runs only from `main` matching `origin/main`; refuses if the release exists |
 
 There is no `format` or application `run` target. `lint` checks Mermaid only; Python lint/type checks and secret scanning are not configured.
@@ -67,6 +69,7 @@ Each eval uses a versioned catalog suite, a fresh fixture under `build/persona-e
 | Focused tests | `bobp make test-q ARGS="-k name"` | During implementation |
 | Mermaid validation | `bobp make lint` | When changing diagrams |
 | Persona behavior/artifact | `bobp persona-eval <persona-or-suite>` | Trin sign-off for persona-skill changes |
+| Security scans | `bobp make security-scan` | Before release and when dependencies change |
 | Package build | `bobp make build` | Release review |
 
 Trin owns gate assertions; Tank owns the runner. Morpheus reviews architecture, and Smith reviews changed user-facing behavior.

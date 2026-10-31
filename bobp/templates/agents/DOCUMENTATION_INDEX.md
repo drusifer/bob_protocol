@@ -19,7 +19,7 @@ Type `*help` for complete command reference with examples.
 - **[skills/prep-clear/SKILL.md](skills/prep-clear/SKILL.md)** - Pre-clear checkpointing & state preservation skill
 - **[README.md](../README.md)** - Project overview and team reference
 - **[SHORTHAND_GUIDE.md](../SHORTHAND_GUIDE.md)** - Complete trigger/command reference
-- **[HELP.md](bob/HELP.md)** - Quick reference for all 9 personas and commands
+- **[HELP.md](bob/HELP.md)** - Quick reference for all 10 personas and commands
 
 ### Tools
 - **`bobp` CLI** - Agent tooling subcommands (`bobp chat`, `bobp make`, `bobp setup-agent-links`, …); run `bobp --help` for the full list. Link setup creates project and harness links and may update user-level Codex/Via configuration; see the `bob-tools` skill before running it.
@@ -41,6 +41,7 @@ Type `*help` for complete command reference with examples.
 | Mouse | Scrum Master | [mouse/SKILL.md](mouse/SKILL.md) | `*sm` |
 | Smith | Expert User & UX Advocate | [smith/SKILL.md](smith/SKILL.md) | `*user` |
 | Tank | DevOps Engineer | [tank/SKILL.md](tank/SKILL.md) | `*devops` |
+| Switch | Security Engineer | [switch/SKILL.md](switch/SKILL.md) | `*sec` |
 
 ---
 
@@ -101,6 +102,8 @@ Located in `agents/templates/`:
 - `_template_LESSON.md` - Engineering lessons learned (rubric: LESSON)
 - `_template_DECISION.md` - Architecture decision record / MADR (rubric: DECISION)
 - `_template_finding.md` - Research spike & technical finding (rubric: FINDING)
+- `_template_SECURITY_REVIEW.md` - Security review report with scope, threat model, area checklist, and verdict (rubric: SECURITY REVIEW)
+- `_template_SECURITY_FINDING.md` - Security finding with severity, evidence, and who-does-what-next (rubric: SECURITY FINDING)
 - `_template_TEST_STRATEGY.md` - Quality & UAT strategy (rubric: STRATEGY)
 - `_template_UAT_PLAN.md` - Sprint acceptance test plan (rubric: UAT)
 - `_template_state.md` - Agent working memory state
@@ -173,6 +176,7 @@ Historical Oracle notes use the `.archive_*.md` prefix. The current archive is
 *pm story <request>            # User story requirements (Cypher)
 *user review <scope>           # Usability & HCI review (Smith)
 *devops deploy <env>           # Infrastructure & deployment (Tank)
+*sec review <target>           # Security review (Switch)
 ```
 
 ---

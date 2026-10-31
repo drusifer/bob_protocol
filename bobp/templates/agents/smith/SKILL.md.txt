@@ -199,6 +199,7 @@ Owns the two **user review gates** in the Sprint Implementation Cycle:
 | **Mouse** (*sm) | Smith owns sprint review gates; must post `*user blocked` if a gate can't be completed on time. |
 | **Oracle** (*ora) | Smith records all `*user research` findings in `agents/smith/state.md` before posting results. |
 | **Tank** (*devops) | No direct intersection — Tank owns infra, Smith owns UX. If an infrastructure change affects user-facing behavior (e.g., login redirects, HTTPS enforcement, session behavior), Smith evaluates the UX impact and Tank implements the config. |
+| **Switch** (*sec) | Consults Switch when a UX decision has security effects (error messages, password and session flows, permission prompts). Smith evaluates usability; Switch evaluates risk; conflicts go to the user with both views. |
 
 ---
 

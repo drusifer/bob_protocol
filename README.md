@@ -54,7 +54,7 @@ tool, run `uv run bobp make system-install` from the checkout.
 
 Bob Protocol coordinates autonomous, multi-agent software engineering through specialized personas and structured SDLC loops:
 
-- **The Team (9 Personas)**: **Neo** (Senior SWE), **Morpheus** (Tech Lead), **Trin** (QA Guardian), **Oracle** (Knowledge Officer), **Mouse** (Scrum Master), **Cypher** (Product Manager), **Bob** (Prompt Engineer), **Smith** (Expert User & UX Advocate), **Tank** (DevOps Engineer).
+- **The Team (10 Personas)**: **Neo** (Senior SWE), **Morpheus** (Tech Lead), **Trin** (QA Guardian), **Oracle** (Knowledge Officer), **Mouse** (Scrum Master), **Cypher** (Product Manager), **Bob** (Prompt Engineer), **Smith** (Expert User & UX Advocate), **Tank** (DevOps Engineer), **Switch** (Security Engineer).
 - **Planning Loops (Strategic Scoping)**: `*plan epic` (*Shape Up* / *Inspired*), `*plan story` (*User Story Mapping* / *Agile Estimating*), `*plan sprint` (*The Scrum Guide*).
 - **Work Loops (Tactical Execution)**: `*impl` (TDD — *Beck*), `*fix` (Surgical diagnosis & fix — *Agans*), `*refactor` (Two-Hats behavioral parity — *Fowler*), `*spike` (Disposable exploration — *XP Installed*), `*uat` (User acceptance testing — *Crispin & Gregory*), `*deploy` (Continuous delivery & smoke test — *Humble & Farley*).
 - **Loop Conductor (`*bloop`)**: Autonomous multi-persona execution engine with strict anti-loop guards (max 2 failures $\rightarrow$ Oracle $\rightarrow$ user escalate) and context budgeting (`*prep-clear`).

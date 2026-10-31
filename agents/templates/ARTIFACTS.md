@@ -12,6 +12,8 @@ Template source lives in `bobp/templates/agents/templates/`; installed or dogfoo
 | Decision record (ADR) | `_template_DECISION.md` | Morpheus / Oracle | DECISION / Oracle or Smith |
 | Domain model | `_template_DOMAIN.md` | Cypher / Morpheus | DOMAIN / planning review |
 | Research finding or spike | `_template_finding.md` | Any | FINDING / Oracle or Morpheus |
+| Security review | `_template_SECURITY_REVIEW.md` | Switch | SECURITY REVIEW / Switch, reviewed by Trin or Morpheus |
+| Security finding | `_template_SECURITY_FINDING.md` | Switch | SECURITY FINDING / Switch, reviewed by Trin or Morpheus |
 | Lesson | `_template_LESSON.md` | Oracle | LESSON / Smith at sprint close |
 | SDLC guide | `_template_SDLC.md` and language profiles | Tank | SDLC / Oracle when changed |
 | Sprint task board | `_template_task.md` | Mouse | PLAN / Morpheus at plan review |

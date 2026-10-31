@@ -124,6 +124,7 @@ See instructions here -> `agents/skills/bob-protocol/SKILL.md`
 | **Cypher** (*pm) | Receives requirements and acceptance criteria from Cypher. Does not change scope without Cypher approval. |
 | **Smith** (*user) | Available for `*user test` at any point mid-phase — not just at gates. Smith can flag UX issues; Neo fixes them. |
 | **Tank** (*devops) | Coordinates on the infra boundary (see below). Neo owns app code; Tank owns everything that runs it. Notify Tank before merging changes that affect env vars, deploy targets, or prod config. |
+| **Switch** (*sec) | Security review partner. Invoke `@Switch *sec review` before merging changes that touch input handling, auth, file/shell/network access, serialization, or dependencies. Neo applies Switch's proposed fixes to application code (Switch never edits app source, but does upgrade, swap, or remove vulnerable dependencies and tells Neo) and adds the regression test with Trin. |
 | **Oracle** (*ora) | Consults Oracle for historical decisions and lessons before starting complex tasks. Records significant implementation decisions to CHAT.md for Oracle to archive. |
 | **Bob** (*prompt) | Receives `*learn` updates from Bob that affect Neo's behavior. Applies them immediately. |
 

@@ -12,7 +12,7 @@ MERMAID_DIR := tools/mermaid_validate
 MERMAID_STAMP := $(MERMAID_DIR)/node_modules/.install.stamp
 MERMAID_DIAGRAMS := $(shell find agents -name '*.diagram.md' 2>/dev/null)
 
-.PHONY: release install install-evals system-install test test-q lint lint-mermaid build clean distclean help
+.PHONY: install-hooks security-scan security-scan-secrets security-scan-python security-scan-npm release install install-evals system-install test test-q lint lint-mermaid build clean distclean help
 
 $(MERMAID_STAMP): $(MERMAID_DIR)/package.json
 	cd $(MERMAID_DIR) && npm install
@@ -59,6 +59,29 @@ FORGEJO_VERSION ?= $(shell git describe --tags --always --dirty)
 .PHONY: deploy-forgejo
 deploy-forgejo: build ## Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
 	$(FORGEJO_PUBLISH) pypi dist
+
+# ── Security scans (owned by Switch; run before release) ───────────────────────
+# Each scan exits non-zero on findings. Needs gitleaks, uv, and npm on PATH;
+# pip-audit runs through uvx. Mermaid's tools have no lockfile, so they cannot
+# be audited reproducibly (documented gap in docs/SDLC.md).
+security-scan: security-scan-secrets security-scan-python security-scan-npm ## Scan for leaked secrets and vulnerable dependencies
+
+install-hooks: ## Enable the repo's git hooks (gitleaks pre-commit) via core.hooksPath
+	@command -v gitleaks >/dev/null || { echo "gitleaks is not installed: https://github.com/gitleaks/gitleaks#installing"; exit 1; }
+	git config core.hooksPath .githooks
+	@echo "git hooks enabled: .githooks/pre-commit (gitleaks)"
+
+security-scan-secrets: ## Scan git history for committed secrets (gitleaks, git-aware)
+	@command -v gitleaks >/dev/null || { echo "gitleaks is not installed: https://github.com/gitleaks/gitleaks#installing"; exit 1; }
+	gitleaks detect --source . --no-banner
+
+security-scan-python: install ## Audit locked Python dependencies for known vulnerabilities (pip-audit)
+	@mkdir -p build
+	uv export --locked --extra dev --no-hashes --no-emit-project -o build/requirements-audit.txt
+	uvx pip-audit -r build/requirements-audit.txt --disable-pip --no-deps
+
+security-scan-npm: ## Audit the packaged persona-eval npm lockfile (high severity and above)
+	npm audit --prefix bobp/tools/persona_eval_assets --audit-level=high
 
 # ── Publish to public PyPI via GitHub trusted publishing ───────────────────────
 # Creating a GitHub Release triggers .github/workflows/release.yml, which builds

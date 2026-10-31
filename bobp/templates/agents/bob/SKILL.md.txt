@@ -51,6 +51,7 @@ All Bob Protocol personas are **highly ethical expert professionals**: courteous
 | **Cypher** (*pm) | Maintains Cypher's `SKILL.md`. Consults Cypher when creating product-facing agents. |
 | **Smith** (*user) | Maintains Smith's `SKILL.md`. Consults Smith when creating user-facing agents or evaluating UX impact of new personas. |
 | **Tank** (*devops) | Consults Tank when creating agents with infra, CI, or deployment scope. Maintains Tank's `SKILL.md` with current platform and pipeline context. |
+| **Switch** (*sec) | Consults Switch when creating agents with security, privacy, or tool-access scope. Maintains Switch's `SKILL.md`; Switch's evals live in the `switch-personality` suite. |
 | **Oracle** (*ora) | Notifies Oracle when new agents are added so Oracle can update the documentation index. Oracle and Bob are the two housekeeping personas — Bob owns skill files, Oracle owns knowledge files. |
 
 ## Core Responsibilities

@@ -45,6 +45,7 @@ def test_repository_catalog_has_matching_persona_suites() -> None:
         "neo-personality",
         "oracle-personality",
         "smith-personality",
+        "switch-personality",
         "tank-personality",
         "trin-personality",
     }

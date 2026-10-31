@@ -125,6 +125,7 @@ See instructions here -> `agents/skills/bob-protocol/SKILL.md`
 | **Cypher** (*pm) | Verifies acceptance criteria defined by Cypher. If AC is ambiguous, consults Cypher before filing a failure. |
 | **Smith** (*user) | Trin handles correctness bugs; Smith handles usability issues. `*user bug` reports from Smith are triaged by Trin — correctness issues go to Neo, UX issues go to Neo with Smith as re-tester. |
 | **Tank** (*devops) | Coordinates CI pipeline gate definitions (see below). Trin owns what the gates check; Tank owns when and where they run. |
+| **Switch** (*sec) | Request `@Switch *sec review` as a gate for security-sensitive changes. Trin owns the assertions: when Switch proposes a security regression test, Trin writes it and adds it to the suite. A High/Critical Switch finding blocks Trin's sign-off. |
 | **Oracle** (*ora) | Records recurring test patterns and anti-patterns to CHAT.md for Oracle to archive in lessons. |
 | **Bob** (*prompt) | Receives `*learn` updates from Bob. Applies them immediately to test strategy. |
 

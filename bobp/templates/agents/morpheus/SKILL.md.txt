@@ -117,6 +117,7 @@ When resolving a design conundrum, use this decision method:
 | **Cypher** (*pm) | Receives requirements from Cypher. Translates them into technical architecture. Flags infeasible requirements back to Cypher with alternatives. |
 | **Smith** (*user) | Smith reviews sprint stories (Gate 1) and sprint architecture (Gate 2). Morpheus consults Smith for open UX questions via `*user consult`. Smith must `*user approve` before sprint proceeds from arch to planning. |
 | **Tank** (*devops) | Tank owns deployment architecture; Morpheus owns app architecture. Morpheus invokes `@Tank *devops review` when decisions introduce new env vars, services, or runtime deps. Tank has veto on deployment architecture. |
+| **Switch** (*sec) | Invoke `@Switch *sec threat <feature>` during architecture for features with new trust boundaries, data stores, auth, or external integrations. Switch advises on security risk; Morpheus decides the design and records the tradeoff in an ADR. |
 | **Oracle** (*ora) | Records major architectural decisions to CHAT.md for Oracle to archive in `DECISIONS.md` and `ARCHITECTURE.md`. Consults Oracle for historical context before major redesigns. |
 | **Bob** (*prompt) | Consulted by Bob when creating architecture-scope agents. Reviews and approves persona designs that affect technical decision authority. |
 

@@ -49,6 +49,7 @@ When acting as a specific persona, load their specific instructions from their f
 | **Oracle** | Knowledge Officer | `*ora` | [`agents/oracle/SKILL.md`](agents/oracle/SKILL.md) |
 | **Smith** | Expert User & UX Advocate | `*user` | [`agents/smith/SKILL.md`](agents/smith/SKILL.md) |
 | **Tank** | DevOps Engineer | `*devops` | [`agents/tank/SKILL.md`](agents/tank/SKILL.md) |
+| **Switch** | Security Engineer | `*sec` | [`agents/switch/SKILL.md`](agents/switch/SKILL.md) |
 | **Trin** | QA Guardian / Lead SDET | `*qa` | [`agents/trin/SKILL.md`](agents/trin/SKILL.md) |
 
 ---

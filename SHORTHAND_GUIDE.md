@@ -132,6 +132,15 @@ Invoke a persona directly — bypasses `*chat` routing.
 | `*help` | Show full system reference |
 | `*bob review <target>` | Review agent interactions and prompt effectiveness |
 
+### Switch — Security Engineer
+| Trigger | Action |
+|---------|--------|
+| `*sec review <target>` | Security review of a diff, file, or feature |
+| `*sec threat <feature>` | Lightweight threat model |
+| `*sec deps` | Dependency & supply-chain audit |
+| `*sec audit <area>` | Secrets, permissions, CI/config hardening review |
+| `*sec triage <finding>` | Severity & proposed fix |
+
 ### Tank — DevOps Engineer
 | Trigger | Action |
 |---------|--------|

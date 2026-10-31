@@ -12,6 +12,8 @@
 - 2026-10-30: Added `docs/PERSONA_EVALUATION.md` covering prerequisites/setup, suite selection, Choice+Score grading and pass rules, reports/failure review, and TypeSafe data flow. Linked it from the root README, documentation index, and packaged README; synchronized the packaged doc and index copies.
 - 2026-10-30: Committed and pushed the evaluation and persona updates as `ad1be67` (`feat(eval): add Choice and Score persona grading`) to `origin/main`; the tree was clean after push.
 
+- 2026-10-31: Groomed docs after the PyPI 0.1.0 release and Switch persona: README now documents PyPI install (0.1.0) plus install from source, and lists security/release commands; walkthrough and its packaged copy updated to 10 personas/25 skills with Switch; docs index links the security skill. Noted that PyPI 0.1.0 predates Switch (installs 9 personas/24 skills), so the walkthrough stays on the source checkout until the next release. Grooming gate: ACCURACY, USABILITY, CONSISTENCY, SYNC all PASS; mirrors match; rubric blocks only in authoring templates; SEC-001 passes the SECURITY FINDING rubric.
+
 ### Key Findings
 - Root README lacked a contents list and documented `make test` directly; docs index had an outdated update date and referenced an archive file that does not exist.
 - No misplaced Markdown files were found. Root-level startup/command guides and `docs/WALKTHROUGH.md` are appropriately placed.

@@ -442,4 +442,10 @@ sequenceDiagram
     Note right of Switch: "Morning, and thanks for<br/>the welcome! Mine is a<br/>review where the team<br/>fixes a risk before<br/>anyone can exploit it.<br/>Why: no incident is the<br/>bes…"
     Bob->>All: "commit"
     Note right of Bob: "Committed and pushing:<br/>chat-diagram split, init<br/>greeting, Switch persona<br/>and security tooling.<br/>Gitleaks hook ran clean<br/>on each commit. Why:…"
+    User->>All: "request"
+    Note right of User: "groom docs"
+    Oracle->>Bob: "ora groom docs"
+    Note right of Oracle: "Docs groomed: README<br/>(PyPI install +<br/>security/release<br/>commands), walkthrough +<br/>mirror (Switch, 10<br/>personas, 25 skills,<br/>PyPI 0.1.0 predates…"
+    Bob->>All: "commit"
+    Note right of Bob: "Version bumped to 0.2.0,<br/>docs groomed. Pushing so<br/>'bobp make release' can<br/>tag v0.2.0. Why: release<br/>requires HEAD to match<br/>origin/main."
 ```

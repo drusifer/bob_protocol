@@ -1079,3 +1079,28 @@ PASS  agents/CHAT.diagram.md [block 2/2]
 ---
 [<small>2026-10-31 19:01:27</small>] [**Bob**]->[**all**] *commit*:
  Committed and pushing: chat-diagram split, init greeting, Switch persona and security tooling. Gitleaks hook ran clean on each commit. Why: records the session's work on origin/main.
+
+---
+[<small>2026-10-31 19:02:06</small>] [**User**]->[**all**] *request*:
+ groom docs
+
+---
+[<small>2026-10-31 19:02:56</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make lint | /home/drusifer/Projects/bob_protocol/build/build.out
+PASS  agents/chat_archive/CHAT_SPRINT_1.diagram.md
+PASS  agents/CHAT.diagram.md [block 1/2]
+PASS  agents/CHAT.diagram.md [block 2/2]
+
+---
+[<small>2026-10-31 19:03:03</small>] [**Oracle**]->[**Bob**] *ora groom docs*:
+ Docs groomed: README (PyPI install + security/release commands), walkthrough + mirror (Switch, 10 personas, 25 skills, PyPI 0.1.0 predates Switch), docs index (security skill). ACCURACY/USABILITY/CONSISTENCY/SYNC pass; tests 109 passed. Why: docs lagged the release and new persona. @Bob *prompt review
+
+---
+[<small>2026-10-31 19:04:10</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test | /home/drusifer/Projects/bob_protocol/build/build.out
+.......................................                         [100%]
+109 passed, 2 skipped, 9 subtests passed in 10.22s
+
+---
+[<small>2026-10-31 19:04:50</small>] [**Bob**]->[**all**] *commit*:
+ Version bumped to 0.2.0; docs groomed. Pushing so 'bobp make release' can tag v0.2.0. Why: release requires HEAD to match origin/main.

@@ -6,7 +6,9 @@ TLDR:
     Parses the `[<small>TS</small>] [**Persona**]->[**To**] *cmd*:` entries written
     by chat.py and renders them as a Mermaid sequenceDiagram (one arrow per
     persona -> recipient message), grouped with a date Note whenever the day
-    changes. Writes agents/CHAT.diagram.md by default; `--print` writes to
+    changes. The diagram is split at phase, sprint, and epic boundaries: each
+    boundary closes the diagram, adds a markdown close-out/next-phase section,
+    and starts a new diagram. Writes agents/CHAT.diagram.md by default; `--print` writes to
     stdout instead. Build-status entries (persona "make") are skipped unless
     --include-builds is passed, since they're noise for following the
     persona-to-persona conversation.
@@ -110,27 +112,32 @@ def _note_text_for(entry):
     return _wrap_label(_clean_message(_first_line(entry.body)))
 
 
-def _loop_summary(kind, entries):
-    """Build a small deterministic recap from the messages at a loop boundary.
+def _recap_details(entries):
+    """Deterministic recap lines (`**Persona**: message`) for a loop boundary.
 
     Chat is intentionally not sent to an external summarizer. Prefer explicit
     outcome messages (passed, complete, approved, failed); if none exist, use
-    the latest messages so the diagram still records what closed the loop.
+    the latest messages so the recap still records what closed the loop.
     """
-    if not entries:
-        return None
     outcomes = [
         e for e in entries
         if re.search(r"\b(pass(?:ed)?|fail(?:ed)?|complete|completed|approved|reject(?:ed)?)\b",
                      _first_line(e.body), re.IGNORECASE)
     ]
     selected = (outcomes or entries)[-3:]
-    details = [f"{e.persona}: {_clean_message(_first_line(e.body))}" for e in selected]
-    if not any(_first_line(e.body) for e in selected):
+    return [
+        f"- **{e.persona}**: {_clean_message(_first_line(e.body))}"
+        for e in selected
+        if _first_line(e.body)
+    ]
+
+
+def _recap_section(title, entries):
+    """A markdown section recapping `entries`, or None when there is nothing to say."""
+    details = _recap_details(entries) if entries else []
+    if not details:
         return None
-    label = f"{kind.title()} summary"
-    text = "<br/>".join([label] + [_wrap_label(detail) for detail in details if detail.strip()])
-    return text
+    return "\n".join([f"## {title}", ""] + details)
 
 
 def _is_phase_marker(entry):
@@ -172,16 +179,11 @@ INIT_DIRECTIVE = (
 )
 
 
-def build_diagram(entries, include_builds=False):
-    """Render the parsed entries as a Mermaid sequenceDiagram body (no code fence)."""
-    filtered = [e for e in entries if include_builds or not _is_build_status(e)]
-
-    if not filtered:
-        return f"{INIT_DIRECTIVE}\nsequenceDiagram\n    Note over Team: No conversation entries yet."
-
+def _segment_diagram(entries):
+    """One Mermaid sequenceDiagram covering `entries`, declaring only its own participants."""
     participant_ids = {}
     order = []
-    for e in filtered:
+    for e in entries:
         for name in [e.persona] + [r.strip() for r in e.to.split(",")]:
             display = _display_name(name)
             if display not in participant_ids:
@@ -198,24 +200,7 @@ def build_diagram(entries, include_builds=False):
 
     left, right = participant_ids[order[0]], participant_ids[order[-1]]
     last_date = None
-    phase_entries = []
-    phase_label = None
-    epic_entries = None
-    for e in filtered:
-        if epic_entries is not None and re.match(r"^plan\s+story\b", e.cmd.strip(), re.IGNORECASE):
-            summary = _loop_summary("Epic", epic_entries)
-            if summary:
-                lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
-            epic_entries = None
-
-        if _is_phase_marker(e):
-            if phase_entries and phase_label:
-                summary = _loop_summary(f"Phase {phase_label}", phase_entries)
-                if summary:
-                    lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
-            phase_label = re.sub(r"^phase\s+", "", e.cmd, flags=re.IGNORECASE).strip()
-            phase_entries = []
-
+    for e in entries:
         date = e.ts.split(" ")[0]
         if date != last_date:
             lines.append(f"    Note over {left},{right}: \U0001F4C5 {date}")
@@ -224,8 +209,7 @@ def build_diagram(entries, include_builds=False):
         from_id = participant_ids[_display_name(e.persona)]
         cmd_label = _quote_label(e.cmd)
         note_text = _note_text_for(e)
-        recipients = [r.strip() for r in e.to.split(",")]
-        for recipient in recipients:
+        for recipient in (r.strip() for r in e.to.split(",")):
             to_id = participant_ids[_display_name(recipient)]
             # Keep the arrow label short (just the command) — it's rendered
             # right against the thin arrow line with little room. The full
@@ -244,7 +228,55 @@ def build_diagram(entries, include_builds=False):
             lines.append(f"    {from_id}->>{to_id}: {cmd_label}")
             if note_text:
                 lines.append(f"    Note right of {from_id}: {_quote_label(note_text)}")
+    return "\n".join(lines)
 
+
+def build_blocks(entries, include_builds=False):
+    """Split the log into ordered ("diagram", mermaid) and ("text", markdown) blocks.
+
+    The diagram closes at each phase boundary, sprint close, and epic close.
+    A markdown section recaps the close-out and announces the next phase,
+    and the following entries start a fresh sequenceDiagram.
+    """
+    filtered = [e for e in entries if include_builds or not _is_build_status(e)]
+
+    if not filtered:
+        return [("diagram", f"{INIT_DIRECTIVE}\nsequenceDiagram\n    Note over Team: No conversation entries yet.")]
+
+    blocks = []
+    segment = []
+
+    def flush():
+        if segment:
+            blocks.append(("diagram", _segment_diagram(segment)))
+            segment.clear()
+
+    def text(markdown):
+        if markdown:
+            blocks.append(("text", markdown))
+
+    phase_entries = []
+    phase_label = None
+    epic_entries = None
+    for e in filtered:
+        if epic_entries is not None and re.match(r"^plan\s+story\b", e.cmd.strip(), re.IGNORECASE):
+            flush()
+            text(_recap_section("Epic close-out", epic_entries))
+            epic_entries = None
+
+        if _is_phase_marker(e):
+            flush()
+            if phase_entries and phase_label:
+                text(_recap_section(f"Phase {phase_label} close-out", phase_entries))
+            phase_label = re.sub(r"^phase\s+", "", e.cmd, flags=re.IGNORECASE).strip()
+            phase_entries = []
+            start = [f"## Phase {phase_label} starts"]
+            goal = _clean_message(_first_line(e.body))
+            if goal:
+                start += ["", goal]
+            text("\n".join(start))
+
+        segment.append(e)
         if not _is_phase_marker(e):
             phase_entries.append(e)
         close_kind = _loop_close_kind(e)
@@ -253,37 +285,33 @@ def build_diagram(entries, include_builds=False):
         elif epic_entries is not None:
             epic_entries.append(e)
         if close_kind:
+            flush()
             if close_kind == "Sprint" and phase_entries and phase_label:
-                summary = _loop_summary(f"Phase {phase_label}", phase_entries[:-1])
-                if summary:
-                    lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
+                text(_recap_section(f"Phase {phase_label} close-out", phase_entries[:-1]))
                 phase_entries = []
                 phase_label = None
             summary_entries = (epic_entries or [e]) if close_kind == "Epic" else [e]
-            summary = _loop_summary(close_kind, summary_entries)
-            if summary:
-                lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
+            text(_recap_section(f"{close_kind} close-out", summary_entries))
             if close_kind == "Epic":
                 epic_entries = None
 
+    flush()
     if phase_entries and phase_label:
-        summary = _loop_summary(f"Phase {phase_label}", phase_entries)
-        if summary:
-            lines.append(f"    Note over {left},{right}: {_quote_label(summary)}")
-
-    return "\n".join(lines)
+        text(_recap_section(f"Phase {phase_label} so far", phase_entries))
+    return blocks
 
 
 def render(chat_text, include_builds=False):
-    """Render a full CHAT.diagram.md file (header + fenced mermaid block) from CHAT.md text."""
-    diagram = build_diagram(parse_entries(chat_text), include_builds=include_builds)
-    return (
+    """Render a full CHAT.diagram.md file (header, fenced mermaid blocks, phase recap sections) from CHAT.md text."""
+    parts = [
         "# CHAT.md — Conversation Flow\n\n"
         "Auto-generated from `agents/CHAT.md` by `bobp chat-diagram`. "
         "Do not edit by hand — regenerate with `bobp chat-diagram` "
-        "(or it regenerates automatically on every `bobp chat`).\n\n"
-        f"```mermaid\n{diagram}\n```\n"
-    )
+        "(or it regenerates automatically on every `bobp chat`)."
+    ]
+    for kind, body in build_blocks(parse_entries(chat_text), include_builds=include_builds):
+        parts.append(f"```mermaid\n{body}\n```" if kind == "diagram" else body)
+    return "\n\n".join(parts) + "\n"
 
 
 def regenerate(chat_file, diagram_file, include_builds=False):

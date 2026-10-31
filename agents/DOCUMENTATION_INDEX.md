@@ -13,6 +13,7 @@ Type `*help` for complete command reference with examples.
 ### Getting Started
 - **[STARTUP.md](../STARTUP.md)** - LLM startup instructions
 - **[docs/WALKTHROUGH.md](../docs/WALKTHROUGH.md)** - Step-by-step user walkthrough: building an app with Bob Protocol
+- **[docs/PERSONA_EVALUATION.md](../docs/PERSONA_EVALUATION.md)** - Set up, run, and review persona evaluations
 - **[docs/SDLC.md](../docs/SDLC.md)** - Project toolchain, quality gates, and change lifecycle
 - **[skills/init/SKILL.md](skills/init/SKILL.md)** - Canonical session initialization & resume skill
 - **[skills/prep-clear/SKILL.md](skills/prep-clear/SKILL.md)** - Pre-clear checkpointing & state preservation skill

@@ -70,6 +70,40 @@ def extract_rubric(template: str) -> str:
     return template.split(RUBRIC_START, 1)[1].split(RUBRIC_END, 1)[0].strip()
 
 
+def extract_rubric_criteria(
+    rubric_text: str, scenario: str = ""
+) -> list[dict[str, Any]]:
+    """Turn rubric checklist rows into individually judgeable criteria."""
+    criteria: list[dict[str, Any]] = []
+    for line in rubric_text.splitlines():
+        match = re.match(r"^\s*-\s+\[ \]\s+(.*\S)\s*$", line)
+        if not match:
+            continue
+        text = match.group(1)
+        # The DECISION rubric's FAIL row is an aggregate gate, not a separate criterion.
+        if text.startswith("**FAIL**"):
+            continue
+        label_match = re.match(r"\*\*(?P<label>[^*]+?):\*\*\s*.+", text)
+        if not label_match:
+            label_match = re.match(r"\*\*(?P<label>[^*]+)\*\*\s*—\s*.+", text)
+        label = label_match.group("label") if label_match else f"criterion-{len(criteria) + 1}"
+        criterion: dict[str, Any] = {
+            "id": f"criterion_{len(criteria) + 1}",
+            "label": label,
+            "text": text,
+            "applicable": True,
+        }
+        if "For any eval scenario that specifies an L1" in text and not re.search(
+            r"\bL[1-4]\b", scenario
+        ):
+            criterion["applicable"] = False
+            criterion["not_applicable_reason"] = "Scenario does not specify an L1–L4 task level."
+        criteria.append(criterion)
+    if not criteria:
+        raise ValueError("Eval rubric must contain at least one unchecked criterion row.")
+    return criteria
+
+
 def create_test_project(project: Path) -> None:
     """Create a tiny real project directory for bobp install."""
     project.mkdir(parents=True)
@@ -193,6 +227,23 @@ def check_node_prerequisites() -> str | None:
     return None
 
 
+def check_jev_prerequisites() -> str | None:
+    """Return an actionable error if the Jev SDK or API key is unavailable."""
+    if not os.environ.get("TYPESAFE_API_KEY"):
+        return (
+            "persona-eval requires a TypeSafe API key for rubric grading. "
+            "Set TYPESAFE_API_KEY in your environment and retry."
+        )
+    try:
+        import typesafe_sdk  # noqa: F401
+    except ImportError:
+        return (
+            "persona-eval requires the typesafe-sdk Python package. "
+            "Install bobp with its declared dependencies or run `uv sync`."
+        )
+    return None
+
+
 def _npm_eval_dependencies() -> dict[str, str]:
     """Read pinned npm requirements from the package's dependency manifest."""
     manifest = json.loads(files(ASSET_PACKAGE).joinpath("package.json").read_text(encoding="utf-8"))
@@ -249,6 +300,49 @@ def _global_node_runtime_error() -> str | None:
     return None
 
 
+def _fixture_project_context(project: Path) -> str:
+    """Summarize fixture capabilities and verifiable paths for the Jev judge."""
+    project_declaration = (project / "agents" / "PROJECT.md").read_text(encoding="utf-8")
+    available_files = sorted(
+        path.relative_to(project).as_posix()
+        for path in (project / "agents").rglob("SKILL.md")
+    )
+    template_root = project / "agents" / "templates"
+    if template_root.exists():
+        available_files.extend(
+            path.relative_to(project).as_posix()
+            for path in template_root.glob("*.md")
+            if path.is_file()
+        )
+    docs_root = project / "docs"
+    if docs_root.exists():
+        available_files.extend(
+            path.relative_to(project).as_posix()
+            for path in docs_root.rglob("*.md")
+            if path.is_file()
+        )
+    available_files.sort()
+    git = shutil.which("git")
+    git_worktree_available = False
+    if git:
+        result = subprocess.run(
+            [git, "rev-parse", "--is-inside-work-tree"],
+            cwd=project,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        git_worktree_available = result.returncode == 0 and result.stdout.strip() == "true"
+
+    return (
+        f"Declared project capabilities:\n{project_declaration}\n\n"
+        f"Git executable on PATH: {bool(git)}\n"
+        f"Fixture directory is inside a Git worktree: {git_worktree_available}\n"
+        "Available project files (paths relative to fixture root):\n"
+        + "\n".join(f"- {path}" for path in available_files)
+    )
+
+
 def build_config(
     suite: dict[str, Any], project: Path, rubric_text: str, project_context: str
 ) -> dict[str, Any]:
@@ -268,42 +362,55 @@ def build_config(
             "Create the requested artifact in the specified path. Do not commit changes "
             "or use network access. Choose routine conventions without asking the user."
         )
-    judge_provider = {
-        "id": "openai:codex-sdk",
-        "config": {
-            "model": MODEL,
-            "working_dir": str(project),
-            "skip_git_repo_check": True,
-            "sandbox_mode": "read-only",
-            "approval_policy": "never",
-            "network_access_enabled": False,
-            "web_search_mode": "disabled",
-        },
+    assertion_config: dict[str, Any] = {
+        "scenario": suite["request"],
+        "artifact_path": str(_project_path(project, artifact)),
+        "artifact_relative_path": artifact,
+        "project_context": project_context,
+        "persona": suite["persona"],
+        "rubric_text": rubric_text,
+        "persona_skill_text": (project / "agents" / suite["persona"] / "SKILL.md").read_text(
+            encoding="utf-8"
+        ),
     }
-    rubric_context = ""
-    if suite["rubric"].endswith("_template_PERSONA_SKILL.md"):
-        rubric_context = (
-            " This is a project-local persona skill in the installed target, not a persona "
-            "packaged by BobProtocol, so the packaged-copy instruction is not applicable. "
-            "A link to the canonical bob-protocol shared skill satisfies inherited "
-            "state/chat/handoff rules; do not require redundant links to transitive dependencies. "
-            "The stated project-local state-file path is sufficient for inherited state guidance; "
-            "do not demand extra persona-specific checkpoint mechanics unless the linked "
-            "shared protocol requires them."
-        )
+    skill_assertion_config = {
+        "persona": suite["persona"],
+        "expected_skill_text": (project / "agents" / suite["persona"] / "SKILL.md").read_text(
+            encoding="utf-8"
+        ),
+    }
     if suite.get("evaluation_scope") == "personality-behavior":
         target_skill_text = (project / artifact).read_text(encoding="utf-8")
-        rubric_text = (
-            "Evaluate only this persona-upgrade scope. Inspect the existing target persona skill at "
-            f"{artifact}: its Personality Traits & Values section must explicitly state the shared "
-            "baseline traits courteous, succinct, and respectful; include a role-fitting demeanor; "
-            "and list 3–5 useful, role-specific working values. Then evaluate the provider's final "
-            "response to the scenario against the persona's role and the additional behavior criteria "
-            f"below. The full target skill content is included as evidence; do not rely on a workspace "
-            f"read. Do not score unrelated legacy instructions, responsibilities, or command-interface "
-            f"criteria.\n\nTarget skill content for {artifact}:\n```markdown\n{target_skill_text}\n```"
-            f"\n\nAdditional behavior criteria:\n{suite['behavior_criteria']}"
+        behavior_criteria = [
+            item.strip()
+            for item in suite["behavior_criteria"].split(";")
+            if item.strip()
+        ]
+        assertion_config.update(
+            {
+                "evaluation_scope": "personality-behavior",
+                "target_skill_text": target_skill_text,
+                "rubric_criteria": [
+                    *(
+                        {
+                            "id": f"behavior_{index}",
+                            "label": f"Behavior {index}",
+                            "text": f"The persona's final response satisfies this scenario behavior criterion: {text}",
+                        }
+                        for index, text in enumerate(behavior_criteria, start=1)
+                    ),
+                ],
+            }
         )
+    else:
+        assertion_config.update(
+            {
+                "evaluation_scope": "artifact",
+                "rubric_criteria": extract_rubric_criteria(rubric_text, suite["request"]),
+            }
+        )
+
+    jev_assertion = Path(__file__).with_name("persona_eval_jev.py").resolve()
     return {
         "description": f"BobProtocol eval catalog: {suite['id']}",
         "tags": {"suite": suite["id"], "persona": suite["persona"]},
@@ -332,30 +439,15 @@ def build_config(
                     else f"{suite['id']} uses its installed skill and produces a rubric-compliant artifact"
                 ),
                 "assert": [
-                    {"type": "skill-used", "value": suite["persona"]},
                     {
-                        "type": "agent-rubric",
-                        "value": (
-                            (
-                                f"The target skill at {artifact} already exists; inspect its personality section "
-                                "and assess the provider's final response to the scenario. "
-                                if suite.get("evaluation_scope") == "personality-behavior"
-                                else f"Review the generated artifact at {artifact}. It must exist. "
-                            )
-                            + "Judge the applicable pass/fail criteria in the following "
-                            "artifact rubric. Judge paths and commands against this "
-                            "installed target project. The following is the authoritative "
-                            "capability declaration from that fixture's agents/PROJECT.md; "
-                            "ignore capabilities from the host checkout. In particular, do "
-                            "not require a Via Integration section when via is disabled. "
-                            f"{rubric_context}\n\n"
-                            f"Fixture agents/PROJECT.md:\n```markdown\n{project_context}\n```\n\n"
-                            "PASS only if all other applicable "
-                            "criteria pass; otherwise fail.\n\n"
-                            f"{rubric_text}"
-                        ),
-                        "threshold": 1.0,
-                        "provider": judge_provider,
+                        "type": "python",
+                        "value": f"file://{jev_assertion}:assert_skill_used",
+                        "config": skill_assertion_config,
+                    },
+                    {
+                        "type": "python",
+                        "value": f"file://{jev_assertion}:grade_with_jev",
+                        "config": assertion_config,
                     },
                 ],
             }
@@ -365,7 +457,7 @@ def build_config(
 
 def run_suite(root: Path, suite: dict[str, Any], repeat: int = 1) -> int:
     """Run repeated, isolated copies of one catalog suite."""
-    prerequisite_error = check_node_prerequisites()
+    prerequisite_error = check_jev_prerequisites() or check_node_prerequisites()
     if prerequisite_error:
         print(prerequisite_error, file=sys.stderr)
         return 2
@@ -393,7 +485,7 @@ def run_suite(root: Path, suite: dict[str, Any], repeat: int = 1) -> int:
         artifact_path = _project_path(project, suite["artifact"])
         rubric_path = _project_path(project, suite["rubric"])
         rubric_text = extract_rubric(rubric_path.read_text())
-        project_context = (project / "agents" / "PROJECT.md").read_text()
+        project_context = _fixture_project_context(project)
         config = build_config(suite, project, rubric_text, project_context)
         config_path = run_dir / "promptfooconfig.json"
         config_path.write_text(json.dumps(config, indent=2) + "\n")
@@ -401,7 +493,14 @@ def run_suite(root: Path, suite: dict[str, Any], repeat: int = 1) -> int:
         isolated_tmp = run_dir / "tmp"
         isolated_tmp.mkdir(exist_ok=True)
         env = os.environ.copy()
-        env.update({"TMPDIR": str(isolated_tmp), "TMP": str(isolated_tmp), "TEMP": str(isolated_tmp)})
+        env.update(
+            {
+                "TMPDIR": str(isolated_tmp),
+                "TMP": str(isolated_tmp),
+                "TEMP": str(isolated_tmp),
+                "PROMPTFOO_PYTHON": sys.executable,
+            }
+        )
         promptfoo = shutil.which("promptfoo")
         if not promptfoo:
             print("The global Promptfoo command is not on PATH. Add npm's global executable directory to PATH and retry.", file=sys.stderr)

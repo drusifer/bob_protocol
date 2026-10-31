@@ -53,6 +53,17 @@ Use this path when `bobp persona-eval --list` shows a suite for the target.
 5. **Trin — Verify in a fresh fixture.** Rerun the same suite after the change. A pass requires every required assertion to pass, or to have an explicit reviewer-approved false-positive override backed by artifact/trace evidence; report raw and adjudicated outcomes separately. For a material change, also complete the three-run repeat and pass at least one relevant holdout suite when available. A rerun without a target or validated test change is not progress.
 6. **Close or escalate.** On pass, record the before/after reports, specific behavior change, and remaining limits. If the same failure persists for two focused fix-and-verify iterations, stop, post the evidence, consult Oracle, and ask the user before another attempt, following the shared anti-loop rule.
 
+### Jev Rubric and Context Guidance
+
+There is no separate TypeSafe/Jev style guide in this repository. The persona evaluator uses the installed `typesafe-sdk`'s `Choice` classifier and ordered `Score` rubric together: classify each criterion as `meets`, `partially_meets`, or `does_not_meet`, and record a three-level rubric score (expected value 0–2) with its confidence and probabilities.
+
+- Keep one classifier and one score question per atomic, observable rubric check. Split compound checks so a result identifies the missing dimension instead of grading a bundle of unrelated requirements.
+- Put the criterion itself in `instructions`. In `Choice.criteria`, define evidence for every classification level. In `Score.criteria`, use the same ordered anchors. Do not change the classifier labels or score scale to compensate for unclear criteria.
+- Use `meets` as the pass gate and require the classifier label to match the score distribution's most likely rubric level. Do not infer a score level by rounding the probability-weighted expected score; preserve that expected score separately as a diagnostic. If the two most likely levels differ, flag the component for human review instead of silently overriding either result.
+- Give Jev the relevant scenario, full rubric, persona skill instructions, candidate response or artifact, expected artifact path, and a concise inventory of declared capabilities and available project paths. Include only fixture files needed to judge the work; omit chat logs, state files, secrets, and unrelated transcripts.
+- Jev does not return a natural-language rationale for these typed questions. Make component labels and rubric rows specific enough to locate a miss in the report. Review low-confidence or classifier/score-disagreement results against the artifact and fixture evidence.
+- Keep the selected class, raw score, confidence values, probabilities, and pass decision in the report. Record a reviewer-supported false-positive override separately from the raw result.
+
 Promptfoo runs and scores scenarios; `*judge` coordinates diagnosis, ownership, changes, and verification. A
 failed rubric result is feedback to inspect, not an instruction to edit until green. Keep a holdout case
 separate from the scenario used to diagnose and fix the target to reduce test-specific overfitting.

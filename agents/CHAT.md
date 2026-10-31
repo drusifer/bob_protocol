@@ -745,3 +745,81 @@ deploy-forgejo  Build and publish the bobp wheel/sdist to pi-patch Forgejo PyPI
  Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
 .............                                                            [100%]
 13 passed, 87 deselected in 0.26s
+
+---
+[<small>2026-10-30 18:48:12</small>] [**Oracle**]->[**Bob**] *handoff*:
+ Oracle documentation grooming is complete. Handing off persona-template update: add the professional and highly ethical shared baseline plus distinct original Sayings for each persona and the template. @Bob *reprompt all personas and template
+
+---
+[<small>2026-10-30 18:51:03</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+..............                                                           [100%]
+14 passed, 87 deselected in 0.25s
+
+---
+[<small>2026-10-30 19:04:48</small>] [**Bob**]->[**all**] *prompt update*:
+ Persona sayings and ethical baseline added to the template and all nine personas; 14 focused tests and package parity checks pass. Eval raw results and interruption are recorded in agents/bob/persona_sayings_eval_2026-10-30.md. User asked to switch eval execution from Codex to TypeScript; awaiting whether this means the wrapper, model provider, or both. @all
+
+---
+[<small>2026-10-30 19:22:35</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+...................                                                      [100%]
+19 passed, 87 deselected in 0.28s
+
+---
+[<small>2026-10-30 19:24:41</small>] [**Bob**]->[**all**] *prompt eval update*:
+ Jev grader integrated with typed per-criterion scores and local objective checks; 19 focused tests pass. Full catalog result: 6/10 pass. Bob and Trin have behavior/rubric failures; Morpheus and Mouse have raw skill-used misses while Jev content checks pass. Raw results and paths are recorded in agents/bob/persona_sayings_eval_2026-10-30.md. @all
+
+---
+[<small>2026-10-30 19:38:43</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+....................                                                     [100%]
+20 passed, 87 deselected in 0.43s
+
+---
+[<small>2026-10-30 19:45:12</small>] [**Bob**]->[**Oracle**] *handoff*:
+ Checkpoint: focused evaluator tests pass; Trin, Morpheus design, and Mouse now pass. Bob still scores Tool/repository fit 0.31 and Behavior check 0.13 despite a staged-diff example; a nested Bob Protocol link is malformed. Please assess whether this is an artifact gap or Jev/context mismatch before another retry; anti-loop guard pauses for Oracle/user guidance.
+
+---
+[<small>2026-10-30 19:47:19</small>] [**Bob**]->[**all**] *prompt update*:
+ Oracle review complete: Sayings are not implicated (0.91). Confirmed Bob fixes now cover relative shared-skill links and Git worktree/no-diff failures; the example requires verifiable output. Morpheus, Mouse, and Trin pass; Bob awaits manual direction before another eval per anti-loop. Mirror parity and diff check pass. Why: remaining Behavior score lacks Jev rationale.
+
+---
+[<small>2026-10-30 20:00:26</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+......................                                                   [100%]
+22 passed, 87 deselected in 0.46s
+
+---
+[<small>2026-10-30 20:04:19</small>] [**Bob**]->[**all**] *prompt eval update*:
+ Jev input improvements verified: Bob passed 3/3 fresh runs (borderline repository-path probabilities 0.51–0.60) plus a final 16/16 component run; Morpheus design holdout passed 4/4. Focused tests 22 passed; mirror parity/diff checks pass. Added Noul true/false descriptions, atomic rubric checks, relevant fixture inventory, and guidance to Judge/SDLC. Why: Jev provides probabilities without explanations.
+
+---
+[<small>2026-10-30 20:35:34</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make test-q | /home/drusifer/Projects/bob_protocol/build/build.out
+......................                                                   [100%]
+22 passed, 87 deselected in 0.29s
+
+---
+[<small>2026-10-30 20:38:59</small>] [**Bob**]->[**all**] *prompt eval update*:
+ Jev now uses per-criterion Choice classes plus ordered Score. The class is gated against Score's most likely level; expected score/confidence/probabilities remain visible, mismatches fail with a review reason. Bob passed 3/3 fresh runs; Morpheus holdout passed 4/4. Focused tests 22 passed; diff/mirror checks pass. Why: use the rubric's level directly while retaining quantitative diagnostics.
+
+---
+[<small>2026-10-30 20:53:22</small>] [**Bob**]->[**Oracle**] *handoff*:
+ Bob's Jev evaluator/rubric work is complete and checkpointed in state.md. Handing off the new task: Oracle, groom docs and add a user-facing guide to the Choice+Score persona eval system. Why: explain setup, operation, reports, scoring/classification, data flow, and failure review.
+
+---
+[<small>2026-10-30 20:53:38</small>] [**User**]->[**all**] *request*:
+ User request: groom the documentation and add user-facing docs for the new persona evaluation system. Why: users need a reliable guide to setup, running evals, Choice+Score results, data flow, and failure triage.
+
+---
+[<small>2026-10-30 20:53:42</small>] [**Oracle**]->[**all**] *resume*:
+ Resuming as Oracle from Bob's handoff; I'll groom the persona-evaluation docs and add a dedicated guide.
+
+---
+[<small>2026-10-30 20:56:09</small>] [**Oracle**]->[**all**] *ora groom docs*:
+ Added the persona evaluation guide covering setup, current suites, Choice+Score pass rules, report triage, and TypeSafe data flow. Linked it from README and the docs index; synchronized packaged copies. CLI help/catalog, six links, mirrors, and diff whitespace checks pass. @Bob *prompt review
+
+---
+[<small>2026-10-30 21:00:40</small>] [**Oracle**]->[**all**] *checkpoint*:
+ Oracle checkpoint saved in agents/oracle/state.md. Persona evaluation docs are complete and mirrored; no active Oracle task remains. Workspace has uncommitted evaluator/persona upgrades and docs listed in state.md. No commit/push performed. Ready for context clear; resume with /init or *resume.

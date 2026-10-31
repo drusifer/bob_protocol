@@ -9,6 +9,7 @@
 - 2026-10-30: Reviewed Tank's new `docs/SDLC.md`; all six SDLC rubric checks pass. README and live/packaged documentation indexes link to the SDLC. Full tests and Mermaid lint pass; clean rebuild is explicitly deferred to sprint close.
 - 2026-10-30: Groomed README-linked onboarding docs against current CLI and SDLC: root README now uses uv, walkthrough uses the local source checkout while Bobp is unpublished, and setup-agent-links side effects are explicit. Added `*judge` and `*ora report` to command references; synchronized shipped copies. Whitespace, local links, and five mirror checks pass.
 - 2026-10-30: During CLI verification, mistakenly invoked `bobp setup-agent-links --help`; the subcommand ignored `--help` and ran setup. Output reported 33 links created and replacement of the existing Codex `via` MCP entry with this project. No teardown was run because it could remove intended links; disclosed in team chat and final report.
+- 2026-10-30: Added `docs/PERSONA_EVALUATION.md` covering prerequisites/setup, suite selection, Choice+Score grading and pass rules, reports/failure review, and TypeSafe data flow. Linked it from the root README, documentation index, and packaged README; synchronized the packaged doc and index copies.
 
 ### Key Findings
 - Root README lacked a contents list and documented `make test` directly; docs index had an outdated update date and referenced an archive file that does not exist.
@@ -20,6 +21,51 @@
 
 ### Important Notes
 - Avoid modifying existing unrelated in-progress changes while grooming; the workspace already contained uv-policy edits.
+- The working tree remains uncommitted. Current modifications include Bob's evaluator/Choice+Score implementation and tests (`bobp/tools/persona_eval.py`, `bobp/tools/persona_eval_jev.py`, `tests/test_persona_eval.py`, `pyproject.toml`, `uv.lock`, `docs/SDLC.md`); persona, template, Judge, and packaged-template upgrades across `agents/` and `bobp/templates/`; Bob's evaluation note; Oracle's docs/index/README additions; and updated team chat/state. New Oracle docs are `docs/PERSONA_EVALUATION.md` and its packaged mirror `bobp/templates/docs/PERSONA_EVALUATION.md`. No commit or push was requested or performed.
+- Exact `git status --short` paths at checkpoint:
+  ```text
+  README.md
+  agents/AGENTS.md
+  agents/CHAT.diagram.md
+  agents/CHAT.md
+  agents/DOCUMENTATION_INDEX.md
+  agents/bob/SKILL.md
+  agents/bob/state.md
+  agents/cypher/SKILL.md
+  agents/morpheus/SKILL.md
+  agents/mouse/SKILL.md
+  agents/neo/SKILL.md
+  agents/oracle/SKILL.md
+  agents/oracle/state.md
+  agents/skills/judge/SKILL.md
+  agents/smith/SKILL.md
+  agents/tank/SKILL.md
+  agents/templates/_template_PERSONA_SKILL.md
+  agents/trin/SKILL.md
+  bobp/templates/README.md
+  bobp/templates/agents/AGENTS.md
+  bobp/templates/agents/DOCUMENTATION_INDEX.md
+  bobp/templates/agents/bob/SKILL.md.txt
+  bobp/templates/agents/cypher/SKILL.md.txt
+  bobp/templates/agents/morpheus/SKILL.md.txt
+  bobp/templates/agents/mouse/SKILL.md.txt
+  bobp/templates/agents/neo/SKILL.md.txt
+  bobp/templates/agents/oracle/SKILL.md.txt
+  bobp/templates/agents/skills/judge/SKILL.md.txt
+  bobp/templates/agents/smith/SKILL.md.txt
+  bobp/templates/agents/tank/SKILL.md.txt
+  bobp/templates/agents/templates/_template_PERSONA_SKILL.md
+  bobp/templates/agents/trin/SKILL.md.txt
+  bobp/templates/docs/PERSONA_EVALUATION.md
+  bobp/tools/persona_eval.py
+  bobp/tools/persona_eval_jev.py
+  docs/PERSONA_EVALUATION.md
+  docs/SDLC.md
+  pyproject.toml
+  tests/test_persona_eval.py
+  uv.lock
+  agents/bob/persona_sayings_eval_2026-10-30.md (untracked)
+  ```
 
 ## Current Task
 **Status:** Completed
@@ -28,14 +74,13 @@
 **Completed:** 2026-10-30
 
 ### Task Description
-Groom README-linked onboarding and command-reference documentation against current project behavior.
+Add user-facing documentation for the new persona evaluation system and groom the links and packaged documentation copies.
 
 ### Progress
-- [x] Reviewed root README links: startup guide, walkthrough, shorthand guide, SDLC, documentation index, and packaged README.
-- [x] Checked install and setup commands against current uv/CLI help, `docs/SDLC.md`, and the Bob tools skill.
-- [x] Replaced stale pip/PyPI examples, clarified the local editable checkout walkthrough and user-level setup effects, and documented Judge and Oracle report triggers.
-- [x] Synchronized packaged docs and help copies; local Markdown links, `git diff --check`, and all five mirror checks pass.
-- [x] Logged the accidental `setup-agent-links --help` execution and its reported Codex/Via config effect.
+- [x] Verified `persona-eval --help`, current suite catalog, grader implementation, and existing SDLC guidance.
+- [x] Documented prerequisites, setup, suite selection/repeats, Choice+Score grading, report triage, and TypeSafe data handling.
+- [x] Added links from README, documentation index, and packaged README; synchronized the packaged guide and index mirrors.
+- [x] Validated the six added local documentation links, exact mirror equality, and `git diff --check`.
 
 ### Blockers
 No documentation blockers. User confirmed the setup-created discovery links and Via/Codex configuration can remain; no teardown is needed.
@@ -45,10 +90,10 @@ None.
 
 ## Next Steps
 ### Immediate Next Action
-Report the grooming results and the setup-command side effect to the user; no further documentation action is queued.
+No active task is pending. On resume, read `agents/CHAT.md` and this state, then follow the user's next request. If asked to continue the evaluation docs, compare `docs/PERSONA_EVALUATION.md` with `bobp/templates/docs/PERSONA_EVALUATION.md` and run `git diff --check` after edits.
 
 ### Waiting On
-Tank handoff.
+User follow-up; the docs task is complete.
 
 ### Planned Work
 - [x] None queued.

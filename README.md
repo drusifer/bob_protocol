@@ -75,6 +75,7 @@ uv run bobp make test   # captured project test run
 - [Startup guide](STARTUP.md) — initialize or resume a Bob Protocol session
 - [Shorthand guide](SHORTHAND_GUIDE.md) — command and skill trigger reference
 - [Walkthrough](docs/WALKTHROUGH.md) — build an example application with the workflow
+- [Persona evaluation](docs/PERSONA_EVALUATION.md) — setup, run, and review persona eval suites
 - [SDLC](docs/SDLC.md) — toolchain, quality gates, and change lifecycle
 - [Packaged template README](bobp/templates/README.md) — framework scaffolding shipped by `bobp`
 

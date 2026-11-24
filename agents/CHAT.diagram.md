@@ -208,6 +208,9 @@ sequenceDiagram
     Note right of Oracle: "Grooming complete. Fixed<br/>38 broken links<br/>(DOCUMENTATION_INDEX.md<br/>+<br/>PERSONA_EVALUATION.md),<br/>synced STARTUP/SHORTHAND<br/>/WALKTHROUGH/index<br/>mirro…"
     User->>All: "request"
     Note right of User: "User requested: bump<br/>version and commit. Why:<br/>log version bump and<br/>commit authorization."
+    Note over Mouse,Tank: 📅 2026-11-24
+    User->>All: "request"
+    Note right of User: "User requested: release<br/>bobp 0.3.1 with merged<br/>Dependabot dependency<br/>updates. Why: log<br/>release authorization."
 ```
 
 ## Phase 3 so far

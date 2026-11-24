@@ -363,9 +363,12 @@ make: *** [Makefile:22: install] Error 2
  User requested: bump version and commit. Why: log version bump and commit authorization.
 
 ---
-[<small>2026-11-24 00:02:09</small>] [**make**]->[**all**] *build*:
- Build PASSED | make security-scan-secrets | /home/drusifer/Projects/bob_protocol/build/build.out
-gitleaks detect --source . --no-banner
-12:02AM INF 100 commits scanned.
-12:02AM INF scanned ~7319814 bytes (7.32 MB) in 3.77s
-12:02AM INF no leaks found
+[<small>2026-11-24 00:04:19</small>] [**make**]->[**all**] *build*:
+ Build PASSED | make release | /home/drusifer/Projects/bob_protocol/build/build.out
+gh release create v0.3.0 --generate-notes --title "bobp 0.3.0"
+https://github.com/drusifer/bob_protocol/releases/tag/v0.3.0
+* [new tag]         v0.3.0 -> v0.3.0
+
+---
+[<small>2026-11-24 00:08:51</small>] [**User**]->[**all**] *request*:
+ User requested: release bobp 0.3.1 with merged Dependabot dependency updates. Why: log release authorization.

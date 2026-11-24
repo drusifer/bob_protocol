@@ -25,8 +25,8 @@ TLDR:
 | `bobp chat "<msg>" --persona X --cmd Y --to Z` | Append short structured messages to `agents/CHAT.md` | `agents/CHAT.md`, `agents/CHAT.diagram.md` |
 | `bobp chat-diagram [--include-builds]` | Render `agents/CHAT.md` as a Mermaid sequence diagram, for humans following the conversation flow | `agents/CHAT.diagram.md` |
 | `bobp make [-v/-vv/-vvv] <target>` | Run this project's own `make <target>`, capturing build/test output and posting build status | `build/build.out`, `agents/CHAT.md` |
-| `bobp setup-agent-links` | Create discovery links for Claude, Codex, root instruction files, delegate MCP setup to via, ensure the via index exists, register via with Codex MCP, and create missing project capabilities | `.claude/skills`, `$CODEX_HOME/skills`, root symlinks; `.mcp.json` via `via`; `.via/index.db`; Codex config via `codex mcp add`; `agents/PROJECT.md` when absent |
-| `bobp teardown-agent-links [--dry-run]` | Remove discovery links created by setup and delegate MCP teardown to via/Codex | `.claude/skills`, `$CODEX_HOME/skills`, root symlinks; via may remove its own MCP config; Codex config via `codex mcp remove` |
+| `bobp setup-agent-links` | Create discovery links for Claude, Codex, root instruction files, delegate MCP setup to via, ensure the via index exists, register via with Codex MCP, and create missing project capabilities | `.agents/skills`, `$CODEX_HOME/skills`, root symlinks; `.mcp.json` via `via`; `.via/index.db`; Codex config via `codex mcp add`; `agents/PROJECT.md` when absent |
+| `bobp teardown-agent-links [--dry-run]` | Remove discovery links created by setup and delegate MCP teardown to via/Codex | `.agents/skills`, `$CODEX_HOME/skills`, root symlinks; via may remove its own MCP config; Codex config via `codex mcp remove` |
 
 ## General Rules
 
@@ -35,7 +35,7 @@ TLDR:
 - Inspect `build/build.out` only when the tail or exit code is not enough.
 - Keep chat messages under 256 characters. For longer status, write a Markdown summary file and chat the path plus a short summary.
 - Consecutive `bobp make` build-status messages replace the previous build entry instead of appending, so routine build/test runs do not fill `agents/CHAT.md`.
-- Run `bobp setup-agent-links` after changing `agents/skills/*/SKILL.md`, adding a new persona folder (`agents/<name>/`), or installing BobProtocol into another project.
+- Run `bobp setup-agent-links` after changing `.agents/skills/*/SKILL.md`, adding a new persona folder (`agents/<name>/`), or installing BobProtocol into another project.
 - Run teardown with `--dry-run` first. It removes only symlinks that point back into the current project and leaves Codex `.system` skills untouched.
 
 ## bobp chat
@@ -96,11 +96,11 @@ bobp setup-agent-links
 It first converts an older project to the current layout: persona folders with the old `.docs`-suffixed names are renamed to `agents/<name>/` and the path references in the project's agent docs are updated to match (chat logs are left as history). `bobp update` runs the same conversion before refreshing files.
 
 It discovers:
-- personas from `agents/<name>/SKILL.md` (any folder directly under `agents/` that holds a `SKILL.md`)
-- shared skills from `agents/skills/*/SKILL.md`
+- personas from `.agents/skills/<name>/SKILL.md` (any folder directly under `agents/` that holds a `SKILL.md`)
+- shared skills from `.agents/skills/*/SKILL.md`
 
 It creates:
-- `.claude/skills/<name>` links for Claude-style skill discovery, one per persona and shared skill. If `.claude/skills` is itself a symlink into `agents/` (e.g. `-> agents/skills`), it is replaced with a real directory first so persona links never land inside `agents/`
+- `.agents/skills/<name>` links for Claude-style skill discovery, one per persona and shared skill. If `.agents/skills` is itself a symlink into `agents/` (e.g. `-> .agents/skills`), it is replaced with a real directory first so persona links never land inside `agents/`
 - `$CODEX_HOME/skills/<name>` links so Codex loads BobProtocol skills on startup
 - root instruction links: `AGENTS.md`, `GEMINI.md`, `CHATGPT.md`, `.cursorrules`, `.github/copilot-instructions.md`
 - via MCP integration by running `via install mcp` when `via` is installed, then hardening `.mcp.json` with `HOME=<project-root>` and `--no-web`
@@ -120,7 +120,7 @@ bobp teardown-agent-links
 ```
 
 It removes only generated links/config owned by this project:
-- `.claude/skills/*` symlinks that point into this repo
+- `.agents/skills/*` symlinks that point into this repo
 - `$CODEX_HOME/skills/*` symlinks that point into this repo
 - root instruction symlinks: `AGENTS.md`, `GEMINI.md`, `CHATGPT.md`, `.cursorrules`, `.github/copilot-instructions.md`
 - via MCP integration by running `via uninstall mcp`

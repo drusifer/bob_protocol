@@ -43,7 +43,10 @@ SUBCOMMANDS = {
 
 
 def print_help() -> None:
-    print("usage: bobp <subcommand> [args...]")
+    print("usage: bobp [-V | --version] <subcommand> [args...]")
+    print()
+    print("options:")
+    print("  -V, --version   print the installed bobp version and exit")
     print()
     print("subcommands:")
     for name in sorted(SUBCOMMANDS):
@@ -63,12 +66,22 @@ def main(argv: "list[str] | None" = None) -> int:
         print_help()
         return 0
 
+    if argv[0] in ("-V", "--version"):
+        import bobp
+
+        print(f"bobp {bobp.__version__}")
+        return 0
+
     name, rest = argv[0], argv[1:]
     module_path = SUBCOMMANDS.get(name)
     if module_path is None:
         print(f"bobp: unknown subcommand '{name}'", file=sys.stderr)
         print_help()
         return 1
+
+    from bobp.tools import _version_check
+
+    _version_check.check(name)
 
     module = importlib.import_module(module_path)
     sys.argv = [name, *rest]

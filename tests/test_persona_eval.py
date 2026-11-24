@@ -3,6 +3,7 @@ import subprocess
 import sys
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
@@ -11,30 +12,250 @@ from bobp.tools import persona_eval_jev
 from bobp.tools.persona_eval_jev import grade_with_jev
 
 
-def test_load_catalog_requires_unique_suites_and_required_fields(tmp_path: Path) -> None:
-    path = tmp_path / "catalog.json"
-    suite = {
-        "id": "bob-persona-authoring",
-        "persona": "bob",
-        "request": "Create a persona skill.",
-        "artifact": "agents/example/SKILL.md",
-        "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+def _eval_entry(**overrides: Any) -> dict[str, Any]:
+    entry: dict[str, Any] = {
+        "id": 1,
+        "prompt": "Create a persona skill.",
+        "expected_output": "A persona skill file.",
+        "assertions": ["The artifact meets the rubric"],
+        "bobp": {
+            "suite": "example-authoring",
+            "persona": "example",
+            "artifact": "agents/example/SKILL.md",
+            "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+            "tags": ["persona-artifact"],
+        },
     }
-    path.write_text(json.dumps({"version": 1, "suites": [suite]}))
-
-    assert persona_eval.load_catalog(path) == [suite]
-
-    path.write_text(json.dumps({"version": 2, "suites": [suite]}))
-    with pytest.raises(ValueError, match="version 1"):
-        persona_eval.load_catalog(path)
-
-    path.write_text(json.dumps({"version": 1, "suites": [suite, suite]}))
-    with pytest.raises(ValueError, match="Duplicate eval suite id"):
-        persona_eval.load_catalog(path)
+    entry.update(overrides)
+    return entry
 
 
-def test_repository_catalog_has_matching_persona_suites() -> None:
-    suites = persona_eval.load_catalog()
+def _write_evals(root: Path, skill: str, evals: list[dict[str, Any]], **top: Any) -> Path:
+    path = root / skill / "evals" / "evals.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    document = {"skill_name": skill, "evals": evals, **top}
+    path.write_text(json.dumps(document))
+    return path
+
+
+def test_load_evals_reads_per_skill_files_in_the_standard_shape(tmp_path: Path) -> None:
+    _write_evals(tmp_path, "example", [_eval_entry()])
+
+    suites = persona_eval.load_evals(tmp_path)
+
+    assert suites == [
+        {
+            "id": "example-authoring",
+            "persona": "example",
+            "skill": "example",
+            "eval_id": 1,
+            "request": "Create a persona skill.",
+            "expected_output": "A persona skill file.",
+            "assertions": ["The artifact meets the rubric"],
+            "artifact": "agents/example/SKILL.md",
+            "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+            "tags": ["persona-artifact"],
+        }
+    ]
+
+
+def test_load_evals_also_reads_shared_skills_and_keeps_personality_fields(tmp_path: Path) -> None:
+    entry = _eval_entry()
+    entry["bobp"].update(
+        {"suite": "chat-behavior", "evaluation_scope": "personality-behavior",
+         "behavior_criteria": "Stays brief."}
+    )
+    _write_evals(tmp_path / "skills", "chat", [entry])
+
+    (suite,) = persona_eval.load_evals(tmp_path)
+
+    assert suite["skill"] == "chat"
+    assert suite["evaluation_scope"] == "personality-behavior"
+    assert suite["behavior_criteria"] == "Stays brief."
+
+
+@pytest.mark.parametrize(
+    ("mutate", "message"),
+    [
+        (lambda e: e.pop("prompt"), "prompt"),
+        (lambda e: e.update(prompt="  "), "prompt"),
+        (lambda e: e.pop("expected_output"), "expected_output"),
+        (lambda e: e.update(id="1"), "id"),
+        (lambda e: e.update(id=True), "id"),
+        (lambda e: e.update(assertions="one string"), "assertions"),
+        (lambda e: e.update(assertions=[]), "assertions"),
+        (lambda e: e.update(assertions=["ok", 3]), "assertions"),
+        (lambda e: e.pop("bobp"), "bobp"),
+        (lambda e: e["bobp"].pop("suite"), "bobp.suite"),
+        (lambda e: e["bobp"].pop("rubric"), "bobp.rubric"),
+        (lambda e: e["bobp"].update(tags="x"), "bobp.tags"),
+        (lambda e: e.update(files="evals/files/a.csv"), "files"),
+        (lambda e: e.update(files=["../outside.csv"]), "escapes"),
+        (lambda e: e.update(files=["/etc/passwd"]), "escapes"),
+        (lambda e: e["bobp"].update(artifact="../../etc/passwd"), "escapes"),
+        (lambda e: e["bobp"].update(rubric="/etc/hosts"), "escapes"),
+    ],
+)
+def test_load_evals_rejects_bad_entries_naming_the_file_and_field(
+    tmp_path: Path, mutate: Any, message: str
+) -> None:
+    entry = _eval_entry()
+    mutate(entry)
+    path = _write_evals(tmp_path, "example", [entry])
+
+    with pytest.raises(ValueError) as error:
+        persona_eval.load_evals(tmp_path)
+
+    assert str(path) in str(error.value)
+    assert message in str(error.value)
+
+
+def test_load_evals_rejects_structural_problems(tmp_path: Path) -> None:
+    path = _write_evals(tmp_path, "example", [_eval_entry(), _eval_entry()])
+    with pytest.raises(ValueError, match="Duplicate eval id 1"):
+        persona_eval.load_evals(tmp_path)
+
+    path.write_text(json.dumps({"skill_name": "other", "evals": [_eval_entry()]}))
+    with pytest.raises(ValueError, match="skill_name"):
+        persona_eval.load_evals(tmp_path)
+
+    path.write_text(json.dumps({"skill_name": "example", "evals": []}))
+    with pytest.raises(ValueError, match="evals"):
+        persona_eval.load_evals(tmp_path)
+
+    path.write_text("{not json")
+    with pytest.raises(ValueError, match="not valid JSON"):
+        persona_eval.load_evals(tmp_path)
+
+    path.write_text(json.dumps([1, 2]))
+    with pytest.raises(ValueError, match="JSON object"):
+        persona_eval.load_evals(tmp_path)
+
+
+def test_load_evals_rejects_duplicate_suite_names_across_files(tmp_path: Path) -> None:
+    _write_evals(tmp_path, "one", [_eval_entry()])
+    _write_evals(tmp_path, "two", [_eval_entry()])
+
+    with pytest.raises(ValueError, match="Duplicate eval suite id: example-authoring"):
+        persona_eval.load_evals(tmp_path)
+
+
+def test_load_evals_refuses_symlinked_or_oversized_files(tmp_path: Path) -> None:
+    real = tmp_path / "real.json"
+    real.write_text(json.dumps({"skill_name": "example", "evals": [_eval_entry()]}))
+    link = tmp_path / "example" / "evals" / "evals.json"
+    link.parent.mkdir(parents=True)
+    link.symlink_to(real)
+    with pytest.raises(ValueError, match="symlink"):
+        persona_eval.load_evals(tmp_path)
+
+    link.unlink()
+    link.write_text(" " * (persona_eval.MAX_EVALS_BYTES + 1))
+    with pytest.raises(ValueError, match="too large"):
+        persona_eval.load_evals(tmp_path)
+
+
+def test_list_json_prints_only_a_json_array_on_stdout(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    persona_eval.main(["--list", "--json"])
+
+    captured = capsys.readouterr()
+    listed = json.loads(captured.out)
+    assert {item["suite"] for item in listed} >= {"bob-persona-authoring", "neo-personality"}
+    assert set(listed[0]) == {"suite", "persona", "skill", "tags"}
+
+
+def test_json_flag_requires_list() -> None:
+    with pytest.raises(SystemExit):
+        persona_eval.main(["--json", "neo"])
+
+
+def _suite(**overrides: Any) -> dict[str, Any]:
+    suite = {
+        "id": "neo-personality",
+        "persona": "neo",
+        "skill": "neo",
+        "eval_id": 1,
+        "request": (
+            "Use the Neo persona skill exposed at .agents/skills/neo/SKILL.md. "
+            "Review this function."
+        ),
+        "expected_output": "A review.",
+        "assertions": ["Reviews the function"],
+        "artifact": ".agents/skills/neo/SKILL.md",
+        "rubric": "agents/templates/_template_PERSONA_SKILL.md",
+        "tags": [],
+        "evaluation_scope": "personality-behavior",
+        "behavior_criteria": "Names a concrete defect",
+    }
+    suite.update(overrides)
+    return suite
+
+
+def _fixture_with_skill(tmp_path: Path) -> Path:
+    project = tmp_path / "project"
+    skill = project / ".agents" / "skills" / "neo"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text("## Personality Traits & Values\n\n## Sayings\n")
+    return project
+
+
+def test_baseline_config_drops_the_skill_check_and_the_skill_sentence(tmp_path: Path) -> None:
+    project = _fixture_with_skill(tmp_path)
+    suite = _suite()
+
+    with_skill = persona_eval.build_config(suite, project, "## Check\n- [ ] **A** — `A` x", "ctx")
+    baseline = persona_eval.build_config(
+        suite, project, "## Check\n- [ ] **A** — `A` x", "ctx", baseline=True
+    )
+
+    def assertion_names(config: dict[str, Any]) -> list[str]:
+        return [a["value"].rsplit(":", 1)[1] for a in config["tests"][0]["assert"]]
+
+    assert assertion_names(with_skill) == ["assert_skill_used", "grade_with_jev"]
+    assert assertion_names(baseline) == ["grade_with_jev"]
+    assert ".agents/skills/" in with_skill["prompts"][0]
+    assert ".agents/skills/" not in baseline["prompts"][0]
+    assert "Review this function." in baseline["prompts"][0]
+
+
+def test_baseline_config_reads_the_skill_text_from_the_reference_project(tmp_path: Path) -> None:
+    project = _fixture_with_skill(tmp_path)
+    baseline_project = tmp_path / "baseline"
+    baseline_project.mkdir()
+
+    config = persona_eval.build_config(
+        _suite(), baseline_project, "## Check\n- [ ] **A** — `A` x", "ctx",
+        baseline=True, reference_project=project,
+    )
+
+    jev = config["tests"][0]["assert"][0]["config"]
+    assert "Personality Traits" in jev["persona_skill_text"]
+    assert "Personality Traits" in jev["target_skill_text"]
+
+
+def test_expose_codex_skills_does_not_require_bob_when_told_not_to(tmp_path: Path) -> None:
+    project = _fixture_with_skill(tmp_path)
+
+    with pytest.raises(RuntimeError, match="Bob skill"):
+        persona_eval.expose_codex_skills(project)
+
+    persona_eval.expose_codex_skills(project, required=None)
+    assert (project / ".agents" / "skills" / "neo" / "SKILL.md").is_file()
+
+
+def test_every_packaged_evals_file_loads_and_matches_its_skill() -> None:
+    suites = persona_eval.load_evals()
+
+    assert len(suites) == 11
+    for suite in suites:
+        assert suite["skill"] == suite["persona"]
+        assert suite["assertions"]
+
+
+def test_repository_evals_has_matching_persona_suites() -> None:
+    suites = persona_eval.load_evals()
 
     assert {suite["id"] for suite in suites} == {
         "bob-persona-authoring",
@@ -125,14 +346,15 @@ def test_persona_rubric_splits_tool_fit_into_observable_checks() -> None:
 
 
 def test_fixture_project_context_includes_declared_capabilities_and_paths(tmp_path: Path) -> None:
-    (tmp_path / "agents/skills/chat").mkdir(parents=True)
-    (tmp_path / "agents/skills/chat/SKILL.md").write_text("# Chat")
+    (tmp_path / ".agents/skills/chat").mkdir(parents=True)
+    (tmp_path / ".agents/skills/chat/SKILL.md").write_text("# Chat")
+    (tmp_path / "agents").mkdir()
     (tmp_path / "agents/PROJECT.md").write_text("via: disabled\n")
 
     context = persona_eval._fixture_project_context(tmp_path)
 
     assert "via: disabled" in context
-    assert "agents/skills/chat/SKILL.md" in context
+    assert ".agents/skills/chat/SKILL.md" in context
     assert "Git executable on PATH:" in context
     assert "Fixture directory is inside a Git worktree:" in context
 
@@ -149,10 +371,10 @@ def test_prepare_test_project_runs_local_bobp_install_in_isolated_locations(
 
     assert (project / "README.md").is_file()
     assert (project / "pyproject.toml").is_file()
-    assert (project / "agents/bob/SKILL.md").read_text() == (
+    assert (project / ".agents/skills/bob/SKILL.md").read_text() == (
         root / "bobp/templates/agents/bob/SKILL.md.txt"
     ).read_text()
-    assert (project / "agents/morpheus/SKILL.md").read_text() == (
+    assert (project / ".agents/skills/morpheus/SKILL.md").read_text() == (
         root / "bobp/templates/agents/morpheus/SKILL.md.txt"
     ).read_text()
     assert (project / "agents/templates/_template_PERSONA_SKILL.md").is_file()
@@ -160,10 +382,12 @@ def test_prepare_test_project_runs_local_bobp_install_in_isolated_locations(
     assert installed_decision_template.read_text() == (
         root / "bobp/templates/agents/templates/_template_DECISION.md"
     ).read_text()
-    assert (project / ".agents/skills/bob").is_symlink()
+    assert (project / ".agents/skills/bob").is_dir()
+    assert not (project / ".agents/skills/bob").is_symlink()
     assert (project / ".agents/skills/bob/SKILL.md").is_file()
     assert (project / ".agents/skills/morpheus/SKILL.md").is_file()
-    assert (temp_root / "codex-home/skills/bob").is_symlink()
+    # bobp no longer registers skills in the Codex home at all.
+    assert not (temp_root / "codex-home/skills").exists()
 
 
 def test_setup_prints_global_npm_instructions_without_installing(
@@ -252,7 +476,7 @@ def test_build_config_checks_skill_use_and_artifact_rubric(tmp_path: Path) -> No
         "artifact": "agents/example/SKILL.md",
         "rubric": "agents/templates/_template_PERSONA_SKILL.md",
     }
-    installed_skill = tmp_path / "agents/bob/SKILL.md"
+    installed_skill = tmp_path / ".agents/skills/bob/SKILL.md"
     installed_skill.parent.mkdir(parents=True)
     installed_skill.write_text("# Bob persona skill\n", encoding="utf-8")
 
@@ -289,14 +513,14 @@ def test_build_config_checks_skill_use_and_artifact_rubric(tmp_path: Path) -> No
 def test_personality_eval_requires_ethical_baseline_and_original_sayings(
     tmp_path: Path,
 ) -> None:
-    skill_path = tmp_path / "agents/example/SKILL.md"
+    skill_path = tmp_path / ".agents/skills/example/SKILL.md"
     skill_path.parent.mkdir(parents=True)
     skill_path.write_text("## Personality Traits & Values\n\n## Sayings\n")
     suite = {
         "id": "example-personality",
         "persona": "example",
         "request": "Respond to this scenario.",
-        "artifact": "agents/example/SKILL.md",
+        "artifact": ".agents/skills/example/SKILL.md",
         "rubric": "agents/templates/_template_PERSONA_SKILL.md",
         "evaluation_scope": "personality-behavior",
         "behavior_criteria": "Shows the role's judgment.",
@@ -339,7 +563,7 @@ def test_build_config_does_not_apply_persona_context_to_decision_artifacts(
         "artifact": "docs/decisions/ADR-0001-example.md",
         "rubric": "agents/templates/_template_DECISION.md",
     }
-    installed_skill = tmp_path / "agents/morpheus/SKILL.md"
+    installed_skill = tmp_path / ".agents/skills/morpheus/SKILL.md"
     installed_skill.parent.mkdir(parents=True)
     installed_skill.write_text("# Morpheus persona skill\n", encoding="utf-8")
 

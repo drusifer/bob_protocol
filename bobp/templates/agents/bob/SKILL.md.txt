@@ -20,7 +20,7 @@ TLDR:
 
 `bob-protocol`, `chat`, `make`, `init`
 
-> **Protocol**: This agent uses the Bob Protocol. See `agents/skills/bob-protocol/SKILL.md`
+> **Protocol**: This agent uses the Bob Protocol. See `.agents/skills/bob-protocol/SKILL.md`
 
 ## Role
 
@@ -68,7 +68,7 @@ All Bob Protocol personas are **highly ethical expert professionals**: courteous
   6. Draft the `SKILL.md` using the Agent Template below. Keep YAML frontmatter to supported fields: `name` and `description` are required; put optional triggers and skill dependencies in Markdown sections, not custom frontmatter keys.
   7. In `Requires`, list only shared skills this persona directly invokes. Do not repeat skills that are inherited through another required skill, such as `chat`, `init`, or `prep-clear` through `bob-protocol`.
   8. Apply every item in the Persona Skill Rubric. Resolve each failure before sign-off and record the result for reviews.
-  9. Validate the frontmatter, paths, commands, and shared-skill references against the repository. Resolve Markdown links from the generated `SKILL.md` location and confirm their targets exist. For a persona file at `agents/<name>/SKILL.md`, link a shared skill at `agents/skills/<skill>/SKILL.md` as `../skills/<skill>/SKILL.md`. Keep the canonical skill and packaged template synchronized, and run `bobp setup-agent-links` when adding a new agent or shared skill.
+  9. Validate the frontmatter, paths, commands, and shared-skill references against the repository. Resolve Markdown links from the generated `SKILL.md` location and confirm their targets exist. For a persona file at `.agents/skills/<name>/SKILL.md`, link a shared skill at `.agents/skills/<skill>/SKILL.md` as `../<skill>/SKILL.md`. Keep the canonical skill and packaged template synchronized, and run `bobp setup-agent-links` when adding a new agent or shared skill.
   10. For a tool-dependent persona, verify the required tool or repository prerequisite and define the response when it is unavailable. For Git tasks, check for a worktree (for example, `git rev-parse --show-toplevel`) and explain what to do if Git is missing, the command fails, or no staged diff exists. Add one compact example with explicit `Request`, `Action`, `Result`, and `Completion check` labels; keep it specific and short.
 
 ### 2. Agent Maintenance (`*reprompt`)
@@ -87,7 +87,7 @@ All Bob Protocol personas are **highly ethical expert professionals**: courteous
 
 ### 5. Session Initialization (`*init`)
 - **Trigger**: `*init` / `/init`
-- **Action**: Execute session initialization and ready team roster per `agents/skills/init/SKILL.md`
+- **Action**: Execute session initialization and ready team roster per `.agents/skills/init/SKILL.md`
 
 ## Command Interface
 
@@ -103,7 +103,7 @@ All Bob Protocol personas are **highly ethical expert professionals**: courteous
 
 ## State Management Protocol (CRITICAL)
 
-See instructions here -> `agents/skills/bob-protocol/SKILL.md`
+See instructions here -> `.agents/skills/bob-protocol/SKILL.md`
 
 **Bob Tweaks & Specifics:**
 - **State File**: `agents/bob/state.md` (Context, Current Task, Next Steps).
@@ -116,17 +116,19 @@ See instructions here -> `agents/skills/bob-protocol/SKILL.md`
 2. **Keep CHAT.md Short**: Brief updates only, details in `bob/`
 3. **Monitor State**: Ensure all personas save/load state files
 4. **Quality Standards**: New agents must follow Global Agent Standards
-5. **Common Skill Inheritance & Redirect Refs**: When an agent uses a common skill (e.g. `bob-protocol`, `via`, `make`, `test-runner`, `sprint`), do NOT duplicate common instructions. Use a redirect reference: `See instructions here -> agents/skills/<skill>/SKILL.md`. In the persona file, specify only persona-specific tweaks, constraints, or overrides.
+5. **Common Skill Inheritance & Redirect Refs**: When an agent uses a common skill (e.g. `bob-protocol`, `via`, `make`, `test-runner`, `sprint`), do NOT duplicate common instructions. Use a redirect reference: `See instructions here -> .agents/skills/<skill>/SKILL.md`. In the persona file, specify only persona-specific tweaks, constraints, or overrides.
 
 ## Agent Template
 
-Create persona skills from [`agents/templates/_template_PERSONA_SKILL.md`](../templates/_template_PERSONA_SKILL.md). Replace all placeholders, apply the embedded PERSONA rubric to the completed draft, then remove the template note and entire rubric block before saving the persona skill. The rubric belongs to the authoring template, not the generated persona’s runtime instructions. Keep its packaged counterpart in `bobp/templates/agents/templates/` synchronized.
+Create persona skills from [`agents/templates/_template_PERSONA_SKILL.md`](../../../agents/templates/_template_PERSONA_SKILL.md). Replace all placeholders, apply the embedded PERSONA rubric to the completed draft, then remove the template note and entire rubric block before saving the persona skill. The rubric belongs to the authoring template, not the generated persona’s runtime instructions. Keep its packaged counterpart in `bobp/templates/agents/templates/` synchronized.
+
+Bob also owns the template inventory in [`agents/templates/ARTIFACTS.md`](../../../agents/templates/ARTIFACTS.md) (and its packaged copy in `bobp/templates/agents/templates/ARTIFACTS.md`). Whenever adding, renaming, or updating an artifact template, update both copies and verify the embedded `CATALOG` check.
 
 ---
 
 ## Via Integration
 
-See instructions here -> `agents/skills/via/SKILL.md`
+See instructions here -> `.agents/skills/via/SKILL.md`
 
 **Bob Tweaks & Specifics:**
 - **Prompt Navigation**: Use `mcp__via__via_query` to find agent files and markdown sections before editing:
@@ -150,7 +152,7 @@ Use **via** for symbol/header lookup; use **Grep** for content search inside fil
 - **Write** — create new agent `SKILL.md` files from the template below
 
 ### Understanding the System
-- **Glob** — find all agent files: `agents/*/SKILL.md`, `agents/skills/*/SKILL.md`
+- **Glob** — find all agent files: `.agents/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md`
 - **Grep** — search for patterns, commands, or inconsistencies across all agent files
 
 ### Running Setup

@@ -23,9 +23,10 @@ class InstallTests(unittest.TestCase):
             target = Path(tmp)
             _install(target)
 
-            self.assertTrue((target / "agents" / "bob" / "SKILL.md").is_file())
-            self.assertFalse((target / "agents" / "bob" / "SKILL.md.txt").exists())
+            self.assertTrue((target / ".agents" / "skills" / "bob" / "SKILL.md").is_file())
+            self.assertFalse((target / ".agents" / "skills" / "bob" / "SKILL.md.txt").exists())
             self.assertFalse(list((target / "agents").rglob("*.txt")))
+            self.assertFalse(list((target / ".claude").rglob("*.txt")))
 
             chat = (target / "agents" / "CHAT.md").read_text()
             self.assertIn("Chat Message Template", chat)
@@ -80,7 +81,7 @@ class UpdateTests(unittest.TestCase):
             state_file.write_text("## Current Task\nreal in-progress work\n")
             chat_file = target / "agents" / "CHAT.md"
             chat_file.write_text("real chat history\n")
-            skill_file = target / "agents" / "neo" / "SKILL.md"
+            skill_file = target / ".agents" / "skills" / "neo" / "SKILL.md"
             skill_file.write_text("stale persona content from an older bobp version\n")
 
             with patch.object(_bob_manage, "_run_setup_agent_links"):
@@ -89,7 +90,7 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual(state_file.read_text(), "## Current Task\nreal in-progress work\n")
             self.assertEqual(chat_file.read_text(), "real chat history\n")
             self.assertIn("Senior Software Engineer", skill_file.read_text())  # refreshed from template
-            self.assertTrue((target / "agents" / "skills" / "make" / "SKILL.md").is_file())
+            self.assertTrue((target / ".agents" / "skills" / "make" / "SKILL.md").is_file())
             self.assertFalse(list((target / "agents").rglob("*.txt")))
 
     def test_update_initialises_state_when_missing(self):
@@ -110,10 +111,12 @@ class UpdateTests(unittest.TestCase):
             target = Path(tmp)
             _install(target)
             agents_dir = target / "agents"
-            for skill in sorted(agents_dir.glob("*/SKILL.md")):
-                skill.parent.rename(agents_dir / f"{skill.parent.name}.docs")
+            # An older project kept each persona's SKILL.md beside its memory, in <name>.docs/.
+            for state in sorted(agents_dir.glob("*/state.md")):
+                persona = state.parent
+                persona.rename(agents_dir / f"{persona.name}.docs")
+                (agents_dir / f"{persona.name}.docs" / "SKILL.md").write_text("stale\n")
             (agents_dir / "neo.docs" / "state.md").write_text("real in-progress work\n")
-            (agents_dir / "neo.docs" / "SKILL.md").write_text("stale\n")
 
             with patch.object(_bob_manage, "_run_setup_agent_links"), redirect_stdout(io.StringIO()):
                 _bob_manage.update(target)
@@ -122,7 +125,10 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual(
                 (agents_dir / "neo" / "state.md").read_text(), "real in-progress work\n"
             )
-            self.assertIn("Senior Software Engineer", (agents_dir / "neo" / "SKILL.md").read_text())
+            self.assertIn(
+                "Senior Software Engineer",
+                (target / ".agents" / "skills" / "neo" / "SKILL.md").read_text(),
+            )
 
 
 class PullTests(unittest.TestCase):
@@ -132,17 +138,20 @@ class PullTests(unittest.TestCase):
             _install(src)
             _install(dst)
 
-            (src / "agents" / "neo" / "SKILL.md").write_text("updated persona text\n")
-            new_file = src / "agents" / "skills" / "chat" / "brand_new_file.md"
+            (src / ".agents" / "skills" / "neo" / "SKILL.md").write_text("updated persona text\n")
+            new_file = src / ".agents" / "skills" / "chat" / "brand_new_file.md"
             new_file.write_text("should not be pulled in\n")
 
             with patch.object(_bob_manage, "find_project_root", return_value=dst):
                 _bob_manage.pull(src)
 
             self.assertEqual(
-                (dst / "agents" / "neo" / "SKILL.md").read_text(), "updated persona text\n"
+                (dst / ".agents" / "skills" / "neo" / "SKILL.md").read_text(),
+                "updated persona text\n",
             )
-            self.assertFalse((dst / "agents" / "skills" / "chat" / "brand_new_file.md").exists())
+            self.assertFalse(
+                (dst / ".agents" / "skills" / "chat" / "brand_new_file.md").exists()
+            )
 
 
 class CleanTests(unittest.TestCase):
@@ -176,7 +185,7 @@ class DiffTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             _install(target)
-            (target / "agents" / "neo" / "SKILL.md").write_text("locally modified\n")
+            (target / ".agents" / "skills" / "neo" / "SKILL.md").write_text("locally modified\n")
             import shutil
 
             shutil.rmtree(target / "agents" / "templates")
@@ -186,7 +195,7 @@ class DiffTests(unittest.TestCase):
                 _bob_manage.diff(target)
 
             output = buf.getvalue()
-            self.assertIn("Files differ: agents/neo/SKILL.md", output)
+            self.assertIn("Files differ: .agents/skills/neo/SKILL.md", output)
             self.assertIn("Only in template: agents/templates/", output)
 
 
@@ -208,7 +217,7 @@ class InstallCliIntegrationTests(unittest.TestCase):
                 capture_output=True, text=True, env=env,
             )
             self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertTrue((target / "agents" / "bob" / "SKILL.md").is_file())
+            self.assertTrue((target / ".agents" / "skills" / "bob" / "SKILL.md").is_file())
 
 
 if __name__ == "__main__":

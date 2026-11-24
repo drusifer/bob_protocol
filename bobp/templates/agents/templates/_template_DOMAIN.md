@@ -1,6 +1,6 @@
 <!--
 Domain Model & Ubiquitous Language specification template.
-Owned by Cypher (Product Manager) and Morpheus (Tech Lead) — see agents/cypher/SKILL.md and agents/morpheus/SKILL.md.
+Owned by Cypher (Product Manager) and Morpheus (Tech Lead) — see .agents/skills/cypher/SKILL.md and .agents/skills/morpheus/SKILL.md.
 Instantiated as `docs/DOMAIN.md` (or `docs/domain/<subdomain>.md` in multi-context projects).
 Remove this note and the check block when creating a real artifact; checks belong to templates.
 Reviewed by Smith and Morpheus using the DOMAIN rubric.

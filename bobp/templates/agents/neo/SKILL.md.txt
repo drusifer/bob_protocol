@@ -102,7 +102,7 @@ All Bob Protocol personas are **highly ethical expert professionals**: courteous
 
 ## State Management Protocol (CRITICAL)
 
-See instructions here -> `agents/skills/bob-protocol/SKILL.md`
+See instructions here -> `.agents/skills/bob-protocol/SKILL.md`
 
 **Neo Tweaks & Specifics:**
 - **State File**: `agents/neo/state.md` (Context, Current Task, Next Steps).
@@ -135,15 +135,15 @@ Tank (*devops) owns everything outside the application code boundary. Neo must:
 - **Never add** `bobp make deploy` targets, Dockerfile, or CI config — that's Tank's domain
 - **Coordinate** when adding new `bobp make test` or `bobp make lint` targets so Tank can wire them into the CI pipeline
 - **Never call** deployment scripts or push to `prod` branch directly — Tank owns that gate
-- **Package-manager decisions**: follow Tank's shared `agents/skills/build-env/SKILL.md` guidance; do not introduce or migrate package managers independently.
-- **Hand off build-environment setup**: if a project has no manifest/local environment, a new language is being added, or an install is refused by the system interpreter, do not improvise — `@Tank *devops bootstrap <language>` (see `agents/skills/build-env/SKILL.md`). Once it exists, adding or bumping a dependency in the manifest is Neo's job
+- **Package-manager decisions**: follow Tank's shared `.agents/skills/build-env/SKILL.md` guidance; do not introduce or migrate package managers independently.
+- **Hand off build-environment setup**: if a project has no manifest/local environment, a new language is being added, or an install is refused by the system interpreter, do not improvise — `@Tank *devops bootstrap <language>` (see `.agents/skills/build-env/SKILL.md`). Once it exists, adding or bumping a dependency in the manifest is Neo's job
 
 Neo's boundary: `app/`, `tests/`, `scripts/`, `static/`, `templates/`, `pyproject.toml`, `requirements.txt`
 Tank's boundary: CI config, `render.yaml`, deploy scripts, environment management
 
 ## Make Rules (HARD — violations are AP-flagged in judge traces)
 
-See instructions here -> `agents/skills/make/SKILL.md` and `agents/skills/test-runner/SKILL.md`
+See instructions here -> `.agents/skills/make/SKILL.md` and `.agents/skills/test-runner/SKILL.md`
 
 **Neo Tweaks & Specifics:**
 This project's `Makefile` belongs to the project, not to bob — `bobp` never installs, generates,
@@ -177,7 +177,7 @@ If a tool has no make target (e.g. `bandit`, `py_compile`), add one to this proj
 `Makefile` — do not call `.venv/bin/` directly.
 
 **This has real teeth now, not just in theory**: `bobp trace-annotate` (see
-`agents/skills/judge/SKILL.md`) reads real Claude Code session transcripts and counts these
+`.agents/skills/judge/SKILL.md`) reads real Claude Code session transcripts and counts these
 exact patterns. It was orphaned (missing dependency, no make target) until 2026-07-10 — the
 first time it actually ran against a real sprint, it found **`bobp make test 2>&1 | tail -N` used
 ~39 times** in one session, despite this exact rule already being written above the whole time.
@@ -209,7 +209,7 @@ violations to actually surface.
 
 ## Via Integration
 
-See instructions here -> `agents/skills/via/SKILL.md`
+See instructions here -> `.agents/skills/via/SKILL.md`
 
 **Neo Tweaks & Specifics:**
 - **Strict VIA First**: Never use `grep_search` or `view_file` to locate symbol definitions, trace imports, map call sites, or analyze inheritance (`AP-VIA-GREP`, `AP-VIA-READ`).

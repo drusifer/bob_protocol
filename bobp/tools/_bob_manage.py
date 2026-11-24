@@ -12,8 +12,9 @@ TLDR:
     distinction is what keeps a project's own real CHAT.md/state.md/lessons.md
     from ever being shipped as if they were generic template content.
     Template SKILL.md files ship as SKILL.md.txt (so they aren't picked up as
-    live skills before install); _restore_skill_extensions() renames them
-    back to SKILL.md in the target.
+    live skills before install); _skill_layout.place_skills() copies them into
+    the target's .agents/skills/<name>/SKILL.md as real files. Persona memory
+    (state.md, ...) is copied to agents/<persona>/ and stays there.
 """
 
 import filecmp
@@ -23,8 +24,15 @@ import subprocess
 import sys
 from pathlib import Path
 
-from . import setup_agent_links
-from ._common import find_persona_dirs, find_project_root
+from . import _path_rewrite, _skill_layout, setup_agent_links
+from ._common import STAMP_NAME, find_persona_dirs, find_project_root, write_text_safely
+
+
+def write_stamp(agents_dir: Path) -> None:
+    """Record which bobp version set up (or last updated) this project."""
+    import bobp
+
+    write_text_safely(agents_dir / STAMP_NAME, f"{bobp.__version__}\n")
 
 
 def templates_dir() -> Path:
@@ -39,9 +47,35 @@ def _require_dir(path: Path, label: str) -> None:
         sys.exit(1)
 
 
-def _restore_skill_extensions(agents_dir: Path) -> None:
-    for txt in agents_dir.rglob("SKILL.md.txt"):
-        txt.rename(txt.with_suffix(""))
+def _ignore_skill_sources(tmpl_agents: Path):
+    """copytree ignore function: skills are placed by _skill_layout, not copied into agents/."""
+
+    def ignore(directory: str, names: "list[str]") -> "set[str]":
+        here = Path(directory)
+        skipped = {name for name in names if name == "SKILL.md.txt"}
+        if here == tmpl_agents:
+            # Skills are placed by _skill_layout; AGENTS.md goes to the project root.
+            skipped.update({"skills", "AGENTS.md", "AGENT.md"} & set(names))
+        elif here.parent == tmpl_agents:
+            skipped.update(name for name in names if name in ("evals", "references"))
+        return skipped
+
+    return ignore
+
+
+def _print_lines(lines: "list[str]") -> None:
+    for line in lines:
+        print(line)
+
+
+def _report(actions: "list[_skill_layout.Action]") -> None:
+    _print_lines(_skill_layout.summarize(actions))
+
+
+def _codex_home() -> Path:
+    import os
+
+    return Path(os.environ.get("CODEX_HOME", "~/.codex")).expanduser()
 
 
 _TEMPLATE_CHECK_RE = re.compile(
@@ -56,8 +90,15 @@ def _copy_artifact_template(template: Path, destination: Path) -> None:
     destination.write_text(content)
 
 
-def _write_missing_state_files(agents_dir: Path, template_state: Path) -> None:
-    for _, persona_dir in find_persona_dirs(agents_dir):
+def _write_missing_state_files(
+    agents_dir: Path, template_state: Path, persona_names: "tuple[str, ...]" = ()
+) -> None:
+    """Give every persona a state.md; `persona_names` are personas that must exist even if new."""
+    for name in persona_names:
+        (agents_dir / name).mkdir(parents=True, exist_ok=True)
+    persona_dirs = dict(find_persona_dirs(agents_dir))
+    persona_dirs.update({name: agents_dir / name for name in persona_names})
+    for persona_dir in persona_dirs.values():
         state_file = persona_dir / "state.md"
         if not state_file.exists():
             _copy_artifact_template(template_state, state_file)
@@ -77,14 +118,6 @@ def _regen_chat_diagram(agents_dir: Path) -> None:
 
 def _run_setup_agent_links(target: Path) -> None:
     subprocess.run([sys.executable, "-m", "bobp.tools.setup_agent_links"], cwd=target)
-
-
-def _template_personas(tmpl: Path) -> list[tuple[str, Path]]:
-    """(persona name, template SKILL.md.txt) for every persona the templates ship."""
-    return [
-        (skill_txt.parent.name, skill_txt)
-        for skill_txt in sorted((tmpl / "agents").glob("*/SKILL.md.txt"))
-    ]
 
 
 def _merge_existing(src: Path, dst: Path) -> None:
@@ -122,10 +155,17 @@ def install(target: Path, force: bool = False) -> None:
 
     tmpl = templates_dir()
     print(f"Installing BobProtocol into {target}...")
-    shutil.copytree(tmpl / "agents", target / "agents", dirs_exist_ok=True)
-    _restore_skill_extensions(target / "agents")
-    print("Setting up Claude skill links...")
+    shutil.copytree(
+        tmpl / "agents",
+        target / "agents",
+        dirs_exist_ok=True,
+        ignore=_ignore_skill_sources(tmpl / "agents"),
+    )
+    print("Installing skills into .agents/skills/...")
+    _report(_skill_layout.place_skills(target, tmpl))
+    _print_lines(_skill_layout.describe(_skill_layout.ensure_root_agents_md(target, tmpl)))
     _run_setup_agent_links(target)
+    write_stamp(target / "agents")
     print(f"\nDone. BobProtocol installed in {target}")
     print("Run `bobp tldr` inside it to verify.")
 
@@ -139,21 +179,47 @@ def update(target: Path) -> None:
         # Convert an older-layout project first, so the refreshed persona files
         # below land in its existing (renamed) folders instead of beside them.
         setup_agent_links.migrate_legacy_layout(agents_dir)
-    shutil.copytree(tmpl / "agents" / "skills", agents_dir / "skills", dirs_exist_ok=True)
+    agents_dir.mkdir(parents=True, exist_ok=True)
     shutil.copytree(tmpl / "agents" / "templates", agents_dir / "templates", dirs_exist_ok=True)
-    for name, skill_txt in _template_personas(tmpl):
-        persona_dir = agents_dir / name
-        persona_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(skill_txt, persona_dir / "SKILL.md")
-    _restore_skill_extensions(agents_dir)
+
+    # Older layouts first: drop bobp's own links, then move skills out of agents/.
+    cleanup = _skill_layout.remove_legacy_links(target)
+    cleanup += _skill_layout.migrate_legacy(target, tmpl)
+    if cleanup:
+        print("Migrating from the older layout...")
+        _print_lines(_skill_layout.describe(cleanup))
+    print("Updating skills in .agents/skills/...")
+    _report(_skill_layout.place_skills(target, tmpl))
+    _print_lines(_skill_layout.describe(_skill_layout.ensure_root_agents_md(target, tmpl)))
+    owned = _skill_layout.read_manifest(agents_dir)
+    _print_lines(_skill_layout.describe(_skill_layout.remove_claude_skill_copies(target, owned)))
+    personas = sorted(set(_path_rewrite.PERSONAS) | {name for name, _ in find_persona_dirs(agents_dir)})
+    rewritten = _path_rewrite.rewrite_files(_path_rewrite.project_targets(target, owned), personas)
+    if rewritten:
+        print(f"Updated path references in {len(rewritten)} file(s) to the .agents/skills layout.")
+    if _skill_layout.gitignore_hides_skills(target):
+        print(
+            "Note: .gitignore ignores the whole .agents/ directory, so the skills in "
+            ".agents/skills/ will not be committed. Remove that ignore rule if you want to share them."
+        )
+    stale = _skill_layout.legacy_codex_links(target, _codex_home())
+    if stale:
+        print(
+            f"Note: {len(stale)} skill link(s) from older bobp versions remain in "
+            f"{_codex_home() / 'skills'}; `bobp teardown-agent-links` removes them."
+        )
 
     print("Ensuring agent state files are initialised...")
-    _write_missing_state_files(agents_dir, tmpl / "agents" / "templates" / "_template_state.md")
+    _write_missing_state_files(
+        agents_dir,
+        tmpl / "agents" / "templates" / "_template_state.md",
+        tuple(_skill_layout.persona_names(tmpl)),
+    )
     _ensure_chat_md(agents_dir, tmpl / "agents" / "templates" / "_template_CHAT.md")
     _regen_chat_diagram(agents_dir)
 
-    print("Updating Claude skill links...")
     _run_setup_agent_links(target)
+    write_stamp(agents_dir)
     print(f"\nDone. BobProtocol updated in {target}")
 
 
@@ -162,12 +228,13 @@ def pull(src: Path) -> None:
     root = find_project_root()
     agents_dir = root / "agents"
     print(f"Pulling BobProtocol updates from {src}...")
-    _merge_existing(src / "agents" / "skills", agents_dir / "skills")
+    # Only skills this project already owns are refreshed from the peer's .claude/skills/.
+    owned = _skill_layout.read_manifest(agents_dir)
+    for name in sorted(owned):
+        _merge_existing(
+            src / _skill_layout.SKILLS_DIR / name, root / _skill_layout.SKILLS_DIR / name
+        )
     _merge_existing(src / "agents" / "templates", agents_dir / "templates")
-    for name, persona_dir in find_persona_dirs(agents_dir):
-        src_skill = src / "agents" / name / "SKILL.md"
-        if src_skill.exists():
-            shutil.copy2(src_skill, persona_dir / "SKILL.md")
     print(f"\nDone. BobProtocol pulled from {src}")
 
 
@@ -194,18 +261,19 @@ def diff(target: Path) -> None:
     tmpl = templates_dir()
     print(f"Diffing BobProtocol template vs {target}")
     print()
-    for name in ("skills", "templates"):
-        src_dir = tmpl / "agents" / name
-        dst_dir = target / "agents" / name
-        if dst_dir.is_dir():
-            _diff_trees(src_dir, dst_dir)
-        else:
-            print(f"Only in template: agents/{name}/")
-    for name, skill_txt in _template_personas(tmpl):
-        tgt_file = target / "agents" / name / "SKILL.md"
+    src_dir = tmpl / "agents" / "templates"
+    dst_dir = target / "agents" / "templates"
+    if dst_dir.is_dir():
+        _diff_trees(src_dir, dst_dir)
+    else:
+        print("Only in template: agents/templates/")
+    for name, source, is_persona in _skill_layout.template_skills(tmpl):
+        template_file = source if is_persona else source / "SKILL.md.txt"
+        rel = f"{_skill_layout.SKILLS_DIR.as_posix()}/{name}/SKILL.md"
+        tgt_file = target / rel
         if tgt_file.is_file():
-            if skill_txt.read_bytes() != tgt_file.read_bytes():
-                print(f"Files differ: agents/{name}/SKILL.md")
+            if template_file.read_bytes() != tgt_file.read_bytes():
+                print(f"Files differ: {rel}")
         else:
-            print(f"Only in template: agents/{name}/SKILL.md")
+            print(f"Only in template: {rel}")
     print("\nDone.")

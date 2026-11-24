@@ -1,37 +1,23 @@
 #!/usr/bin/env python3
 """
-Setup Agent Discovery Links — creates symlinks so AI tools can find agent personas.
+Project setup — via MCP, project capabilities and .gitignore; creates no links.
 
 TLDR:
-    Converts older projects whose persona folders are agents/<name>.docs/ to
-    the current agents/<name>/ layout, removes the tool scripts older
-    projects carried in agents/tools/ now that they ship inside bobp, then
-    scans agents/<name>/ directories
-    for persona folders (identified by the presence of SKILL.md) and creates
-    the platform-specific symlinks each AI
-    tool expects: .claude/skills/<name>/ for Claude Code, $CODEX_HOME/skills/<name>/
-    for Codex, AGENTS.md / GEMINI.md / .cursorrules / CHATGPT.md /
-    .github/copilot-instructions.md at the project root for other tools, plus
-    a .agents/ -> agents/ directory symlink for Gemini CLI's agent tool.
-    Key functions: find_project_root() locates the repo root;
-    migrate_legacy_layout() renames agents/<name>.docs/ -> agents/<name>/ and
-    updates the path references in the project's agent docs (this module is
-    the only place that knows the old layout); remove_legacy_tools() deletes
-    the superseded agents/tools/*.py copies (leaving project-specific tools
-    and trace_rules.json alone); find_persona_dirs()
-    discovers persona dirs; find_shared_skills() finds agents/skills/*/;
-    setup_claude_skills() builds the .claude/skills/ tree; setup_codex_skills()
-    builds the Codex skill links; setup_root_symlinks() creates root-level links;
-    install_via_mcp() writes generic via MCP config; install_codex_via_mcp()
-    registers the same server with Codex using `codex mcp add`;
-    check_yaml_frontmatter() warns about missing
-    SKILL.md frontmatter; create_symlink() safely creates/replaces a symlink;
-    ensure_gitignore_entries() idempotently adds .mcp.json and .via/ to
-    .gitignore (both are machine-local and must never be committed).
-    Role in the system: a one-time setup script run from the project root; depends
-    on agents/<name>/SKILL.md files existing and produces the discovery artifacts
-    consumed by Claude Code, OpenAI Codex, Cursor, Gemini CLI, and GitHub Copilot.
-
+    Skills and personas are real directories in .agents/skills/ (placed by
+    `bobp install`/`bobp update`, see _skill_layout) and the shared instructions
+    are a real root AGENTS.md, so there is nothing left to link. What remains:
+    converts older projects whose persona folders are agents/<name>.docs/ to
+    the current agents/<name>/ layout (migrate_legacy_layout(), the only place
+    that knows that layout); removes the tool scripts older projects carried in
+    agents/tools/ now that they ship inside bobp (remove_legacy_tools(), leaving
+    project-specific tools and trace_rules.json alone); install_via_mcp() writes
+    generic via MCP config; install_codex_via_mcp() registers the same server
+    with Codex using `codex mcp add`; setup_project_capabilities() writes
+    agents/PROJECT.md when absent; ensure_gitignore_entries() idempotently adds
+    .mcp.json and .via/ to .gitignore (both are machine-local and must never be
+    committed). find_persona_dirs() discovers persona folders (agents/<name>/
+    holding state.md).
+    Role in the system: run from the project root by install/update and by hand.
 """
 
 import json
@@ -219,177 +205,9 @@ def remove_legacy_tools(agents_dir: Path) -> list[str]:
     return removed
 
 
-def find_shared_skills(agents_dir: Path) -> list[tuple[str, Path]]:
-    """Find shared skills in agents/skills/ directory."""
-    skills = []
-    skills_dir = agents_dir / "skills"
-
-    if not skills_dir.is_dir():
-        return skills
-
-    for item in skills_dir.iterdir():
-        if item.is_dir():
-            skill_file = item / "SKILL.md"
-            if skill_file.exists():
-                skills.append((item.name, item))
-
-    return skills
-
-
-def create_symlink(link_path: Path, target_path: Path, relative: bool = True) -> bool:
-    """Create a symlink, removing existing one if present."""
-    if link_path.exists() or link_path.is_symlink():
-        if link_path.is_symlink():
-            existing_target = link_path.resolve()
-            if existing_target == target_path.resolve():
-                return False
-            try:
-                link_path.unlink()
-            except OSError as exc:
-                print(f"  ⚠️  Skipping {link_path} - could not remove symlink: {exc}")
-                return False
-        else:
-            print(f"  ⚠️  Skipping {link_path} - exists and is not a symlink")
-            return False
-
-    if relative:
-        # Calculate relative path from link location to target
-        target = os.path.relpath(target_path, link_path.parent)
-    else:
-        target = target_path
-
-    try:
-        link_path.symlink_to(target)
-    except OSError as exc:
-        print(f"  ⚠️  Skipping {link_path} - could not create symlink: {exc}")
-        return False
-
-    return True
-
-
 def get_codex_home() -> Path:
     """Return Codex home, honoring CODEX_HOME when set."""
     return Path(os.environ.get("CODEX_HOME", "~/.codex")).expanduser()
-
-
-def setup_claude_skills(project_root: Path, personas: list, shared_skills: list) -> int:
-    """Create .claude/skills/ structure with symlinks to persona and shared skill folders."""
-    print("\n📁 Setting up Claude Skills (.claude/skills/)...")
-
-    skills_dir = project_root / ".claude" / "skills"
-    agents_dir = (project_root / "agents").resolve()
-    if skills_dir.is_symlink() and skills_dir.resolve().is_relative_to(agents_dir):
-        # A whole-directory link (e.g. .claude/skills -> agents/skills) would make the
-        # persona links below land inside agents/ itself, where they show up as
-        # untracked files and get rediscovered as shared skills. Swap it for a real
-        # directory; every skill it exposed is re-linked individually below.
-        target = skills_dir.resolve().relative_to(project_root.resolve())
-        skills_dir.unlink()
-        print(f"  ℹ️  Replaced .claude/skills -> {target} link with a real directory")
-    skills_dir.mkdir(parents=True, exist_ok=True)
-
-    count = 0
-
-    # Persona skills (agents/<name>/)
-    for persona_name, persona_dir in personas:
-        # Create symlink: .claude/skills/<name>/ -> agents/<name>/
-        skill_link = skills_dir / persona_name
-        if create_symlink(skill_link, persona_dir):
-            print(f"  ✅ {skill_link.relative_to(project_root)} -> {persona_dir.relative_to(project_root)}")
-            count += 1
-        else:
-            # Already linked
-            pass
-
-    # Shared skills (agents/skills/*/)
-    for skill_name, skill_dir in shared_skills:
-        skill_link = skills_dir / skill_name
-        if create_symlink(skill_link, skill_dir):
-            print(f"  ✅ {skill_link.relative_to(project_root)} -> {skill_dir.relative_to(project_root)}")
-            count += 1
-
-    return count
-
-
-def setup_codex_skills(project_root: Path, personas: list, shared_skills: list) -> int:
-    """Create $CODEX_HOME/skills/ links so Codex loads project skills on startup."""
-    codex_home = get_codex_home()
-    skills_dir = codex_home / "skills"
-
-    print(f"\n📁 Setting up Codex Skills ({skills_dir})...")
-
-    try:
-        skills_dir.mkdir(parents=True, exist_ok=True)
-    except OSError as exc:
-        print(f"  ⚠️  Could not create {skills_dir}: {exc}")
-        print("     Set CODEX_HOME to a writable Codex home and re-run this script.")
-        return 0
-
-    count = 0
-
-    for persona_name, persona_dir in personas:
-        skill_link = skills_dir / persona_name
-        if create_symlink(skill_link, persona_dir):
-            print(f"  ✅ {skill_link} -> {persona_dir.relative_to(project_root)}")
-            count += 1
-
-    for skill_name, skill_dir in shared_skills:
-        skill_link = skills_dir / skill_name
-        if create_symlink(skill_link, skill_dir):
-            print(f"  ✅ {skill_link} -> {skill_dir.relative_to(project_root)}")
-            count += 1
-
-    print("  ℹ️  Existing Codex system skills in .system/ were left untouched")
-    return count
-
-
-def setup_root_symlinks(project_root: Path, agents_dir: Path) -> int:
-    """Create discovery symlinks at project root for various AI tools."""
-    print("\n📁 Setting up root symlinks...")
-
-    agents_md = agents_dir / "AGENTS.md"
-    if not agents_md.exists():
-        print(f"  ⚠️  {agents_md} not found - skipping root symlinks")
-        print(f"      Create agents/AGENTS.md first with project instructions")
-        return 0
-
-    count = 0
-
-    # Singular alias inside agents/ -> agents/AGENT.md -> AGENTS.md
-    agents_agent_md_link = agents_dir / "AGENT.md"
-    if create_symlink(agents_agent_md_link, agents_md):
-        print("  ✅ agents/AGENT.md -> agents/AGENTS.md (Singular alias)")
-        count += 1
-
-    links = [
-        ("AGENTS.md", "OpenAI/Codex/Standard"),
-        ("AGENT.md", "OpenAI/Codex (Singular alias)"),
-        ("GEMINI.md", "Gemini CLI"),
-        (".cursorrules", "Cursor AI"),
-        ("CHATGPT.md", "ChatGPT Projects (Copy-Paste)"),
-    ]
-
-    for link_name, tool_name in links:
-        link = project_root / link_name
-        if create_symlink(link, agents_md):
-            print(f"  ✅ {link_name} -> agents/AGENTS.md ({tool_name})")
-            count += 1
-
-    # GitHub Copilot (specific directory)
-    github_dir = project_root / ".github"
-    github_dir.mkdir(exist_ok=True)
-    copilot_link = github_dir / "copilot-instructions.md"
-    if create_symlink(copilot_link, agents_md):
-        print(f"  ✅ .github/copilot-instructions.md -> agents/AGENTS.md (GitHub Copilot)")
-        count += 1
-
-    # Gemini CLI's agent tool discovers personas via a top-level .agents/ dir
-    dot_agents_link = project_root / ".agents"
-    if create_symlink(dot_agents_link, agents_dir):
-        print(f"  ✅ .agents -> agents (Gemini CLI agent tool)")
-        count += 1
-
-    return count
 
 
 def install_via_mcp(project_root: Path) -> bool:
@@ -591,7 +409,8 @@ Follow the repository instructions in `AGENTS.md` and persona state files.
 
 ## Key Artifacts
 - `agents/CHAT.md` — Team communication log
-- `agents/AGENTS.md` — Shared agent instructions
+- `AGENTS.md` — Shared agent instructions (project root)
+- `.agents/skills/` — Persona and shared skills
 - `agents/<name>/` — Persona state and instructions
 
 ## Notes
@@ -641,19 +460,6 @@ def ensure_gitignore_entries(project_root: Path) -> bool:
     return True
 
 
-def check_yaml_frontmatter(personas: list) -> list[str]:
-    """Check which persona files are missing YAML frontmatter."""
-    missing = []
-
-    for persona_name, persona_dir in personas:
-        skill_md = persona_dir / "SKILL.md"
-        content = skill_md.read_text()
-        if not content.startswith("---"):
-            missing.append(str(skill_md))
-
-    return missing
-
-
 def main():
     print("🔧 Agent Discovery Links Setup")
     print("=" * 40)
@@ -674,37 +480,12 @@ def main():
     personas = find_persona_dirs(agents_dir)
     if not personas:
         print("\n❌ No persona folders found!")
-        print("   Expected: agents/<name>/SKILL.md")
+        print("   Expected: agents/<name>/state.md")
         sys.exit(1)
 
     print(f"\nFound {len(personas)} personas:")
     for name, _ in personas:
         print(f"  • {name}")
-
-    # Find shared skills
-    shared_skills = find_shared_skills(agents_dir)
-    if shared_skills:
-        print(f"\nFound {len(shared_skills)} shared skills:")
-        for name, skill_dir in shared_skills:
-            print(f"  • {name}: {skill_dir.relative_to(agents_dir)}/SKILL.md")
-
-    # Check for YAML frontmatter
-    missing_frontmatter = check_yaml_frontmatter(personas)
-    if missing_frontmatter:
-        print("\n⚠️  Missing YAML frontmatter (recommended for Skills):")
-        for f in missing_frontmatter:
-            print(f"   • {f}")
-        print("\n   Add frontmatter like:")
-        print("   ---")
-        print("   name: persona-name")
-        print("   description: When to use this agent...")
-        print("   ---")
-
-    # Create symlinks
-    total = 0
-    total += setup_claude_skills(project_root, personas, shared_skills)
-    total += setup_codex_skills(project_root, personas, shared_skills)
-    total += setup_root_symlinks(project_root, agents_dir)
 
     # Delegate generic MCP setup to via, then register the server with Codex.
     via_index_ok = ensure_via_index(project_root)
@@ -715,12 +496,11 @@ def main():
     print("\n📄 Checking .gitignore for machine-local files...")
     ensure_gitignore_entries(project_root)
 
-    print(f"\n✅ Done! Created {total} symlinks.")
-    print("\nAgent discovery is now enabled for:")
-    print("  • Claude Code (.claude/skills/)")
-    print(f"  • OpenAI Codex ({get_codex_home() / 'skills'}/ and AGENTS.md)")
-    print("  • Cursor, Copilot (AGENTS.md)")
-    print("  • Gemini CLI (GEMINI.md, .agents/)")
+    print("\n✅ Done. No links were created.")
+    print("\nSkills are real directories in .agents/skills/ (Codex, Gemini CLI, Cursor, Copilot);")
+    print("the shared instructions are AGENTS.md at the project root.")
+    print("Claude Code does not read .agents/skills/; Gemini CLI also needs")
+    print('context.fileName to include "AGENTS.md" in its own settings.')
     if via_index_ok:
         print("  • via index (.via/index.db)")
     if via_ok:

@@ -14,7 +14,7 @@ Type `*help` anytime to see this. One AI switches between 9 specialized personas
 
 ## Session Lifecycle Triggers
 
-Formalized in `agents/skills/init/SKILL.md` & `agents/skills/prep-clear/SKILL.md`.
+Formalized in `.agents/skills/init/SKILL.md` & `.agents/skills/prep-clear/SKILL.md`.
 
 | Command / Trigger | Action | Primary Handler |
 |-------------------|--------|-----------------|
@@ -51,7 +51,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 ## The Team
 
 ### Bob — Prompt Engineer
-`agents/bob/SKILL.md` · prefix: `*prompt` (create) / `*reprompt` / `*learn`; `*new` is a creation alias
+`.agents/skills/bob/SKILL.md` · prefix: `*prompt` (create) / `*reprompt` / `*learn`; `*new` is a creation alias
 
 | Command | Action |
 |---------|--------|
@@ -62,7 +62,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*help` | Show this reference |
 
 ### Cypher — Product Manager
-`agents/cypher/SKILL.md` · prefix: `*pm`
+`.agents/skills/cypher/SKILL.md` · prefix: `*pm`
 
 | Command | Action |
 |---------|--------|
@@ -73,7 +73,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*pm doc <topic>` | Create a PRD or product document |
 
 ### Morpheus — Tech Lead
-`agents/morpheus/SKILL.md` · prefix: `*lead`
+`.agents/skills/morpheus/SKILL.md` · prefix: `*lead`
 
 | Command | Action |
 |---------|--------|
@@ -84,7 +84,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*lead refactor <target>` | Plan a refactoring strategy |
 
 ### Neo — Software Engineer
-`agents/neo/SKILL.md` · prefix: `*swe`
+`.agents/skills/neo/SKILL.md` · prefix: `*swe`
 
 | Command | Action |
 |---------|--------|
@@ -94,7 +94,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*swe refactor <target>` | Refactor code |
 
 ### Oracle — Knowledge Officer
-`agents/oracle/SKILL.md` · prefix: `*ora`
+`.agents/skills/oracle/SKILL.md` · prefix: `*ora`
 
 | Command | Action |
 |---------|--------|
@@ -107,7 +107,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*ora report <moniker>` | Archive the full sprint chat and reset the current log |
 
 ### Trin — QA Guardian
-`agents/trin/SKILL.md` · prefix: `*qa`
+`.agents/skills/trin/SKILL.md` · prefix: `*qa`
 
 | Command | Action |
 |---------|--------|
@@ -118,7 +118,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*qa repro <issue>` | Reproduce a bug |
 
 ### Mouse — Scrum Master
-`agents/mouse/SKILL.md` · prefix: `*sm`
+`.agents/skills/mouse/SKILL.md` · prefix: `*sm`
 
 | Command | Action |
 |---------|--------|
@@ -132,7 +132,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*sm velocity` | Team velocity metrics |
 
 ### Smith — Expert User & UX Advocate
-`agents/smith/SKILL.md` · prefix: `*user`
+`.agents/skills/smith/SKILL.md` · prefix: `*user`
 
 | Command | Action |
 |---------|--------|
@@ -145,7 +145,7 @@ Multi-persona autonomous workflows decomposed into two tiers:
 | `*user bug CMD: … | EXPECTED: … | ACTUAL: … | UX ISSUE: …` | File a usability defect |
 
 ### Tank — DevOps Engineer
-`agents/tank/SKILL.md` · prefix: `*devops`
+`.agents/skills/tank/SKILL.md` · prefix: `*devops`
 
 | Command | Action |
 |---------|--------|
@@ -190,12 +190,12 @@ Sprint close:
 
 ## State Management Protocol (CRITICAL)
 
-See `agents/skills/bob-protocol/SKILL.md`, `agents/skills/init/SKILL.md`, & `agents/skills/prep-clear/SKILL.md`.
+See `.agents/skills/bob-protocol/SKILL.md`, `.agents/skills/init/SKILL.md`, & `.agents/skills/prep-clear/SKILL.md`.
 
 - **ENTRY**: Read `agents/CHAT.md` (last 10–20 messages) → load `agents/[persona]/state.md`.
 - **WORK**: Update working memory (`state.md`), post brief updates to `agents/CHAT.md`.
 - **EXIT (Mandatory Hard Gate)**:
-  1. **Pre-Clear / Checkpoint**: Follow `agents/skills/prep-clear/SKILL.md` before `/clear` or persona switch. Update `agents/[persona]/state.md` (Context, Current Task progress %, Next Steps cold-start resume plan).
+  1. **Pre-Clear / Checkpoint**: Follow `.agents/skills/prep-clear/SKILL.md` before `/clear` or persona switch. Update `agents/[persona]/state.md` (Context, Current Task progress %, Next Steps cold-start resume plan).
   2. **Handoff Message**: `bobp chat "<summary> @NextPersona *command" --persona <Name> --cmd handoff --to <next>`.
   3. Never switch personas or clear context without completing both steps.
 

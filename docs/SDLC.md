@@ -89,6 +89,8 @@ Requests come from the user. Use Bob Protocol planning loops for multi-step work
 
 Update `bobp.__version__` in `bobp/__init__.py` for a release. `bobp make build` creates `dist/`; `deploy-forgejo` uses a script in the external pi-patch checkout. Public PyPI releases use trusted publishing: `bobp make release` (section 3) tags `v<version>` and creates the GitHub Release, which triggers `.github/workflows/release.yml`. The publish job runs in the GitHub environment `pypi`, which requires reviewer approval; PyPI trusts repo `drusifer/bob_protocol`, workflow `release.yml`, environment `pypi`. Versions are immutable on PyPI, so bump `__version__` and push to `main` before each release. `bobp 0.1.0` was published this way on 2026-10-31 and verified with `pip install bobp`.
 
+`bobp --version` prints `bobp.__version__`, the only place the version is set. `bobp install` and `bobp update` record that version in the target project as `agents/.bobp-version` (one line, committed with the project). Every other subcommand compares it with the running bobp and, if it is missing, unreadable or older, prints one stderr line with the `bobp update <project>` command and carries on; it never prompts or modifies the project. `BOBP_NO_VERSION_CHECK=1` turns the notice off. The stamp is untrusted input (see SEC-005): it is opened without following symlinks and must be a regular file.
+
 ## 8. CI and deployment
 
 `.github/workflows/ci.yml` runs pytest and a CLI help check on pushes to `main` and pull requests using pip and Python 3.10–3.12, plus a `secrets` job that scans full git history with a pinned, checksum-verified gitleaks binary as a server-side backstop for the local pre-commit hook. All workflows use a read-only token by default, every action is pinned to a commit SHA (Dependabot's weekly `github-actions` updates keep the pins current), and only the publish job requests `id-token: write`. `.github/workflows/release.yml` handles published releases. No new Actions workflow or commit hook is part of the local persona-eval gate.
@@ -98,11 +100,12 @@ Update `bobp.__version__` in `bobp/__init__.py` for a release. `bobp make build`
 - Local development uses uv/Python 3.15; CI still uses pip/Python 3.10–3.12 and does not cover the newest runtime.
 - Mermaid has no npm lockfile. Local Node 24.13.0 passes lint but emits a transitive dependency engine warning requiring Node 24.15.0 (or 22.22.2+).
 - Promptfoo's Codex target provider uses local subscription auth; Jev grading uses the external TypeSafe API and is not run in CI. PyPI trusted publishing is configured (section 7).
-- Full tests and lint passed in the existing uv environment; the clean `distclean` rebuild remains for Tank's sprint-close conformance check.
+- `bobp make distclean` deletes `build/`, where `bobp make` keeps its own output capture, so the wrapper ends with a `FileNotFoundError` for `build/build.out` after the clean has actually finished. Run `distclean` and `install` as separate commands (the next `bobp make` recreates `build/`). Observed at Sprint 2 close; not yet fixed.
+- Clean rebuild (`distclean`, `install`, `test`, `lint`) passed at Sprint 2 close, 2026-11-01.
 
 ## 10. Conformance check
 
 At sprint close, Tank runs `uv run bobp make distclean`, `uv sync --python 3.15 --locked --extra dev`, `uv run bobp make test`, and all other applicable gates. Confirm Python imports are declared and `uv.lock` matches; eval package changes update its npm lockfile; Make targets match section 3; runtime data stays in `build/`; `.venv/`, `node_modules/`, and generated data remain ignored; workflows still match sections 5 and 8; and the sprint followed section 6.
 
 ---
-*Last verified: 2026-10-30 against workspace based on `a976401` by Tank.*
+*Last verified: 2026-11-01 against workspace based on `ee7ce0e` plus uncommitted Sprint 2 changes, by Tank.*

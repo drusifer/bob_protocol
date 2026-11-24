@@ -1,4 +1,4 @@
-"""Run Promptfoo catalog evaluations against a fresh local BobProtocol install."""
+"""Run Promptfoo evaluations from each skill's evals/evals.json against a fresh local install."""
 
 from __future__ import annotations
 
@@ -11,8 +11,11 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from importlib.resources import files
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
+
+from . import persona_eval_workspace as workspace
+from .persona_eval_workspace import baseline_request
 
 ASSET_PACKAGE = "bobp.tools.persona_eval_assets"
 MODEL = "gpt-6-luna"
@@ -32,26 +35,120 @@ def find_project_root(start: Path | None = None) -> Path:
     return current
 
 
-def load_catalog(path: Path | None = None) -> list[dict[str, Any]]:
-    """Load and validate the package's versioned evaluation catalog or a test file."""
-    if path is None:
-        catalog_text = files(ASSET_PACKAGE).joinpath("catalog.json").read_text(encoding="utf-8")
-    else:
-        catalog_text = path.read_text(encoding="utf-8")
-    catalog = json.loads(catalog_text)
-    if catalog.get("version") != 1 or not isinstance(catalog.get("suites"), list):
-        raise ValueError("Eval catalog must use version 1 and contain a suites list.")
-    suites = catalog["suites"]
-    ids: set[str] = set()
-    for suite in suites:
-        required = ("id", "persona", "request", "artifact", "rubric")
-        if any(not isinstance(suite.get(key), str) or not suite[key].strip() for key in required):
-            raise ValueError("Each suite must define non-empty id, persona, request, artifact, and rubric fields.")
-        if suite["id"] in ids:
-            raise ValueError(f"Duplicate eval suite id: {suite['id']}")
-        ids.add(suite["id"])
-        if not isinstance(suite.get("tags", []), list):
-            raise ValueError(f"Eval suite '{suite['id']}' tags must be a list.")
+MAX_EVALS_BYTES = 1024 * 1024
+PACKAGED_AGENTS = Path(__file__).resolve().parent.parent / "templates" / "agents"
+
+
+def _escapes(relative_path: str) -> bool:
+    """True if a path from an eval file is absolute or climbs out with '..'."""
+    path = PurePosixPath(relative_path.replace("\\", "/"))
+    return path.is_absolute() or ".." in path.parts or bool(re.match(r"^[A-Za-z]:", relative_path))
+
+
+def _read_evals_file(path: Path) -> Any:
+    """Parse one evals.json, refusing symlinks and oversized files, naming the file in errors."""
+    if path.is_symlink():
+        raise ValueError(f"{path}: evals.json must not be a symlink.")
+    if path.stat().st_size > MAX_EVALS_BYTES:
+        raise ValueError(f"{path}: evals.json is too large (limit {MAX_EVALS_BYTES} bytes).")
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise ValueError(f"{path}: not valid JSON ({exc}).") from exc
+
+
+def _text(entry: dict[str, Any], key: str, where: str, label: str | None = None) -> str:
+    value = entry.get(key)
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{where}: '{label or key}' must be a non-empty string.")
+    return value
+
+
+def _validate_eval(entry: Any, path: Path, skill: str, position: int) -> dict[str, Any]:
+    """Validate one eval from <skill>/evals/evals.json and return it as an evaluator suite."""
+    where = f"{path} (evals[{position}])"
+    if not isinstance(entry, dict):
+        raise ValueError(f"{where}: each eval must be an object.")
+    eval_id = entry.get("id")
+    if isinstance(eval_id, bool) or not isinstance(eval_id, int):
+        raise ValueError(f"{where}: 'id' must be an integer.")
+    prompt = _text(entry, "prompt", where)
+    expected = _text(entry, "expected_output", where)
+    assertions = entry.get("assertions")
+    if (
+        not isinstance(assertions, list)
+        or not assertions
+        or any(not isinstance(item, str) or not item.strip() for item in assertions)
+    ):
+        raise ValueError(f"{where}: 'assertions' must be a non-empty list of non-empty strings.")
+    files_field = entry.get("files", [])
+    if not isinstance(files_field, list) or any(not isinstance(item, str) for item in files_field):
+        raise ValueError(f"{where}: 'files' must be a list of strings.")
+    for item in files_field:
+        if _escapes(item):
+            raise ValueError(f"{where}: file path escapes the skill directory: {item}")
+    extras = entry.get("bobp")
+    if not isinstance(extras, dict):
+        raise ValueError(f"{where}: 'bobp' must be an object with the evaluator settings.")
+    suite = {
+        "id": _text(extras, "suite", where, "bobp.suite"),
+        "persona": _text(extras, "persona", where, "bobp.persona"),
+        "skill": skill,
+        "eval_id": eval_id,
+        "request": prompt,
+        "expected_output": expected,
+        "assertions": assertions,
+        "artifact": _text(extras, "artifact", where, "bobp.artifact"),
+        "rubric": _text(extras, "rubric", where, "bobp.rubric"),
+    }
+    for key in ("artifact", "rubric"):
+        if _escapes(suite[key]):
+            raise ValueError(f"{where}: bobp.{key} path escapes the project: {suite[key]}")
+    tags = extras.get("tags", [])
+    if not isinstance(tags, list) or any(not isinstance(tag, str) for tag in tags):
+        raise ValueError(f"{where}: 'bobp.tags' must be a list of strings.")
+    suite["tags"] = tags
+    for key in ("evaluation_scope", "behavior_criteria"):
+        if key in extras:
+            suite[key] = _text(extras, key, where, f"bobp.{key}")
+    if files_field:
+        suite["files"] = files_field
+    return suite
+
+
+def load_evals(root: Path | None = None) -> list[dict[str, Any]]:
+    """Load every skill's evals/evals.json under `root` (default: the packaged templates).
+
+    Looks in <root>/<persona>/evals/evals.json and <root>/skills/<skill>/evals/evals.json.
+    Each file follows https://agentskills.io/skill-creation/evaluating-skills (`skill_name`
+    and `evals`, each eval with `id`, `prompt`, `expected_output`, `assertions`, optional
+    `files`); the evaluator's own settings live in the eval's `bobp` object. Raises
+    ValueError naming the file and field for anything malformed.
+    """
+    root = PACKAGED_AGENTS if root is None else root
+    paths = sorted(root.glob("*/evals/evals.json")) + sorted(root.glob("skills/*/evals/evals.json"))
+    suites: list[dict[str, Any]] = []
+    suite_ids: set[str] = set()
+    for path in paths:
+        document = _read_evals_file(path)
+        if not isinstance(document, dict):
+            raise ValueError(f"{path}: must contain a JSON object.")
+        skill = path.parent.parent.name
+        if document.get("skill_name") != skill:
+            raise ValueError(f"{path}: 'skill_name' must be '{skill}'.")
+        evals = document.get("evals")
+        if not isinstance(evals, list) or not evals:
+            raise ValueError(f"{path}: 'evals' must be a non-empty list.")
+        ids: set[int] = set()
+        for position, entry in enumerate(evals):
+            suite = _validate_eval(entry, path, skill, position)
+            if suite["eval_id"] in ids:
+                raise ValueError(f"{path}: Duplicate eval id {suite['eval_id']}.")
+            ids.add(suite["eval_id"])
+            if suite["id"] in suite_ids:
+                raise ValueError(f"Duplicate eval suite id: {suite['id']}")
+            suite_ids.add(suite["id"])
+            suites.append(suite)
     return suites
 
 
@@ -159,39 +256,13 @@ def prepare_test_project(project: Path, temp_root: Path) -> Path:
     return project
 
 
-def expose_codex_skills(project: Path) -> None:
-    """Expose installed skills at Codex's project-local discovery path.
-
-    bobp install also creates global CODEX_HOME links. The eval isolates that
-    location, then links the installed skill files into the project's standard
-    .agents/skills directory so the user's real Codex login remains in use.
-    """
-    dot_agents = project / ".agents"
-    if dot_agents.is_symlink():
-        dot_agents.unlink()
-    elif dot_agents.exists():
-        shutil.rmtree(dot_agents)
-    skills_dir = dot_agents / "skills"
-    skills_dir.mkdir(parents=True)
-
-    agents_dir = project / "agents"
-    sources = [
-        child
-        for child in agents_dir.iterdir()
-        if child.is_dir() and (child / "SKILL.md").is_file()
-    ]
-    shared = agents_dir / "skills"
-    if shared.is_dir():
-        sources.extend(
-            child
-            for child in shared.iterdir()
-            if child.is_dir() and (child / "SKILL.md").is_file()
+def expose_codex_skills(project: Path, required: str | None = "bob") -> None:
+    """Check that bobp installed real skills at Codex's project discovery path."""
+    skills_dir = project / ".agents" / "skills"
+    if required and not (skills_dir / required / "SKILL.md").is_file():
+        raise RuntimeError(
+            f"Installed {required.capitalize()} skill was not available at Codex's project-local path."
         )
-    for source in sources:
-        link = skills_dir / source.name
-        link.symlink_to(os.path.relpath(source, skills_dir), target_is_directory=True)
-    if not (skills_dir / "bob" / "SKILL.md").is_file():
-        raise RuntimeError("Installed Bob skill was not available at Codex's project-local path.")
 
 
 def _npm_command(*args: str) -> list[str] | None:
@@ -305,7 +376,7 @@ def _fixture_project_context(project: Path) -> str:
     project_declaration = (project / "agents" / "PROJECT.md").read_text(encoding="utf-8")
     available_files = sorted(
         path.relative_to(project).as_posix()
-        for path in (project / "agents").rglob("SKILL.md")
+        for path in (project / ".agents" / "skills").rglob("SKILL.md")
     )
     template_root = project / "agents" / "templates"
     if template_root.exists():
@@ -344,13 +415,26 @@ def _fixture_project_context(project: Path) -> str:
 
 
 def build_config(
-    suite: dict[str, Any], project: Path, rubric_text: str, project_context: str
+    suite: dict[str, Any],
+    project: Path,
+    rubric_text: str,
+    project_context: str,
+    *,
+    baseline: bool = False,
+    reference_project: Path | None = None,
 ) -> dict[str, Any]:
-    """Build an eval that checks actual installed skill use and artifact quality."""
+    """Build an eval that checks actual installed skill use and artifact quality.
+
+    A baseline config runs the same request without the skill: the sentence that points at the
+    skill is dropped from the prompt and the skill-use check is left out. `reference_project`
+    is the project that has the skill installed, which the grader still reads the skill text from.
+    """
     artifact = suite["artifact"]
+    reference = reference_project or project
+    request = baseline_request(suite["request"]) if baseline else suite["request"]
     if suite.get("evaluation_scope") == "personality-behavior":
         task = (
-            f"{suite['request']}\n\n"
+            f"{request}\n\n"
             "This is a response-only evaluation. Answer the scenario in your final response; do not "
             "create a deliverable or change your installed skill. Follow required state/chat protocol "
             "only if it applies. Do not commit changes or use network access. Choose routine conventions "
@@ -358,7 +442,7 @@ def build_config(
         )
     else:
         task = (
-            f"{suite['request']}\n\n"
+            f"{request}\n\n"
             "Create the requested artifact in the specified path. Do not commit changes "
             "or use network access. Choose routine conventions without asking the user."
         )
@@ -369,18 +453,18 @@ def build_config(
         "project_context": project_context,
         "persona": suite["persona"],
         "rubric_text": rubric_text,
-        "persona_skill_text": (project / "agents" / suite["persona"] / "SKILL.md").read_text(
-            encoding="utf-8"
-        ),
+        "persona_skill_text": (
+            reference / ".agents" / "skills" / suite["persona"] / "SKILL.md"
+        ).read_text(encoding="utf-8"),
     }
     skill_assertion_config = {
         "persona": suite["persona"],
-        "expected_skill_text": (project / "agents" / suite["persona"] / "SKILL.md").read_text(
-            encoding="utf-8"
-        ),
+        "expected_skill_text": (
+            reference / ".agents" / "skills" / suite["persona"] / "SKILL.md"
+        ).read_text(encoding="utf-8"),
     }
     if suite.get("evaluation_scope") == "personality-behavior":
-        target_skill_text = (project / artifact).read_text(encoding="utf-8")
+        target_skill_text = (reference / artifact).read_text(encoding="utf-8")
         behavior_criteria = [
             item.strip()
             for item in suite["behavior_criteria"].split(";")
@@ -411,6 +495,22 @@ def build_config(
         )
 
     jev_assertion = Path(__file__).with_name("persona_eval_jev.py").resolve()
+    assertions = [
+        {
+            "type": "python",
+            "value": f"file://{jev_assertion}:grade_with_jev",
+            "config": assertion_config,
+        },
+    ]
+    if not baseline:
+        assertions.insert(
+            0,
+            {
+                "type": "python",
+                "value": f"file://{jev_assertion}:assert_skill_used",
+                "config": skill_assertion_config,
+            },
+        )
     return {
         "description": f"BobProtocol eval catalog: {suite['id']}",
         "tags": {"suite": suite["id"], "persona": suite["persona"]},
@@ -438,25 +538,144 @@ def build_config(
                     if suite.get("evaluation_scope") == "personality-behavior"
                     else f"{suite['id']} uses its installed skill and produces a rubric-compliant artifact"
                 ),
-                "assert": [
-                    {
-                        "type": "python",
-                        "value": f"file://{jev_assertion}:assert_skill_used",
-                        "config": skill_assertion_config,
-                    },
-                    {
-                        "type": "python",
-                        "value": f"file://{jev_assertion}:grade_with_jev",
-                        "config": assertion_config,
-                    },
-                ],
+                "assert": assertions,
             }
         ],
     }
 
 
-def run_suite(root: Path, suite: dict[str, Any], repeat: int = 1) -> int:
-    """Run repeated, isolated copies of one catalog suite."""
+BASELINES = ("none", "without-skill", "previous")
+
+
+def _execute_promptfoo(
+    root: Path, run_dir: Path, config: dict[str, Any], output_path: Path
+) -> int | None:
+    """Run Promptfoo once for `config`; return its exit code, or None if promptfoo is missing."""
+    config_path = run_dir / "promptfooconfig.json"
+    config_path.write_text(json.dumps(config, indent=2) + "\n")
+    isolated_tmp = run_dir / "tmp"
+    isolated_tmp.mkdir(exist_ok=True)
+    env = os.environ.copy()
+    env.update(
+        {
+            "TMPDIR": str(isolated_tmp),
+            "TMP": str(isolated_tmp),
+            "TEMP": str(isolated_tmp),
+            "PROMPTFOO_PYTHON": sys.executable,
+        }
+    )
+    promptfoo = shutil.which("promptfoo")
+    if not promptfoo:
+        print("The global Promptfoo command is not on PATH. Add npm's global executable directory to PATH and retry.", file=sys.stderr)
+        return None
+    command = [
+        promptfoo,
+        "eval",
+        "--config",
+        str(config_path),
+        "--no-cache",
+        "--output",
+        str(output_path),
+    ]
+    if os.name == "nt" and Path(promptfoo).suffix.lower() in {".cmd", ".bat"}:
+        command = ["cmd", "/c", *command]
+    return subprocess.run(command, cwd=root, env=env, check=False).returncode
+
+
+def _config_name(base: str, attempt: int) -> str:
+    """with_skill / without_skill / old_skill for the first attempt, then ..._run2, ..."""
+    return base if attempt == 1 else f"{base}_run{attempt}"
+
+
+def _record_run(
+    iteration_dir: Path | None,
+    suite: dict[str, Any],
+    config_name: str,
+    output_path: Path,
+    artifact_path: Path | None,
+) -> None:
+    """Write one run into the workspace; a failure to record is reported, never fatal."""
+    if iteration_dir is None:
+        return
+    try:
+        report = json.loads(output_path.read_text(encoding="utf-8"))
+        run_dir = iteration_dir / workspace.eval_dir_name(suite["id"]) / config_name
+        workspace.write_run(run_dir, report, suite.get("assertions", []), artifact_path)
+    except (OSError, ValueError) as exc:
+        print(f"Could not record the {config_name} results: {exc}", file=sys.stderr)
+
+
+def prepare_baseline_project(
+    project: Path, temp_root: Path, skill: str, snapshot: Path | None
+) -> Path:
+    """A fixture project for the baseline run: the skill removed, or replaced by an older version."""
+    create_test_project(project)
+    install_local_bobp(project, temp_root)
+    installed = project / ".agents" / "skills" / skill
+    if installed.is_dir() and not installed.is_symlink():
+        shutil.rmtree(installed)
+    if snapshot is not None:
+        shutil.copytree(snapshot, installed, symlinks=True)
+    expose_codex_skills(project, required=None)
+    return project
+
+
+def _run_baseline(
+    root: Path,
+    suite: dict[str, Any],
+    reference_project: Path,
+    attempt: int,
+    run_dir: Path,
+    output_dir: Path,
+    timestamp: str,
+    iteration_dir: Path | None,
+    snapshot: Path | None,
+) -> None:
+    """Run the same request without the skill (or with its previous version) and record it."""
+    base_dir = run_dir.with_name(f"{run_dir.name}-baseline")
+    base_dir.mkdir()
+    project = base_dir / "project"
+    prepare_baseline_project(project, base_dir, suite["skill"], snapshot)
+    rubric_text = extract_rubric(_project_path(project, suite["rubric"]).read_text())
+    config = build_config(
+        suite,
+        project,
+        rubric_text,
+        _fixture_project_context(project),
+        baseline=True,
+        reference_project=reference_project,
+    )
+    output_path = output_dir / f"{suite['id']}-{timestamp}-run{attempt}-baseline.json"
+    returncode = _execute_promptfoo(root, base_dir, config, output_path)
+    if returncode is None:
+        return
+    base = "old_skill" if snapshot is not None else "without_skill"
+    _record_run(iteration_dir, suite, _config_name(base, attempt), output_path, None)
+    print(f"Baseline ({base}) project: {project}")
+    print(f"Baseline report: {output_path}")
+
+
+def run_suite(
+    root: Path,
+    suite: dict[str, Any],
+    repeat: int = 1,
+    *,
+    iteration_dir: Path | None = None,
+    baseline: str = "none",
+    snapshot: Path | None = None,
+) -> int:
+    """Run repeated, isolated copies of one suite, recording each run in `iteration_dir`.
+
+    With `baseline` "without-skill" the same request is also run with the skill removed;
+    with "previous" it is run with `snapshot` (the version evaluated last time) instead,
+    falling back to without-skill when there is no snapshot. Baseline results are recorded
+    but never fail the suite.
+    """
+    if baseline not in BASELINES:
+        raise ValueError(f"baseline must be one of {', '.join(BASELINES)}")
+    if baseline == "previous" and snapshot is None:
+        print("No earlier version of this skill was evaluated; using a without-skill baseline.")
+        baseline = "without-skill"
     prerequisite_error = check_jev_prerequisites() or check_node_prerequisites()
     if prerequisite_error:
         print(prerequisite_error, file=sys.stderr)
@@ -472,7 +691,7 @@ def run_suite(root: Path, suite: dict[str, Any], repeat: int = 1) -> int:
 
     output_dir = root / "build" / "persona-eval"
     output_dir.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     runtime_dir = output_dir / "runtime"
     runtime_dir.mkdir(exist_ok=True)
     failures = 0
@@ -487,52 +706,76 @@ def run_suite(root: Path, suite: dict[str, Any], repeat: int = 1) -> int:
         rubric_text = extract_rubric(rubric_path.read_text())
         project_context = _fixture_project_context(project)
         config = build_config(suite, project, rubric_text, project_context)
-        config_path = run_dir / "promptfooconfig.json"
-        config_path.write_text(json.dumps(config, indent=2) + "\n")
         output_path = output_dir / f"{suite['id']}-{timestamp}-run{attempt}.json"
-        isolated_tmp = run_dir / "tmp"
-        isolated_tmp.mkdir(exist_ok=True)
-        env = os.environ.copy()
-        env.update(
-            {
-                "TMPDIR": str(isolated_tmp),
-                "TMP": str(isolated_tmp),
-                "TEMP": str(isolated_tmp),
-                "PROMPTFOO_PYTHON": sys.executable,
-            }
-        )
-        promptfoo = shutil.which("promptfoo")
-        if not promptfoo:
-            print("The global Promptfoo command is not on PATH. Add npm's global executable directory to PATH and retry.", file=sys.stderr)
+        returncode = _execute_promptfoo(root, run_dir, config, output_path)
+        if returncode is None:
             return 2
-        command = [
-            promptfoo,
-            "eval",
-            "--config",
-            str(config_path),
-            "--no-cache",
-            "--output",
-            str(output_path),
-        ]
-        if os.name == "nt" and Path(promptfoo).suffix.lower() in {".cmd", ".bat"}:
-            command = ["cmd", "/c", *command]
-        result = subprocess.run(
-            command,
-            cwd=root,
-            env=env,
-            check=False,
-        )
         if not artifact_path.is_file():
             print(
                 f"Eval did not create the expected artifact: {suite['artifact']}",
                 file=sys.stderr,
             )
             failures += 1
-        if result.returncode:
+        if returncode:
             failures += 1
         print(f"Eval project: {project}")
         print(f"Eval report: {output_path}")
+        _record_run(
+            iteration_dir,
+            suite,
+            _config_name("with_skill", attempt),
+            output_path,
+            artifact_path if artifact_path.is_file() else None,
+        )
+        if baseline != "none":
+            _run_baseline(
+                root, suite, project, attempt, run_dir, output_dir, timestamp,
+                iteration_dir, snapshot if baseline == "previous" else None,
+            )
     return 1 if failures else 0
+
+
+def _snapshot_packaged_skill(skill: str, skill_workspace: Path) -> None:
+    """Remember the skill version just evaluated, as installed, for the next 'previous' baseline."""
+    from . import _skill_layout
+
+    templates = PACKAGED_AGENTS.parent
+    for name, source, is_persona in _skill_layout.template_skills(templates):
+        if name != skill:
+            continue
+        staging = skill_workspace / ".skill-staging"
+        if staging.exists():
+            shutil.rmtree(staging)
+        skill_workspace.mkdir(parents=True, exist_ok=True)
+        _skill_layout.build_skill(source, is_persona, staging)
+        try:
+            workspace.snapshot_skill(staging, skill_workspace)
+        finally:
+            shutil.rmtree(staging, ignore_errors=True)
+        return
+
+
+def _finish_iteration(output_dir: Path, skill: str, iteration_dir: Path) -> None:
+    """Write the iteration's benchmark.json, print it, and snapshot the evaluated skill."""
+    skill_workspace = workspace.workspace_dir(output_dir, skill)
+    try:
+        benchmark = workspace.write_benchmark(iteration_dir)
+    except ValueError as exc:
+        print(f"No benchmark for {iteration_dir.name}: {exc}", file=sys.stderr)
+        if not any(iteration_dir.iterdir()):
+            iteration_dir.rmdir()  # a run that recorded nothing should not use up a number
+        return
+    print(f"\nBenchmark for {skill} ({iteration_dir.name}): {iteration_dir / 'benchmark.json'}")
+    for name, stats in benchmark["run_summary"].items():
+        if name == "delta":
+            print(f"  delta vs baseline: {json.dumps(stats)}")
+        else:
+            print(
+                f"  {name}: pass_rate {stats['pass_rate']['mean']} "
+                f"(±{stats['pass_rate']['stddev']}), "
+                f"{stats['time_seconds']['mean']}s, {stats['tokens']['mean']} tokens"
+            )
+    _snapshot_packaged_skill(skill, skill_workspace)
 
 
 def select_suites(suites: list[dict[str, Any]], selector: str) -> list[dict[str, Any]]:
@@ -542,21 +785,38 @@ def select_suites(suites: list[dict[str, Any]], selector: str) -> list[dict[str,
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
-        description="Run catalogued Promptfoo skill-use and artifact evaluations."
+        description="Run the Promptfoo skill-use and artifact evaluations in each skill's evals/evals.json."
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("selector", nargs="?", help="Persona name or eval suite id.")
     group.add_argument("--all", action="store_true", help="Run every suite in the catalog.")
-    group.add_argument("--list", action="store_true", help="List catalog suites.")
+    group.add_argument("--list", action="store_true", help="List the evaluation cases.")
     group.add_argument("--setup", action="store_true", help="Show instructions for installing locked npm dependencies globally.")
     parser.add_argument("--repeat", type=int, default=1, help="Fresh runs per suite (default: 1).")
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="With --list: print the cases as a JSON array on stdout and nothing else.",
+    )
+    parser.add_argument(
+        "--baseline",
+        choices=BASELINES,
+        default="none",
+        help=(
+            "Also run each case for comparison: 'without-skill' removes the skill, 'previous' runs "
+            "the version evaluated last time (falls back to without-skill). Doubles the number of "
+            "Codex and Jev calls. Default: none."
+        ),
+    )
     args = parser.parse_args(argv)
     if args.repeat < 1:
         parser.error("--repeat must be at least 1")
+    if args.json and not args.list:
+        parser.error("--json can only be used with --list")
 
     try:
         root = find_project_root()
-        suites = load_catalog()
+        suites = load_evals()
     except ValueError as exc:
         parser.error(str(exc))
 
@@ -564,6 +824,21 @@ def main(argv: list[str] | None = None) -> None:
         raise SystemExit(show_node_setup_instructions())
 
     if args.list:
+        if args.json:
+            print(
+                json.dumps(
+                    [
+                        {
+                            "suite": suite["id"],
+                            "persona": suite["persona"],
+                            "skill": suite["skill"],
+                            "tags": suite.get("tags", []),
+                        }
+                        for suite in suites
+                    ]
+                )
+            )
+            return
         for suite in suites:
             print(f"{suite['id']}\t{suite['persona']}\t{', '.join(suite.get('tags', []))}")
         return
@@ -575,12 +850,30 @@ def main(argv: list[str] | None = None) -> None:
         if not selected:
             parser.error(f"No eval suites found for '{args.selector}'. Use --list to see the catalog.")
 
+    output_dir = root / "build" / "persona-eval"
+    iterations: dict[str, Path] = {}
+    snapshots: dict[str, Path | None] = {}
     failures = []
     for suite in selected:
+        skill = suite["skill"]
+        if skill not in iterations:
+            skill_workspace = workspace.workspace_dir(output_dir, skill)
+            snapshots[skill] = workspace.previous_snapshot(skill_workspace)
+            iterations[skill] = workspace.make_iteration(skill_workspace)
+            print(f"\nRecording {skill} results in {iterations[skill]} (baseline: {args.baseline})")
         print(f"\n=== Eval suite: {suite['id']} ===", flush=True)
-        code = run_suite(root, suite, args.repeat)
+        code = run_suite(
+            root,
+            suite,
+            args.repeat,
+            iteration_dir=iterations[skill],
+            baseline=args.baseline,
+            snapshot=snapshots[skill],
+        )
         if code:
             failures.append((suite["id"], code))
+    for skill, iteration_dir in iterations.items():
+        _finish_iteration(output_dir, skill, iteration_dir)
     if failures:
         for suite_id, code in failures:
             print(f"FAIL {suite_id} (Promptfoo exit {code})", file=sys.stderr)

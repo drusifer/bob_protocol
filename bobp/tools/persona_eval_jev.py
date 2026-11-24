@@ -34,7 +34,7 @@ def assert_skill_used(_output: str, context: dict[str, Any]) -> dict[str, Any]:
         for item in raw.get("items", []):
             command = item.get("command", "")
             body = item.get("aggregated_output", "")
-            canonical_path = f"agents/{persona}/SKILL.md"
+            canonical_path = f".agents/skills/{persona}/SKILL.md"
             codex_path = f".agents/skills/{persona}/SKILL.md"
             if (
                 item.get("type") == "command_execution"

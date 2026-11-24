@@ -1,8 +1,8 @@
-TL;DR: BobProtocol is a reusable Claude Code Skills framework. Invoke personas with `*chat`, Bloop commands (`*fix`, `*impl`, `*plan sprint`), or direct skill triggers. State persists per-persona in `agents/[persona]/`.
+TL;DR: BobProtocol is a reusable Agent Skills framework (`.agents/skills/`). Invoke personas with `*chat`, Bloop commands (`*fix`, `*impl`, `*plan sprint`), or direct skill triggers. State persists per-persona in `agents/[persona]/state.md`.
 
 # BobProtocol: Multi-Persona AI Development Framework
 
-A reusable multi-harness agent-skills framework that orchestrates a team of specialized AI personas. One LLM dynamically switches between 9 expert roles based on task context, with persistent state and structured handoffs across sessions.
+A reusable multi-harness agent-skills framework that orchestrates a team of specialized AI personas. One LLM dynamically switches between 10 expert roles based on task context, with persistent state and structured handoffs across sessions.
 
 ## How It Works
 
@@ -25,7 +25,8 @@ All coordination flows through `agents/CHAT.md` — a shared team log that every
 | **Cypher** | Product Manager | `*pm` | Requirements, user stories, PRDs |
 | **Bob** | Prompt Engineer | `*prompt` | Agent creation, system improvement |
 | **Smith** | HCI Expert | `*user` | Usability testing, HCI evaluation, sprint gates |
-| **Tank** | DevOps Engineer | `*devops` | IaC, CI/CD, deployment automation, environment management, systems reliability |
+| **Tank** | DevOps Engineer | `*devops` | IaC, CI/CD, deployment automation, `mise`/`Task` build setup, `docs/SDLC.md` |
+| **Switch** | Security Engineer | `*sec` | Security review, threat modeling, build scans, dependency triage |
 
 ## Skills & Workflow Loops
 
@@ -51,7 +52,7 @@ Bob Protocol organizes autonomous workflows into hierarchical loops and supporti
 
 ### Supporting Protocol & Tool Skills
 - **Session Lifecycle**: `init` (session startup & discovery), `prep-clear` (checkpointing state before `/clear`), `judge` / `*judge` (persona, skill, and tool evaluation)
-- **Protocol & Operations**: `bob-protocol` (routing & state protocol), `bob-tools` (`bobp` CLI operations), `build-env` (`docs/SDLC.md` management), `chat` (team logging), `linter` (code analysis), `make` (captured target runner), `make-discover` (target self-discovery), `personas` (specialist switching), `render` (cloud deployment), `test-runner` (bounded tests), `via` (symbol lookup)
+- **Protocol & Operations**: `bob-protocol` (routing & state protocol), `bob-tools` (`bobp` CLI operations), `build-env` (`mise.toml`/`Taskfile.yml`/thin `Makefile` & `docs/SDLC.md`), `chat` (team logging), `linter` (code analysis), `make` (captured target runner), `make-discover` (target self-discovery), `personas` (specialist switching), `render` (cloud deployment), `security` (gitleaks & dependency audits), `test-runner` (bounded tests), `via` (symbol lookup)
 
 ## Invoking Agents
 
@@ -101,31 +102,30 @@ Directly invoke a persona using Gemini's `@` syntax or the internal `@Persona` t
 ## Project Structure
 
 ```
+AGENTS.md                    # Shared agent instructions (real file at repo root)
+.agents/skills/              # 35 real skill directories (10 personas + 25 shared skills)
+├── [persona]/SKILL.md       # Persona definition + command interface (e.g. neo/, trin/, switch/)
+├── epic/                    # Strategic epic planning (*plan epic)
+├── story/                   # User story slicing & ADRs (*plan story)
+├── sprint/                  # Sprint planning & cadence container (*plan sprint)
+├── impl/                    # Feature TDD work-loop (*impl)
+├── fix/                     # Defect diagnosis & surgical fix work-loop (*fix)
+├── refactor/                # Behavior-preserving refactoring work-loop (*refactor)
+├── spike/                   # Disposable research spike work-loop (*spike)
+├── uat/                     # End-to-end acceptance & UX audit work-loop (*uat)
+├── deploy/                  # Automated delivery & live smoke work-loop (*deploy)
+├── bloop/                   # Work-loop conductor & catalog (*bloop)
+├── init/                    # Session initialization & resume (*init, *resume)
+├── prep-clear/              # Context checkpointing before /clear (*prep-clear)
+├── judge/                   # Agent & prompt optimization loop (*judge)
+└── ...                      # Supporting tool skills (make, chat, via, build-env, security, etc.)
 agents/
 ├── CHAT.md                  # Shared team communication log
 ├── CHAT.diagram.md          # Auto-generated Mermaid view of CHAT.md (derived, don't edit)
 ├── PROJECT.md               # Project capabilities (created by setup when missing)
 ├── PROJECT.md.template      # Reference template for capability declarations
-├── [persona]/               # Per-persona state and working memory (e.g. neo/, trin/)
-│   ├── SKILL.md             # Persona definition + command interface
-│   └── state.md             # Context, current task, and resume plan (state)
-├── skills/                  # 24 shared skills discovered by harnesses
-│   ├── epic/                # Strategic epic planning (*plan epic)
-│   ├── story/               # User story slicing & ADRs (*plan story)
-│   ├── sprint/              # Sprint planning & cadence container (*plan sprint)
-│   ├── impl/                # Feature TDD work-loop (*impl)
-│   ├── fix/                 # Defect diagnosis & surgical fix work-loop (*fix)
-│   ├── refactor/            # Behavior-preserving refactoring work-loop (*refactor)
-│   ├── spike/               # Disposable research spike work-loop (*spike)
-│   ├── uat/                 # End-to-end acceptance & UX audit work-loop (*uat)
-│   ├── deploy/              # Automated delivery & live smoke work-loop (*deploy)
-│   ├── bloop/               # Work-loop conductor & catalog (*bloop)
-│   ├── init/                # Session initialization & resume (*init, *resume)
-│   ├── prep-clear/          # Context checkpointing before /clear (*prep-clear)
-│   ├── judge/               # Agent & prompt optimization loop (*judge)
-│   └── ...                  # Supporting tool skills (make, chat, via, build-env, etc.)
-└── templates/               # Document and state file templates (ARTIFACTS.md, rubrics)
-.claude/skills/              # Discovery links to persona and shared-skill folders
+├── [persona]/state.md       # Per-persona working memory (Context, Current Task, Next Steps)
+└── templates/               # Document and build templates (ARTIFACTS.md, rubrics)
 ```
 
 `bobp` never installs, generates, or modifies a `Makefile` — that stays entirely
@@ -133,9 +133,7 @@ yours. See "Running Your Own Make Targets" below.
 
 ## Installing into a Project
 
-`bobp` is installed separately from the framework files. This project version
-is not yet published to PyPI; from a BobProtocol source checkout, install the
-CLI as a uv-managed user tool:
+Install `bobp` from PyPI (`uv tool install bobp` or `pip install bobp`) or from a source checkout:
 
 ```bash
 cd /path/to/bob_protocol
@@ -153,12 +151,12 @@ bobp install /path/to/your/project
 bobp update /path/to/your/project    # refresh skills/templates, preserving state
 bobp pull /path/to/another/project   # pull framework updates from a peer project
 bobp diff /path/to/your/project      # compare the template against an install
-bobp clean                           # reset state files and remove symlinks (run inside the project)
+bobp clean                           # reset state files (run inside the project)
 ```
 
 ## Project Setup (after install)
 
-1. Run skill link setup:
+1. Run project setup (no symlinks are created):
 ```bash
 bobp setup-agent-links
 ```
@@ -169,10 +167,9 @@ bobp setup-agent-links
 via: enabled   # present only when via integration setup succeeds
 ```
 
-Link setup creates project discovery links and may also write to the user's
-Codex skills directory and Codex MCP configuration. When the `via` CLI is
-installed, setup configures the project's `.mcp.json` and index too. Review its
-output; restart Codex after creating or changing Codex links.
+Setup configures the project's `.mcp.json`, `.via/index.db`, `.gitignore`, and
+`agents/PROJECT.md` (and may register the Via MCP server in user-level Codex
+configuration when `codex` and `via` are installed). Review its output.
 
 ## Team Coordination Commands
 
@@ -213,7 +210,7 @@ Every persona follows the strict State Management Protocol:
 - **ENTRY**: Read `agents/CHAT.md` (last 10–20 messages) → load `agents/[persona]/state.md`
 - **WORK**: Update working memory with progress, blockers, and findings
 - **EXIT (Mandatory Hard Gate)**:
-  1. Follow `agents/skills/prep-clear/SKILL.md` before `/clear` or persona switch — flush Context, Current Task progress %, and Next Steps cold-start resume plan to `state.md`.
+  1. Follow `.agents/skills/prep-clear/SKILL.md` before `/clear` or persona switch — flush Context, Current Task progress %, and Next Steps cold-start resume plan to `state.md`.
   2. Post handoff message: `bobp chat "<summary> @NextPersona *command" --persona <Name> --cmd handoff --to <next>`.
   3. Never switch personas or clear context without completing both steps.
 

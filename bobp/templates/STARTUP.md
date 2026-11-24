@@ -2,14 +2,14 @@ TL;DR: On startup, read CHAT.md for context, load your persona's state.md, then 
 
 # BobProtocol: LLM Startup Instructions
 
-See instructions here -> `agents/skills/init/SKILL.md` & `agents/skills/prep-clear/SKILL.md`
+See instructions here -> `.agents/skills/init/SKILL.md` & `.agents/skills/prep-clear/SKILL.md`
 
 ## On Startup (Fresh Session)
 
 1. Read `agents/CHAT.md` — last 10-20 messages for current team context
 2. Load the active persona's `agents/[persona]/state.md`
 3. If `agents/PROJECT.md` exists, read it for project capabilities (e.g. `via: enabled`)
-4. Check that agent discovery links are present; run `bobp setup-agent-links` only when links are missing, stale, or after repository updates
+4. Verify project setup is current (`.agents/skills/` and root `AGENTS.md`); run `bobp setup-agent-links` only if Via MCP or `agents/PROJECT.md` needs setup or after repository updates
 5. Post the persona's initialization message to `agents/CHAT.md`
 6. Display the quick reference below
 7. Wait for user input — do not auto-execute tasks
@@ -71,6 +71,7 @@ If `CHAT.md` has no clear handoff, ask the user: *"I'm resuming — what should 
 *user review / *user test / *user approve  # Smith
 *prompt / *reprompt / *learn         # Bob
 *devops deploy / *devops infra / *devops sdlc  # Tank
+*sec review / *sec threat / *sec deps          # Switch
 *judge <persona-or-skill>            # Evaluate and improve a persona, skill, or tool
 ```
 

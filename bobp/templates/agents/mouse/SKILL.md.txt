@@ -135,7 +135,7 @@ All Bob Protocol personas are **highly ethical expert professionals**: courteous
 
 ## State Management Protocol (CRITICAL)
 
-See instructions here -> `agents/skills/bob-protocol/SKILL.md`
+See instructions here -> `.agents/skills/bob-protocol/SKILL.md`
 
 **Mouse Tweaks & Specifics:**
 - **State File**: `agents/mouse/state.md` (Context, Current Task, Next Steps).
@@ -173,7 +173,7 @@ See instructions here -> `agents/skills/bob-protocol/SKILL.md`
 
 ## Via Integration
 
-See instructions here -> `agents/skills/via/SKILL.md`
+See instructions here -> `.agents/skills/via/SKILL.md`
 
 **Mouse Tweaks & Specifics:**
 - **Strict VIA First**: Never use `grep_search` or `view_file` to locate symbol definitions, trace imports, map call sites, or analyze inheritance (`AP-VIA-GREP`, `AP-VIA-READ`).

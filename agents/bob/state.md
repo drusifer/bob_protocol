@@ -24,33 +24,30 @@
 - 2026-10-30: Oracle consultation confirmed Bob's broken root-relative links and missing Git-worktree/error handling as real tool-fit gaps. Oracle judged Behavior check likely a Jev false negative/criterion ambiguity because the artifact already contains an activation request, command, concrete result, and rationale; Jev provides no explanation. Sayings are not implicated (0.91). Updated Bob guidance and persona template to validate links relative to the nested skill, cover Git prerequisite/failure paths, and make examples explicitly verifiable. These latest prompt edits are not reevaluated; pause for manual user direction before another Bob attempt.
 - 2026-10-31: User directed Jev input/rubric improvement. No separate TypeSafe/Jev or Promptfoo style guide exists; added guidance to Judge's existing skill. Noul questions now use SDK-supported true/false criteria descriptions and atomic rubric rows; Jev state includes complete rubric, persona instructions, artifact path, and a concise fixture path/capability/executable inventory. Focused tests pass (22 passed, 87 deselected); Bob's refined `--repeat 3` passed 3/3, final artifact-path-enriched run passed all 16 report components, and Morpheus design holdout passed 4/4. Detailed reports are in `agents/bob/persona_sayings_eval_2026-10-30.md`.
 - 2026-10-31: User directed using Jev as a rubric-level classifier, with a score as a second view. Replaced binary Noul judgments with per-criterion Choice (`meets`/`partially_meets`/`does_not_meet`) plus an ordered Score whose expected value is 0–2. Found and fixed two wiring defects during live trials: each question now contains its own criterion text, and Choice is compared to Score's most likely level rather than rounding the expected score. The class must be `meets` and agree with Score's top level to pass. Latest Bob repeat passed 3/3 (`bob-persona-authoring-20261031T003541Z-run1..3.json`); Morpheus holdout passed 4/4 (`morpheus-design-advice-20261031T003727Z-run1.json`); focused tests passed 22/22. Details in the eval note.
+- 2026-11-23: Session initialized via `/bob-protocol init load bob`. `bobp setup-agent-links` verified 10 personas, `.agents/skills/` layout, `via: enabled` (`agents/PROJECT.md`), and MCP config. Sprint 3 Phases 1–4 and the `.agents/skills/` migration amendment are completed in the working tree (uncommitted); Phases 5–6 (owned by Bob), Phase 7 (Neo), and Stage 3 Closeout remain open in `task.md`.
+- 2026-11-23: `*reprompt` updated Tank (`.agents/skills/tank/SKILL.md` + `bobp/templates/agents/tank/SKILL.md.txt`) and Tank's owned `build-env` skill (canonical + packaged + `references/language-conventions.md`) to standardize on `mise` (`mise.toml`) for pinned runtimes/CLIs, `Task` (`Taskfile.yml`, go-task v3) for build/ops instructions, and a thin `Makefile` forwarding shim (modeled on `/home/drusifer/Projects/t3-gcp`) while keeping `bobp make <target>` as the agent entry point and preserving existing traditional Makefiles unless migration is requested.
+- 2026-11-23: `*reprompt` wired `agents/templates/_template_DOMAIN.md` and the DOMAIN rubric (`LANG`, `BOUND`, `INVAR`, `STATE`, `EVENT`) into Morpheus (`.agents/skills/morpheus/SKILL.md` + `bobp/templates/agents/morpheus/SKILL.md.txt`) to match Cypher and `ARTIFACTS.md`.
+- 2026-11-23: Added 3 new Tank build templates with embedded rubrics (`_template_MAKEFILE.md`, `_template_TASKFILE.md`, `_template_MISE.md`) in both `agents/templates/` and `bobp/templates/agents/templates/`, registered them in `ARTIFACTS.md`, and wired every remaining owner/reviewer template reference across `tank`, `build-env`, `bob`, `bob-protocol`, `prep-clear`, `chat`, `smith`, `morpheus`, and `trin` (canonical + packaged copies synchronized).
 
 ## Current Task
-**Status:** Completed; Jev context/rubric refinements and fresh verification pass.
-**Assigned to:** Bob
-**Started:** 2026-10-30
-**Completed:** 2026-10-31
+**Status:** Completed Tank `mise`/`Task`/thin-`Makefile` update, new build templates + rubrics, and full template/rubric wiring pass; handed off to Oracle for `*ora groom`.
+**Assigned to:** Oracle (handed off from Bob)
+**Started:** 2026-11-23
+**Last Completed:** 2026-11-23 (New build templates + full template/rubric wiring across skills)
 
 ### Task Description
-Add original role-specific sayings to each persona and the template, reinforce the shared ethical-professional baseline, and improve Jev's Promptfoo rubric judgments with classifier levels, an ordinal score, clearer atomic criteria, and relevant evaluation context.
-
-### Task
-Latest (2026-10-31): *reprompt — added Switch security gates to the sprint loops: design gate 2b (`*sec threat`, after Smith's architecture approval) and implementation gate 5a (`*sec review <phase>`, after Trin UAT, before Morpheus review) in sprint + impl skills, task template (new Switch task per phase), and Switch/Mouse/Morpheus/Trin/Smith/init text. Switch eval re-run. Uncommitted.
-
-Created the Switch (Security Engineer, `*sec`) persona. Report-and-propose only: Switch never edits app code; Neo applies fixes, Tank owns secret scanning/CI.
+Completed Bob's prompt and template updates (Tank `mise`+`Task`+thin `Makefile`, `_template_MAKEFILE.md`, `_template_TASKFILE.md`, `_template_MISE.md`, `ARTIFACTS.md`, and all remaining owner/reviewer template refs across 9 skills, all canonical + packaged copies verified and passing focused tests). Handing off to `@Oracle *ora groom`.
 
 ### Progress
-- [x] `agents/switch/SKILL.md` (+ packaged `.txt` copy, state.md) written against the PERSONA rubric; links resolve; mirror matches.
-- [x] Registered in AGENTS.md, DOCUMENTATION_INDEX, personas/bob-protocol/init skills, README, SHORTHAND_GUIDE (canonical + packaged).
-- [x] Added `switch-personality` eval suite to catalog.json and the suite list test; `bobp make test`: 109 passed.
-- [x] Live eval: run 1 FAIL (Behavior 3: response omitted verdict/owner under "be concise"); skill fixed to always state severity, verdict, owner; run 2 PASS (build/persona-eval/switch-personality-*run1.json, 2 runs).
-- [x] Added Switch interaction rows to Neo, Morpheus, Trin, Mouse, Cypher, Smith, Tank, Oracle, Bob and a Relationship table to Switch (canonical + packaged mirrors match).
-- [ ] Not committed.
+- [x] Verified setup via `bobp setup-agent-links` (10 personas, `.via/index.db`, `via` MCP, `agents/PROJECT.md`).
+- [x] Inspected `/home/drusifer/Projects/t3-gcp` (`Makefile`, `mise.toml`, `Taskfile.yml`, `docs/SDLC.md`).
+- [x] Updated Tank + `build-env` (`mise.toml`, `Taskfile.yml`, thin `Makefile` shim) and created `_template_MAKEFILE.md`, `_template_TASKFILE.md`, `_template_MISE.md` with rubrics.
+- [x] Registered new templates in `ARTIFACTS.md` and wired all missing owner/reviewer template refs across 9 skills (canonical + packaged parity verified; 66/66 focused tests passed).
+- [x] Handed off to Oracle for `*ora groom`.
 
 ### Blockers
 None.
 
 ## Next Steps
-1. Optionally re-run the other personas' suites (their skills gained one Switch row each).
-2. Trin signs off on the suite; Morpheus reviews ownership overlap with Tank/Neo.
-3. Oracle updates doc index if needed; commit when the user asks.
+1. Oracle runs `*ora groom` across project docs, index, and recent changes.
+2. When returning to Bob: proceed with Sprint 3 Phase 5 (`task.md` Task 5.1) or other prompt work as directed by the user.

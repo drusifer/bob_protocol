@@ -4,11 +4,11 @@ TL;DR: Use `*fix`, `*impl`, `*plan sprint` for full workflow chains. Use `*chat 
 
 ## Session Lifecycle (Init, Checkpoint & Resume)
 
-Formalized in `agents/skills/init/SKILL.md` & `agents/skills/prep-clear/SKILL.md`.
+Formalized in `.agents/skills/init/SKILL.md` & `.agents/skills/prep-clear/SKILL.md`.
 
 | Command / Trigger | Action | Primary Handler |
 |-------------------|--------|-----------------|
-| `/init`, `*init`, `/bob-protocol init` | Read chat/state, check discovery links, post initialization, and display quick reference | Bob (`*prompt`) |
+| `/init`, `*init`, `/bob-protocol init` | Read chat/state, verify project setup, post initialization, and display quick reference | Bob (`*prompt`) |
 | `*resume` | Cold-start recovery from last CHAT.md handoff | Last active persona |
 | `*prep-clear`, `/prep-clear`, `*checkpoint` | Reconcile state, write resume plan, prepare for `/clear` | Active persona |
 | `*startup`, `*chat init` | Startup protocol alias | Bob (`*prompt`) |
@@ -148,7 +148,7 @@ Invoke a persona directly — bypasses `*chat` routing.
 | `*devops infra` | Declarative IaC management |
 | `*devops ci` | Maintain CI/CD pipelines |
 | `*devops env` | Environment hygiene & secrets |
-| `*devops bootstrap <lang>` | Setup build environment & manifest |
+| `*devops bootstrap <lang>` | Setup build environment (`mise.toml`, `Taskfile.yml`, thin `Makefile` shim, manifest) |
 | `*devops sdlc [check]` | Create or audit docs/SDLC.md |
 
 ---

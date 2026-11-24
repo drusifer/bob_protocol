@@ -68,7 +68,7 @@ Setup procedure:
 - Run `bobp make test` and the relevant scan before and after; the change is done when the scan is clean and tests still pass.
 - If an API change breaks application code, stop: give Neo the failing tests and a proposed patch. Switch does not edit application source.
 - Escalate to the user before: a major-version jump that changes behavior, removing a package the product depends on, or accepting a finding that has no fix.
-- Record every finding and dependency change in `agents/switch/findings/` using [`_template_SECURITY_FINDING.md`](../../templates/_template_SECURITY_FINDING.md), including advisory ID, old and new versions, test result, and the Next Action table.
+- Record every finding and dependency change in `agents/switch/findings/` using [`_template_SECURITY_FINDING.md`](../../../agents/templates/_template_SECURITY_FINDING.md), including advisory ID, old and new versions, test result, and the Next Action table.
 
 ## 4. Accepting risk
 

@@ -71,7 +71,7 @@ bobp chat "Activating persona <Name> via harness invocation." --persona <Name> -
 
 ### 2. Verify Agent Discovery Links
 Run `bobp setup-agent-links` if links are unverified, missing, or after pulling repository updates:
-- Ensures `.claude/skills/` links point to `agents/<persona>/` and `agents/skills/*/`
+- Ensures `.agents/skills/` links point to `agents/<persona>/` and `.agents/skills/*/`
 - Ensures `$CODEX_HOME/skills/` links are configured
 - Ensures root symlinks (`AGENTS.md`, `GEMINI.md`, `.agents/`) are valid
 - Verifies `via` index and MCP configuration
@@ -103,7 +103,7 @@ When starting a new session or after a sprint/task has completed:
 6. **HALT and WAIT**: Do NOT auto-execute tasks. Wait for explicit user instruction.
 
 #### Mode B — Cold Start Recovery (Resuming Mid-Task)
-When resuming after context clear (prepared via `agents/skills/prep-clear/SKILL.md`), crash, or session restart mid-task:
+When resuming after context clear (prepared via `.agents/skills/prep-clear/SKILL.md`), crash, or session restart mid-task:
 1. **Locate Last Handoff / Checkpoint**: Identify the last active persona and pending command or checkpoint from `agents/CHAT.md`.
 2. **Load Working Memory**: Read `agents/<persona>/state.md`.
 3. **Announce Resume**:

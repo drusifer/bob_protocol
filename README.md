@@ -40,12 +40,28 @@ This creates the locked development environment in `.venv/` and runs the
 packaged CLI from that environment. To install `bobp` as a uv-managed user
 tool, run `uv run bobp make system-install` from the checkout.
 
+### Versions and keeping a project current
+
+`bobp --version` (or `-V`) prints the installed version. `bobp install` and
+`bobp update` record that version in the project as `agents/.bobp-version`.
+When you run any other `bobp` command inside a project whose recorded version
+is missing or older than the installed bobp, it prints one line to stderr
+with the command to run and then carries on with what you asked:
+
+```text
+bobp: this project was set up with bobp 0.1.0; installed is bobp 0.2.0. Run: bobp update /path/to/project
+```
+
+bobp never asks a question or changes the project on its own. The line repeats
+on every run until you run `bobp update`. Set `BOBP_NO_VERSION_CHECK=1` to
+silence it (for example in CI).
+
 ## What's in here
 
 - **`bobp/tools/`** — the actual implementation: posting to `CHAT.md`,
-  rendering the Mermaid chat diagram, setting up `.claude/skills/` and
-  Codex skill links, the `make` output filter, TL;DR tooling, session
-  tracing.
+  rendering the Mermaid chat diagram, installing real skills in `.agents/skills/`
+  and configuring Via MCP/capabilities, the `make` output filter, TL;DR tooling,
+  session tracing, and persona evaluation.
 - **`bobp/templates/`** — the redistributable Bob Protocol scaffolding
   (persona `SKILL.md` files, shared skills, document templates) that
   `bobp install` copies into a target project. See
@@ -67,7 +83,7 @@ Bob Protocol coordinates autonomous, multi-agent software engineering through sp
 - **Planning Loops (Strategic Scoping)**: `*plan epic` (*Shape Up* / *Inspired*), `*plan story` (*User Story Mapping* / *Agile Estimating*), `*plan sprint` (*The Scrum Guide*).
 - **Work Loops (Tactical Execution)**: `*impl` (TDD — *Beck*), `*fix` (Surgical diagnosis & fix — *Agans*), `*refactor` (Two-Hats behavioral parity — *Fowler*), `*spike` (Disposable exploration — *XP Installed*), `*uat` (User acceptance testing — *Crispin & Gregory*), `*deploy` (Continuous delivery & smoke test — *Humble & Farley*).
 - **Loop Conductor (`*bloop`)**: Autonomous multi-persona execution engine with strict anti-loop guards (max 2 failures $\rightarrow$ Oracle $\rightarrow$ user escalate) and context budgeting (`*prep-clear`).
-- **Review Rubrics**: 10 Brookhart-compliant quality rubrics measuring deliverable quality and loop effectiveness.
+- **Templates & Review Rubrics**: Standardized artifact templates and binary quality checks cataloged in [`agents/templates/ARTIFACTS.md`](agents/templates/ARTIFACTS.md) (stories, architecture, domain model, tasks, ADRs, SDLC, `mise.toml`/`Taskfile.yml`/`Makefile`, security reviews, test strategies, UAT plans, lessons, and persona skills).
 
 See **[STARTUP.md](STARTUP.md)** for LLM session startup instructions, **[docs/WALKTHROUGH.md](docs/WALKTHROUGH.md)** for a complete step-by-step tutorial, and **[SHORTHAND_GUIDE.md](SHORTHAND_GUIDE.md)** for the complete trigger reference.
 

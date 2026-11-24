@@ -152,8 +152,8 @@ bobp chat "Bugs resolved and test suite verified green. @Bob *prompt update judg
 Bob *prompt update judge <target>
 ```
 - Bob extracts the optimal usage patterns identified by Smith and updates:
-  - The universal customization skill guidelines under `agents/skills/<target>/SKILL.md` (or the relevant skill/persona file).
-  - Specialist persona instructions (`agents/<persona>/SKILL.md`) to guide future agent interactions and prevent identified anti-patterns.
+  - The universal customization skill guidelines under `.agents/skills/<target>/SKILL.md` (or the relevant skill/persona file).
+  - Specialist persona instructions (`.agents/skills/<persona>/SKILL.md`) to guide future agent interactions and prevent identified anti-patterns.
 - Bob registers the updated skills/rules configurations.
 
 ### Handoff:

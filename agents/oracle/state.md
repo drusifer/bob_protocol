@@ -13,6 +13,7 @@
 - 2026-10-30: Committed and pushed the evaluation and persona updates as `ad1be67` (`feat(eval): add Choice and Score persona grading`) to `origin/main`; the tree was clean after push.
 
 - 2026-10-31: Groomed docs after the PyPI 0.1.0 release and Switch persona: README now documents PyPI install (0.1.0) plus install from source, and lists security/release commands; walkthrough and its packaged copy updated to 10 personas/25 skills with Switch; docs index links the security skill. Noted that PyPI 0.1.0 predates Switch (installs 9 personas/24 skills), so the walkthrough stays on the source checkout until the next release. Grooming gate: ACCURACY, USABILITY, CONSISTENCY, SYNC all PASS; mirrors match; rubric blocks only in authoring templates; SEC-001 passes the SECURITY FINDING rubric.
+- 2026-11-23: `*ora groom` across root docs, `docs/`, `agents/DOCUMENTATION_INDEX.md`, `bobp/templates/`, and all 22 templates in `agents/templates/`. Fixed 38 broken relative links (37 in `DOCUMENTATION_INDEX.md` + 1 in `docs/PERSONA_EVALUATION.md`), updated persona count (10), added `_template_PERSONA_SKILL.md`/`_template_MAKEFILE.md`/`_template_TASKFILE.md`/`_template_MISE.md` to the index, updated `README.md`, `bobp/templates/README.md`, `STARTUP.md`, `SHORTHAND_GUIDE.md`, and `docs/WALKTHROUGH.md` to reflect real `.agents/skills/` directories (no symlinks), Switch, and Tank's `mise`/`Task` bootstrap. Synchronized all packaged mirrors. Noted for Tank (`@Tank *devops sdlc`): `docs/SDLC.md` is still dated `2026-11-01` (Sprint 2) and will need Sprint 3 updates (`.agents/skills/` layout, per-skill `evals/evals.json`, workspace/baseline evaluator).
 
 ### Key Findings
 - Root README lacked a contents list and documented `make test` directly; docs index had an outdated update date and referenced an archive file that does not exist.
@@ -71,35 +72,36 @@
   ```
 
 ## Current Task
-**Status:** Completed
+**Status:** Completed (`*ora groom` pass)
 **Assigned to:** Oracle
-**Started:** 2026-10-30
-**Completed:** 2026-10-30
+**Started:** 2026-11-23
+**Completed:** 2026-11-23
 
 ### Task Description
-Add user-facing documentation for the new persona evaluation system and groom the links and packaged documentation copies.
+Full documentation grooming pass (`*ora groom`) following Sprint 3 `.agents/skills/` migration, Tank `mise`/`Task`/thin-`Makefile` updates, and new build templates.
 
 ### Progress
-- [x] Verified `persona-eval --help`, current suite catalog, grader implementation, and existing SDLC guidance.
-- [x] Documented prerequisites, setup, suite selection/repeats, Choice+Score grading, report triage, and TypeSafe data handling.
-- [x] Added links from README, documentation index, and packaged README; synchronized the packaged guide and index mirrors.
-- [x] Validated the six added local documentation links, exact mirror equality, and `git diff --check`.
+- [x] Verified zero misplaced/orphan root `.md` files and confirmed `RUBRIC-START` blocks appear only in authoring templates (`agents/templates/` + `bobp/templates/agents/templates/`).
+- [x] Fixed 37 broken links in `agents/DOCUMENTATION_INDEX.md` (+ packaged mirror), updated persona count to 10, added all 22 template entries, and refreshed `setup-agent-links` / `build-env` descriptions.
+- [x] Fixed broken Judge link in `docs/PERSONA_EVALUATION.md` (+ packaged mirror).
+- [x] Re-synchronized drifted mirrors (`STARTUP.md`, `SHORTHAND_GUIDE.md`) and refreshed `README.md`, `bobp/templates/README.md`, and `docs/WALKTHROUGH.md` (+ mirror) for `.agents/skills/` no-links layout, Switch, and Tank's `mise`/`Task` build standard.
+- [x] Flagged `docs/SDLC.md` Sprint 3 updates (layout, per-skill `evals/evals.json`, workspace evaluator) for Tank (`@Tank *devops sdlc`, already tracked as Task C.1 in `task.md`).
 
 ### Blockers
-No documentation blockers. User confirmed the setup-created discovery links and Via/Codex configuration can remain; no teardown is needed.
+None.
 
 ### Oracle Consultations
 None.
 
 ## Next Steps
 ### Immediate Next Action
-No active Oracle task is pending. The last work is committed and pushed as `ad1be67`. On resume, read `agents/CHAT.md` and this state, then follow the user's next request.
+Awaiting user direction. Grooming pass is complete and all mirrors/links verified. If resuming Sprint 3, next pending phases in `task.md` are Phase 5–6 (Bob), Phase 7 (Neo), and Closeout (Tank C.1 SDLC update → Oracle C.2 chat report).
 
 ### Waiting On
-User follow-up; the documentation and requested commit/push are complete.
+User direction.
 
 ### Planned Work
-- [x] None queued.
+- [ ] Sprint 3 Closeout Task C.2 (`bobp chat-report --moniker SPRINT_3`) once Sprint 3 Phases 5–7 and Tank's C.1 SDLC check complete.
 
 ---
-*Last updated: 2026-10-30*
+*Last updated: 2026-11-23*

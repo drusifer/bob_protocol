@@ -90,23 +90,23 @@ uv run bobp install .
 uv run bobp setup-agent-links
 ```
 
-`bobp install` creates the `agents/` workspace and seeds team files. Link setup
-creates project and harness discovery links; it can also write to the user's
-Codex skills directory and register the Via MCP server in Codex. If `via` is
-installed, it configures the project MCP entry and index. Review the command's
-output and restart Codex after setup. `uv add` creates `uv.lock`; commit it to
-make the environment reproducible. Run Bobp CLI tools with `uv run bobp ...`
-unless the project's environment is activated.
+`bobp install` places real skill directories in `.agents/skills/`, writes root
+`AGENTS.md`, and creates the `agents/` workspace with seeded state files (no
+symlinks are created). `bobp setup-agent-links` configures Via MCP/index (and
+registers the Via MCP server in Codex when installed), writes `agents/PROJECT.md`
+if missing, and updates `.gitignore`. Review the command's output. `uv add`
+creates `uv.lock`; commit it to make the environment reproducible. Run Bobp CLI
+tools with `uv run bobp ...` unless the project's environment is activated.
 
 ### Starting Your Session
 
-Open your agent harness (Claude Code, Gemini CLI, Cursor, or Codex) and initialize the session:
+Open your agent harness (Codex, Gemini CLI, Cursor, Copilot, or Antigravity) and initialize the session:
 
 ```text
 User: *init
 ```
 
-**Bob** initializes the environment, confirms symlink discovery (25 shared skills), reads `agents/CHAT.md`, and prints the team quick reference:
+**Bob** initializes the environment, confirms the installed `.agents/skills/` roster (10 personas, 25 shared skills), reads `agents/CHAT.md`, and prints the team quick reference:
 
 ```text
 [bob]->[all] *init*:

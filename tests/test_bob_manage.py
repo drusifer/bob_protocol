@@ -164,7 +164,7 @@ class CleanTests(unittest.TestCase):
 
             with patch("subprocess.run") as run:
                 with patch.object(_bob_manage, "find_project_root", return_value=target):
-                    _bob_manage.clean()
+                    _bob_manage.clean(yes=True)
                 run.assert_called_once()
 
             self.assertIn(

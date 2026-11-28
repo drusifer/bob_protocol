@@ -24,22 +24,37 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(PROJECT_ROOT))
 
-from via.core.discovery import FileDiscovery, find_index_db
-from via.core.match_record import MatchRecordFactory
-from via.db.store import DatabaseStore
-from via.parsers.registry import get_global_registry
-from via.renderers.usage import UsageRenderer
-from via.services.indexing import IndexingService
-
-TOOLS_DIR = Path(__file__).resolve().parent
-sys.path.insert(0, str(TOOLS_DIR))
-from tldr import find_tldr_with_coords
+try:
+    from .tldr import find_tldr_with_coords
+except ImportError:
+    TOOLS_DIR = Path(__file__).resolve().parent
+    sys.path.insert(0, str(TOOLS_DIR))
+    from tldr import find_tldr_with_coords
 
 PREP_DIR = PROJECT_ROOT / 'build' / 'tldr_prep'
-FACTORY = MatchRecordFactory()
-RENDERER = UsageRenderer()
+FACTORY = None
+RENDERER = None
+
+
+def _require_via():
+    """Import optional `via` symbols lazily so `--help` works without `via` installed."""
+    global FACTORY, RENDERER
+    try:
+        from via.core.discovery import FileDiscovery, find_index_db
+        from via.core.match_record import MatchRecordFactory
+        from via.db.store import DatabaseStore
+        from via.parsers.registry import get_global_registry
+        from via.renderers.usage import UsageRenderer
+        from via.services.indexing import IndexingService
+    except ModuleNotFoundError:
+        print("Error: `bobp prep-tldr` requires the `via` package to be installed.", file=sys.stderr)
+        sys.exit(1)
+    if FACTORY is None:
+        FACTORY = MatchRecordFactory()
+    if RENDERER is None:
+        RENDERER = UsageRenderer()
+    return FileDiscovery, find_index_db, DatabaseStore, get_global_registry, IndexingService
 
 
 def symbols_for_file(conn: sqlite3.Connection, abs_path: str) -> list:
@@ -91,8 +106,12 @@ def safe_name(rel_path: str) -> str:
 
 
 def parse_args() -> argparse.Namespace:
+    from ._common import EXIT_CODES_EPILOG
+
     parser = argparse.ArgumentParser(
+        prog='bobp prep-tldr',
         description='Prepare per-file TLDR data for Oracle sub-agents.',
+        epilog=EXIT_CODES_EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument('root', nargs='?', default=None,
@@ -134,6 +153,7 @@ def get_changed_files(conn: sqlite3.Connection, all_files: list, last_run: float
 
 def main():
     args = parse_args()
+    FileDiscovery, _find_index_db, DatabaseStore, get_global_registry, IndexingService = _require_via()
     root = Path(args.root).resolve() if args.root else PROJECT_ROOT
 
     # Re-index before gathering data

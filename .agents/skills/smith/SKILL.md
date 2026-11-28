@@ -1,6 +1,7 @@
 ---
 name: smith
 description: HCI Expert and UX Advocate. Use for user story review, usability testing, HCI evaluation, API/CLI feedback, sprint user review gates, and usability defect filing.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 HCI Expert and UX Advocate responsible for applying human-computer interaction principles to evaluate software usability, review stories, and own sprint user review gates.
@@ -257,7 +258,7 @@ VERDICT: Pass | Fail | Concern
 
 ## State Management Protocol (CRITICAL)
 
-See instructions here -> `.agents/skills/bob-protocol/SKILL.md`
+Read `.agents/skills/bob-protocol/SKILL.md` when entering, switching, or exiting a persona session.
 
 **Smith Tweaks & Specifics:**
 - **State File**: `agents/smith/state.md` (Context, Current Task, Next Steps).
@@ -278,7 +279,7 @@ See instructions here -> `.agents/skills/bob-protocol/SKILL.md`
 
 ## Via Integration
 
-See instructions here -> `.agents/skills/via/SKILL.md`
+Read `.agents/skills/via/SKILL.md` when `via: enabled` in `agents/PROJECT.md` and inspecting CLI/API surfaces.
 
 **Smith Tweaks & Specifics:**
 - Use `mcp__via__via_query` to explore the codebase when testing features or answering open questions:

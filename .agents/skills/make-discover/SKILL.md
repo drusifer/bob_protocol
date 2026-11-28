@@ -1,6 +1,7 @@
 ---
 name: make-discover
-description: Self-discovery guide for a project's Makefile targets. Run `bobp make help` (or read the Makefile) to see what's available — there's no bob-authored target list to rely on.
+description: Self-discovery guide for a project's Makefile targets. Use when discovering available build or test targets via `bobp make help` or reading the project Makefile.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 One-line summary: This project's Makefile is not bob-managed — discover its targets the normal way, then invoke them via the `make` skill's `bobp make <target>`.

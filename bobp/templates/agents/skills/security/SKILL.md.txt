@@ -1,6 +1,7 @@
 ---
 name: security
-description: Shared security practice for Bob Protocol projects. Covers build-time scans (secrets, dependency audits), triaging vulnerable dependencies, and how to swap or remove them safely. Used by Switch; other personas follow its gates.
+description: Shared security practice for Bob Protocol projects. Use when setting up or running build-time scans (secrets, dependency audits), triaging vulnerable dependencies, or safely upgrading, swapping, or removing them.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 One-line summary: How the team scans for security problems at build time and fixes vulnerable dependencies without breaking the build.
@@ -77,3 +78,9 @@ Setup procedure:
 **Acceptable with expiry — dependency advisories (npm and Python).** `tools/audit_gate.py` backs both `security-scan-npm` and `security-scan-python`. Only the user may accept an advisory, always with an expiry (below). The preferred fix is still to upgrade, swap, or remove the package; Python advisories count as blocking (pip-audit gives no severity) until fixed or accepted. Never add `--ignore-vuln` or an ignore file outside the gate.
 
 Only the user accepts risk. **Every acceptance has an expiration date** (`expires`, YYYY-MM-DD, at most 90 days after it is granted; default 90). After that date the acceptance no longer counts: the gate blocks again until the user renews it with a fresh review or the risk is fixed. Switch warns 14 days ahead, lists expired acceptances as open in every review, and never records an acceptance without an expiry. Record an accepted advisory (npm or Python; match by GHSA, PYSEC, or CVE id) in `agents/switch/accepted-risks.json` (id, package, finding, who and when, reason, `expires`, re-check trigger); `tools/audit_gate.py` then notes it instead of failing the scan, and any new advisory still blocks. Record the accepted finding with its reason, scope, and a re-check trigger (for example, "re-run when promptfoo publishes a release that bumps glob"). An accepted High finding stays visible in `agents/switch/state.md`.
+
+## Gotchas
+
+- **Untrusted project files can hang or redirect I/O (SEC-005 / SEC-006):** Fixed paths inside a cloned repo (stamps, manifests, `.bak` files) may be planted symlinks (e.g. to `/dev/stdin`) or FIFOs. Open with `O_NOFOLLOW | O_NONBLOCK`, require `fstat` `S_ISREG`, cap reads, never pass `O_TRUNC` before `S_ISREG`, and guard FIFO tests with `signal.alarm`.
+- **Regex backtracking on untrusted files (SEC-008 / SEC-009):** Avoid adjacent identical quantifiers across optional groups and unanchored variable-length `re.split` prefixes (`\n+`); add an alarm-guarded 50k-char mismatch test.
+- **Secrets are never accepted:** Never create `.gitleaksignore`, allowlists, or baselines for `gitleaks`; remove and rotate the credential instead.

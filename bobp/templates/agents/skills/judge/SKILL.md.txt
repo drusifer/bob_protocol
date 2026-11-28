@@ -1,6 +1,7 @@
 ---
 name: judge
-description: Work-loop to evaluate and improve agent skills, personas, and tools using Promptfoo scenarios or usage traces (e.g. *judge bob, *judge via).
+description: Work-loop to evaluate and improve agent skills, personas, and tools. Use when running Promptfoo/Jev evals or auditing usage traces (*judge bob, *judge via) to diagnose and fix prompt defects.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Work-loop for evaluating the effectiveness of a target skill, tool, or persona, using repeatable evidence to identify behavior defects, improve prompts or code, and verify the fix without tuning to a single output.
@@ -74,7 +75,7 @@ separate from the scenario used to diagnose and fix the target to reduce test-sp
 ```
 Trin *qa judge <target>
 ```
-- **Required tool — `bobp trace-annotate [--date YYYY-MM-DD] [--format html|md]`**: invoke this Bobp CLI directly; it does not require a target project Makefile. It parses Claude Code JSONL transcripts (`~/.claude/projects/<slug>/*.jsonl`) for the selected date and flags tool-use patterns via `agents/tools/trace_rules.json`. Output defaults to `agents/trin/judge_tool_trace.html` (or `.md` with `--format md`).
+- **Required tool — `bobp trace-annotate [--date YYYY-MM-DD] [--format html|md]`**: invoke this Bobp CLI directly; it does not require a target project Makefile. It parses Claude Code JSONL transcripts (`~/.claude/projects/<slug>/*.jsonl`) for the selected date and flags tool-use patterns using its built-in rules (or a custom `--rules <path>` file). Output defaults to `agents/trin/judge_tool_trace.html` (or `.md` with `--format md`).
 - **Harness coverage:** this annotator currently reads Claude Code transcripts only. It does not capture Codex tool calls. If the session being judged ran in Codex, report that the tool trace is unavailable and do not issue a numeric TES from CHAT.md or state files; those records support process/protocol review only.
 - **Do not hand-reconstruct a tool trace from `agents/CHAT.md`.** CHAT.md cannot show tool-call-level behavior and produces a systematically over-optimistic trace. Use `bobp trace-annotate` for Claude tool-use judging; use CHAT.md and persona state only for process/protocol adherence (chain sequencing, gate compliance, handoffs).
 - **Manual review is still required after running the tool**: read the raw flags before scoring — the rule regexes are heuristics and can both over-flag (e.g. a `make <target> | tail` where the invocation wasn't actually via `bobp make`, so there's no build.out capture to be redundant with) and under-flag. Note any flag you're overriding and why in the trace report, per-flag, not as a blanket dismissal.

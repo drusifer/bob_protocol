@@ -1,6 +1,7 @@
 ---
 name: bob-protocol
 description: Multi-persona coordination protocol. Enables AI to switch between specialized personas (Neo, Morpheus, Trin, Oracle, Mouse, Cypher, Bob, Smith, Tank, Switch) based on task needs. Use for *chat workflow, state management, and cross-agent communication.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Orchestrates multi-persona AI coordination through a shared chat log using the `*chat` trigger.
@@ -124,7 +125,7 @@ For a **large, growing reference doc** (not `state.md` itself — those stay sma
 
 ### ENTRY (When Activating / Rapid Startup)
 
-See instructions here -> `.agents/skills/init/SKILL.md`
+Read `.agents/skills/init/SKILL.md` when initializing a fresh session or resuming from a cold start.
 
 1. Read `agents/CHAT.md` — last 10-20 messages
 2. Load `agents/[persona]/state.md`
@@ -139,7 +140,7 @@ See instructions here -> `.agents/skills/init/SKILL.md`
 
 ### EXIT — HARD GATE
 
-See instructions here -> `.agents/skills/prep-clear/SKILL.md`
+Read `.agents/skills/prep-clear/SKILL.md` when checkpointing before `/clear`, compaction, or a persona switch.
 
 9. Update `agents/[persona]/state.md` (Context, Current Task, Next Steps sections)
 10. Post handoff message
@@ -149,7 +150,7 @@ See instructions here -> `.agents/skills/prep-clear/SKILL.md`
 
 ## Cold Start Recovery
 
-See instructions here -> `.agents/skills/init/SKILL.md`
+Read `.agents/skills/init/SKILL.md` when recovering from a context clear or session restart with no memory.
 
 When resuming after a context clear or new session with no memory:
 
@@ -217,3 +218,9 @@ If a fix attempt fails:
 | `*chat @tank *devops deploy` | Tank | `*devops deploy` |
 | `*chat @tank *devops sdlc` | Tank | `*devops sdlc` |
 | `*chat @switch *sec review` | Switch | `*sec review` |
+
+## Gotchas
+
+- **Anti-loop hard stop:** After 2 failed attempts on the same fix or gate, stop immediately, consult Oracle, and wait for explicit user approval before a 3rd attempt.
+- **State-file hard gate:** Never switch personas or clear context without saving `agents/[persona]/state.md` and posting a `bobp chat` handoff — `state.md` is the only memory that survives `/clear`.
+- **Growing reference docs:** On large files (`docs/ARCH.md`, `agents/oracle/lessons.md`), use `via` heading lookup (`-tH`) + bounded line-range reads rather than `-A N` blind windows or full-file re-reads.

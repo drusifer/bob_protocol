@@ -28,26 +28,25 @@
 - 2026-11-23: `*reprompt` updated Tank (`.agents/skills/tank/SKILL.md` + `bobp/templates/agents/tank/SKILL.md.txt`) and Tank's owned `build-env` skill (canonical + packaged + `references/language-conventions.md`) to standardize on `mise` (`mise.toml`) for pinned runtimes/CLIs, `Task` (`Taskfile.yml`, go-task v3) for build/ops instructions, and a thin `Makefile` forwarding shim (modeled on `/home/drusifer/Projects/t3-gcp`) while keeping `bobp make <target>` as the agent entry point and preserving existing traditional Makefiles unless migration is requested.
 - 2026-11-23: `*reprompt` wired `agents/templates/_template_DOMAIN.md` and the DOMAIN rubric (`LANG`, `BOUND`, `INVAR`, `STATE`, `EVENT`) into Morpheus (`.agents/skills/morpheus/SKILL.md` + `bobp/templates/agents/morpheus/SKILL.md.txt`) to match Cypher and `ARTIFACTS.md`.
 - 2026-11-23: Added 3 new Tank build templates with embedded rubrics (`_template_MAKEFILE.md`, `_template_TASKFILE.md`, `_template_MISE.md`) in both `agents/templates/` and `bobp/templates/agents/templates/`, registered them in `ARTIFACTS.md`, and wired every remaining owner/reviewer template reference across `tank`, `build-env`, `bob`, `bob-protocol`, `prep-clear`, `chat`, `smith`, `morpheus`, and `trin` (canonical + packaged copies synchronized).
+- 2026-11-27: Fresh session initialized via `$bob-protocol init read docs`. Verified `bobp setup-agent-links` (10 personas in `.agents/skills/`, `.via/index.db`, `via` MCP, Codex MCP, `agents/PROJECT.md` `via: enabled`). Read project docs (`docs/SDLC.md`, `docs/LESSONS.md`, `docs/PERSONA_EVALUATION.md`, `docs/WALKTHROUGH.md`, `docs/sprints/USER_STORIES_SPRINT3.md`, `README.md`, `STARTUP.md`, `SHORTHAND_GUIDE.md`, `agents/DOCUMENTATION_INDEX.md`, `agents/templates/ARTIFACTS.md`, and `task.md`). Latest release is `v0.3.1` (2026-11-24); Sprint 3 Phases 5–7 and Closeout remain open in `task.md`.
 
 ## Current Task
-**Status:** Completed Tank `mise`/`Task`/thin-`Makefile` update, new build templates + rubrics, and full template/rubric wiring pass; handed off to Oracle for `*ora groom`.
-**Assigned to:** Oracle (handed off from Bob)
-**Started:** 2026-11-23
-**Last Completed:** 2026-11-23 (New build templates + full template/rubric wiring across skills)
+**Status:** Sprint 3 Phases 5–6 complete & Sprint 3 LAUNCHED (2026-11-28).
+**Assigned to:** Bob (`*prompt`) — complete
+**Started:** 2026-11-28
+**Last Completed:** 2026-11-28 (Sprint 3 Phase 5 `build-env/references/sdlc-guide.md`, Phase 6 all 35 skills descriptions/`compatibility`/`## Gotchas`/conditional pointers/`render`/`linter`/`__pycache__` cleanup, Sprint 3 retro)
 
 ### Task Description
-Completed Bob's prompt and template updates (Tank `mise`+`Task`+thin `Makefile`, `_template_MAKEFILE.md`, `_template_TASKFILE.md`, `_template_MISE.md`, `ARTIFACTS.md`, and all remaining owner/reviewer template refs across 9 skills, all canonical + packaged copies verified and passing focused tests). Handing off to `@Oracle *ora groom`.
+Completed Sprint 3 skill best-practices upgrades across all 35 canonical `.agents/skills/` and packaged `bobp/templates/agents/` skills with enforcing tests in `tests/test_skill_spec.py`.
 
 ### Progress
-- [x] Verified setup via `bobp setup-agent-links` (10 personas, `.via/index.db`, `via` MCP, `agents/PROJECT.md`).
-- [x] Inspected `/home/drusifer/Projects/t3-gcp` (`Makefile`, `mise.toml`, `Taskfile.yml`, `docs/SDLC.md`).
-- [x] Updated Tank + `build-env` (`mise.toml`, `Taskfile.yml`, thin `Makefile` shim) and created `_template_MAKEFILE.md`, `_template_TASKFILE.md`, `_template_MISE.md` with rubrics.
-- [x] Registered new templates in `ARTIFACTS.md` and wired all missing owner/reviewer template refs across 9 skills (canonical + packaged parity verified; 66/66 focused tests passed).
-- [x] Handed off to Oracle for `*ora groom`.
+- [x] Phase 5: Extracted `build-env/references/sdlc-guide.md` (+ mirror); all 35 skills under ≤500 lines and ≤4,500 tokens.
+- [x] Phase 6: Updated trigger descriptions, `compatibility`, conditional pointers, evidence-backed `## Gotchas` (`make`, `security`, `bob-protocol`, `sprint`, `build-env`), generalized `render`, pinned `linter`, removed `agents/tools/__pycache__/`, and synced all 70 skill files.
+- [x] Sprint 3 Stage 3 Closeout completed and launched.
 
 ### Blockers
 None.
 
 ## Next Steps
-1. Oracle runs `*ora groom` across project docs, index, and recent changes.
-2. When returning to Bob: proceed with Sprint 3 Phase 5 (`task.md` Task 5.1) or other prompt work as directed by the user.
+1. Await user direction (commit/release or next sprint).
+2. Run live paid `bobp persona-eval` suites if owner approves external API spend.

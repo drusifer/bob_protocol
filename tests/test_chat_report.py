@@ -162,7 +162,7 @@ class PhaseReportTests(unittest.TestCase):
             self.assertEqual(archive_diagram.read_text(), expected)
 
     def test_split_phases_returns_none_without_markers(self):
-        from bobp.tools.chat_merge import parse_blocks
+        from bobp.tools.merge import parse_blocks
         _, blocks = parse_blocks(SAMPLE_LOG)
         self.assertIsNone(chat_report.split_phases(blocks))
 

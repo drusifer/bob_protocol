@@ -1,6 +1,7 @@
 ---
 name: test-runner
 description: Run tests using the project Makefile. Use for executing test suites, running specific tests, and validating code changes.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 One-line summary: Run the project test suite through the Makefile for consistent environment setup.

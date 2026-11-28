@@ -1,6 +1,7 @@
 ---
 name: chat
 description: Post a message (max 512 chars) with a 'why?' explanation to the team chat log (agents/CHAT.md). Use to communicate between personas, log progress updates, and coordinate handoffs between agents.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 # Chat Skill
 

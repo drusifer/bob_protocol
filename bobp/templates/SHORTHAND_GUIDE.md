@@ -217,6 +217,7 @@ a `Makefile`:
 bobp tldr                              # TL;DR from all project files
 bobp chat "..." --persona X --cmd Y    # post to CHAT.md
 bobp chat-diagram                      # regenerate CHAT.diagram.md
+bobp merge [PATH]                      # resolve Git conflicts in timestamped Markdown docs (--help for opt-in Git driver)
 ```
 
 ## Running Your Own Make Targets
@@ -234,8 +235,8 @@ with the `bobp` CLI, not make:
 
 ```bash
 bobp diff <path>          # diff framework files with a project
-bobp update <path>        # push framework updates to a project
-bobp pull <path>          # pull framework updates from a project
+bobp update <path>        # push framework updates to a project (--dry-run to preview)
+bobp pull <path>          # pull framework updates from a project (--dry-run to preview)
 bobp install <path>       # fresh install into a project
-bobp clean                # reset state files and symlinks (run inside the project)
+bobp clean --yes          # reset state files and CHAT.md (--dry-run to preview; exits 2 without --yes)
 ```

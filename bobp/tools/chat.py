@@ -69,7 +69,14 @@ def write_message(chat_file, formatted_line, overwrite_last_make_build):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Append a message to agents/CHAT.md")
+    from ._common import EXIT_CODES_EPILOG
+
+    parser = argparse.ArgumentParser(
+        prog="bobp chat",
+        description="Append a message to agents/CHAT.md",
+        epilog=EXIT_CODES_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("message", help="The message content max 512 characters")
     parser.add_argument("--persona", "-p", default=os.environ.get("USER", "User"), help="Persona name (default: $USER)")
     parser.add_argument("--cmd", "-c", default="chat", help="Command prefix (default: chat)")

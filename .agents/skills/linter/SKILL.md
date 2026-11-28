@@ -1,6 +1,7 @@
 ---
 name: linter
-description: Run code quality checks including linting, type checking, dead code detection, duplication, and complexity analysis.
+description: Run Python code quality checks including linting, type checking, dead code detection, duplication, and complexity analysis. Use when running *qa lint, *qa quality, or pre-review static analysis.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 One-line summary: Runs Python code quality checks — style, types, dead code, complexity, and duplication.
@@ -88,9 +89,9 @@ source .venv/bin/activate && pylint --disable=all --enable=duplicate-code via/
 
 ## Installation
 
-If tools are missing, install them:
+If tools are missing, add pinned dev dependencies with `uv` (and commit `pyproject.toml` + `uv.lock`):
 ```bash
-source .venv/bin/activate && pip install pylint mypy vulture radon
+uv add --dev "pylint>=3.3,<4" "mypy>=1.14,<2" "vulture>=2.14,<3" "radon>=6.0,<7"
 ```
 
 ## Workflow

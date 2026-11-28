@@ -9,13 +9,10 @@
 - `docs/SDLC.md` is drafted; README development commands now use uv. Full suite: 88 passed, 7 skipped, 9 subtests; Mermaid lint passed. A clean `distclean` rebuild remains for sprint close to avoid deleting retained eval reports from `build/`.
 
 ## Current Task
-**Release 2026-10-31:** bobp 0.1.0 published to PyPI (tag v0.1.0 at d17cc1a, license -> SPDX GPL-3.0-only, `make release` target added in dcc0aad). Verified fresh-venv install and `bobp --help`. Forgejo registry remains a separate private target. `gh` token initially lacked release permission (403); fixed by user.
-
-**Status:** Completed; SDLC reviewed and approved.
-**Assigned to:** Tank
-**Progress:** Checked every Make target, CI/release workflow, dependency layout, quality gate, branch/push convention, local eval behavior, and known gap. Oracle's SDLC review passed all six criteria. Full suite and lint pass. `git diff --check` clean.
+**Status:** Sprint 5 Task C.1 SDLC conformance check PASSED (2026-11-28); Sprint 5 LAUNCHED (`384 passed, 2 skipped, 435 subtests`, lint, security-scan, build `bobp-0.3.1` green; `docs/SDLC.md` §7 updated).
+**Assigned to:** Oracle (`*ora groom`)
+**Progress:** Updated `docs/SDLC.md` §3 (per-skill `evals/evals.json`, `--list --json`, evaluating-skills workspace/baseline layout), §7 (real `.agents/skills/`, no links, root `AGENTS.md`, `bobp merge`, agent-safe `--help`/`--dry-run`/`clean --yes`), §9 (clean rebuild record & live-eval owner-approval deferral), and `Last verified: 2026-11-28`. Ran full clean rebuild: `bobp make distclean` (documented SDLC §9 `build/build.out` exception after clean completed), `bobp make install` (`uv sync --locked`), `bobp make test` (`368 passed, 2 skipped, 397 subtests`), `bobp make lint` (all Mermaid blocks PASS), `bobp make security-scan` (`gitleaks` 0 leaks, `pip-audit` clean, `npm audit` clean with 3 accepted SEC-001 advisories), and `bobp make build` (`bobp-0.3.1` wheel/sdist).
 
 ## Next Steps
-0. Next release: bump `__version__`, push to main, run `bobp make release`, approve the `pypi` environment, verify install.
-1. Report completion with test/lint results, live suite report paths, and the clean-rebuild caveat.
-2. Do not commit or push unless the user asks.
+1. Oracle reviews `docs/SDLC.md` (`SDLC` rubric) and completes Task C.2 grooming; Smith executes Task C.3 E2E UAT; team retro & Cypher Sprint 3 launch.
+2. Do not commit, bump version, or release until directed by the owner (SDLC §6/§7).

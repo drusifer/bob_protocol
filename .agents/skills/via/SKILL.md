@@ -1,6 +1,7 @@
 ---
 name: via
-description: Guidelines for writing efficient via relationship queries.
+description: Guidelines for writing efficient via relationship queries. Use when `via: enabled` in `agents/PROJECT.md` to locate symbol definitions, callers, imports, or markdown headings.
+compatibility: Requires the via CLI/MCP server and the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 # Via — Guidelines for Efficient Relationship Queries

@@ -1,6 +1,7 @@
 ---
 name: bob-tools
-description: Use when working in a BobProtocol project and you need to understand or run the bobp CLI subcommands, especially chat, chat-diagram, make, setup-agent-links, and teardown-agent-links. This skill explains which commands to run, what each writes, and how to avoid flooding Codex context.
+description: Use when working in a BobProtocol project and you need to understand or run the bobp CLI subcommands, especially chat, chat-diagram, merge, make, setup-agent-links, and teardown-agent-links. This skill explains which commands to run, what each writes, and how to avoid flooding Codex context.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 One-line summary: Use BobProtocol's tools through the `bobp` CLI's stable subcommands — never reach for the implementation modules under `bobp.tools` directly.
@@ -8,15 +9,16 @@ One-line summary: Use BobProtocol's tools through the `bobp` CLI's stable subcom
 TLDR:
     Use `bobp chat "..." --persona X --cmd Y --to Z` for team log messages — it also regenerates `agents/CHAT.diagram.md` (a Mermaid sequence diagram of the log) automatically.
     Use `bobp chat-diagram` to regenerate the diagram on demand without posting a message.
+    Use `bobp merge [PATH]` to resolve Git conflicts and chronologically order timestamped Markdown logs (`CHAT.md`, `LESSONS.md`, `DECISIONS.md`, ADRs), or `--git-driver %O %A %B` as an opt-in Git custom merge driver.
     Use `bobp make <target>` to run this project's own `make <target>` — it captures output to `build/build.out` and posts build status. bobp does not install, own, or modify the project's Makefile.
-    Use `bobp setup-agent-links` after installing/updating BobProtocol so Claude, Codex, root instruction links, via MCP, and Codex MCP are configured.
-    Use `bobp teardown-agent-links --dry-run` to inspect generated links before removing them.
+    Use `bobp setup-agent-links` after installing/updating BobProtocol to configure Via MCP/index, Codex Via MCP, `agents/PROJECT.md`, and `.gitignore` (creates no symlinks).
+    Use `bobp teardown-agent-links --dry-run` to inspect legacy symlinks and MCP teardown before removing them.
 
 # BobProtocol Tools
 
 ## Triggers
 
-`bobp chat`, `bobp make`, `bobp setup-agent-links`, `bobp teardown-agent-links`, `bob tools`, `BobProtocol tools`
+`bobp chat`, `bobp merge`, `bobp make`, `bobp setup-agent-links`, `bobp teardown-agent-links`, `bob tools`, `BobProtocol tools`
 
 ## Tool Map
 
@@ -24,9 +26,13 @@ TLDR:
 |------|---------|--------|
 | `bobp chat "<msg>" --persona X --cmd Y --to Z` | Append short structured messages to `agents/CHAT.md` | `agents/CHAT.md`, `agents/CHAT.diagram.md` |
 | `bobp chat-diagram [--include-builds]` | Render `agents/CHAT.md` as a Mermaid sequence diagram, for humans following the conversation flow | `agents/CHAT.diagram.md` |
+| `bobp merge [PATH] [--dry-run] [--order auto\|asc\|desc] [--backup]` | Resolve Git conflict markers and order timestamped Markdown docs (`CHAT.md`, `LESSONS.md`, `DECISIONS.md`, ADRs); also supports opt-in `--git-driver BASE OURS THEIRS` | Target file (or `OURS` in driver mode; optional `<path>.bak` with `--backup`) |
 | `bobp make [-v/-vv/-vvv] <target>` | Run this project's own `make <target>`, capturing build/test output and posting build status | `build/build.out`, `agents/CHAT.md` |
-| `bobp setup-agent-links` | Create discovery links for Claude, Codex, root instruction files, delegate MCP setup to via, ensure the via index exists, register via with Codex MCP, and create missing project capabilities | `.agents/skills`, `$CODEX_HOME/skills`, root symlinks; `.mcp.json` via `via`; `.via/index.db`; Codex config via `codex mcp add`; `agents/PROJECT.md` when absent |
-| `bobp teardown-agent-links [--dry-run]` | Remove discovery links created by setup and delegate MCP teardown to via/Codex | `.agents/skills`, `$CODEX_HOME/skills`, root symlinks; via may remove its own MCP config; Codex config via `codex mcp remove` |
+| `bobp update [--dry-run] <target>` | Refresh skills, harness subagents, and templates in a project, migrating legacy layouts while preserving persona state | `.agents/skills/`, `.claude/agents/`, `.codex/agents/`, `.gemini/agents/`, `agents/templates/`, `AGENTS.md`, `agents/.bobp-skills`, `agents/.bobp-subagents`, `agents/.bobp-version` |
+| `bobp pull [--dry-run] <src>` | Pull owned skill, subagent, and template updates from a peer project into this one | Existing owned files under `.agents/skills/`, `.claude/agents/`, `.codex/agents/`, `.gemini/agents/`, and `agents/templates/` |
+| `bobp clean [--dry-run] --yes` | Reset persona state files and `CHAT.md` (requires `--yes`; exits `2` without it; leaves skills and subagents intact) | `agents/*/state.md`, `agents/CHAT.md`, `agents/CHAT.diagram.md` |
+| `bobp setup-agent-links` | Configure Via index/MCP, Codex Via MCP, missing `agents/PROJECT.md`, and `.gitignore` (creates no symlinks) | `.mcp.json`, `.via/index.db`, Codex config via `codex mcp add`, `agents/PROJECT.md`, `.gitignore` |
+| `bobp teardown-agent-links [--dry-run]` | Remove legacy symlinks from older bobp versions and delegate MCP teardown to via/Codex | Legacy symlinks pointing into `agents/`; via/Codex MCP config |
 
 ## General Rules
 
@@ -35,8 +41,8 @@ TLDR:
 - Inspect `build/build.out` only when the tail or exit code is not enough.
 - Keep chat messages under 256 characters. For longer status, write a Markdown summary file and chat the path plus a short summary.
 - Consecutive `bobp make` build-status messages replace the previous build entry instead of appending, so routine build/test runs do not fill `agents/CHAT.md`.
-- Run `bobp setup-agent-links` after changing `.agents/skills/*/SKILL.md`, adding a new persona folder (`agents/<name>/`), or installing BobProtocol into another project.
-- Run teardown with `--dry-run` first. It removes only symlinks that point back into the current project and leaves Codex `.system` skills untouched.
+- Run `bobp setup-agent-links` after installing BobProtocol or when Via MCP, `.via/index.db`, or `agents/PROJECT.md` needs setup.
+- Run `bobp teardown-agent-links --dry-run` first. It removes only legacy symlinks whose target is inside `agents/` and never touches real files or unrelated symlinks.
 
 ## bobp chat
 
@@ -60,6 +66,22 @@ Regenerate on demand, e.g. after manually editing `CHAT.md` or archiving old mes
 bobp chat-diagram                    # skip build-status entries (default)
 bobp chat-diagram --include-builds   # include them
 ```
+
+## bobp merge
+
+Resolve Git merge conflicts and sort timestamped Markdown documents (`CHAT.md`, date-headed logs like `LESSONS.md`, and metadata-dated ADR/decision logs like `DECISIONS.md`):
+
+```bash
+bobp merge                           # clean up agents/CHAT.md in place
+bobp merge docs/LESSONS.md --dry-run # preview changes without writing
+bobp merge docs/DECISIONS.md --order desc
+bobp merge --help                    # print opt-in .git/config & .gitattributes snippet
+```
+
+Notes:
+- Chronological direction (`asc` / `desc`) is auto-detected from non-conflicted entries (override with `--order asc|desc`).
+- Preamble conflicts are refused safely (file untouched, exit `1`).
+- Optional Git custom merge driver mode (`bobp merge --git-driver %O %A %B`) is strictly opt-in; neither `bobp install`, `bobp update`, nor `bobp merge` modifies `.git/config` or `.gitattributes`. Run `bobp merge --help` for the exact configuration snippet.
 
 ## bobp make
 
@@ -87,45 +109,29 @@ tail -20 build/build.out
 
 ## bobp setup-agent-links
 
-Run this from the project root after setup or skill changes:
+Run this from the project root after installing BobProtocol or when Via/MCP setup is needed:
 
 ```bash
 bobp setup-agent-links
 ```
 
-It first converts an older project to the current layout: persona folders with the old `.docs`-suffixed names are renamed to `agents/<name>/` and the path references in the project's agent docs are updated to match (chat logs are left as history). `bobp update` runs the same conversion before refreshing files.
-
-It discovers:
-- personas from `.agents/skills/<name>/SKILL.md` (any folder directly under `agents/` that holds a `SKILL.md`)
-- shared skills from `.agents/skills/*/SKILL.md`
-
-It creates:
-- `.agents/skills/<name>` links for Claude-style skill discovery, one per persona and shared skill. If `.agents/skills` is itself a symlink into `agents/` (e.g. `-> .agents/skills`), it is replaced with a real directory first so persona links never land inside `agents/`
-- `$CODEX_HOME/skills/<name>` links so Codex loads BobProtocol skills on startup
-- root instruction links: `AGENTS.md`, `GEMINI.md`, `CHATGPT.md`, `.cursorrules`, `.github/copilot-instructions.md`
-- via MCP integration by running `via install mcp` when `via` is installed, then hardening `.mcp.json` with `HOME=<project-root>` and `--no-web`
-- via index creation with `via index <project-root>` when `.via/index.db` is missing
-- Codex MCP integration by running `codex mcp add via --env HOME=<project-root> -- <via> mcp serve --no-web <project-root>` when `codex` and `via` are installed
-- `agents/PROJECT.md` when it is missing, with `via: enabled` only if via MCP setup succeeded
-
-If writing to `$CODEX_HOME/skills` fails under sandboxing, rerun with approval. Restart Codex after creating or changing Codex skill links.
+Skills and root `AGENTS.md` are installed as real files by `bobp install` / `bobp update` — `setup-agent-links` creates **no symlinks**. It:
+- converts older `.docs`-suffixed persona folders to `agents/<name>/` and updates internal path references (chat logs stay untouched as history)
+- configures via MCP integration with `via install mcp` when `via` is installed, hardening `.mcp.json` with `HOME=<project-root>` and `--no-web`
+- creates `.via/index.db` with `via index <project-root>` when missing
+- registers Codex MCP integration via `codex mcp add via --env HOME=<project-root> -- <via> mcp serve --no-web <project-root>` when `codex` and `via` are installed
+- creates `agents/PROJECT.md` when missing, enabling `via: enabled` only if via MCP setup succeeded
+- ensures `.gitignore` has standard ignores without hiding `.agents/skills/`
 
 ## bobp teardown-agent-links
 
-Run this from the project root to undo setup:
+Run this from the project root to remove legacy symlinks from older `bobp` versions and uninstall MCP config:
 
 ```bash
 bobp teardown-agent-links --dry-run
 bobp teardown-agent-links
 ```
 
-It removes only generated links/config owned by this project:
-- `.agents/skills/*` symlinks that point into this repo
-- `$CODEX_HOME/skills/*` symlinks that point into this repo
-- root instruction symlinks: `AGENTS.md`, `GEMINI.md`, `CHATGPT.md`, `.cursorrules`, `.github/copilot-instructions.md`
-- via MCP integration by running `via uninstall mcp`
-- Codex MCP integration by running `codex mcp remove via`
+It removes only verified legacy symlinks targeting `agents/` (such as older `AGENT.md`, `GEMINI.md`, `.cursorrules`, `CHATGPT.md`, `.github/copilot-instructions.md`, `.agents`, or per-skill symlinks) and delegates MCP cleanup to `via uninstall mcp` and `codex mcp remove via`.
 
-It does not remove real files, unrelated symlinks, or `$CODEX_HOME/skills/.system`.
-
-Use `--keep-mcp` to skip `via uninstall mcp`.
+It never removes real files or symlinks pointing outside `agents/`. Use `--keep-mcp` to skip MCP uninstall.

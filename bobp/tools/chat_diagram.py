@@ -334,7 +334,14 @@ def regenerate(chat_file, diagram_file, include_builds=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Render agents/CHAT.md as a Mermaid sequence diagram")
+    from ._common import EXIT_CODES_EPILOG
+
+    parser = argparse.ArgumentParser(
+        prog="bobp chat-diagram",
+        description="Render agents/CHAT.md as a Mermaid sequence diagram",
+        epilog=EXIT_CODES_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("--chat-file", default=None, help="Path to CHAT.md (default: agents/CHAT.md)")
     parser.add_argument("--out", default=None, help="Output path (default: agents/CHAT.diagram.md)")
     parser.add_argument("--include-builds", action="store_true", help="Include 'make' build-status entries")

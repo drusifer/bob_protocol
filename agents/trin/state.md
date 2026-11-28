@@ -9,11 +9,9 @@
 - Full tests: 88 passed, 7 skipped, 9 subtests passed. Mermaid lint passed; Node v24.13 emitted a transitive dependency engine warning, recorded in `docs/SDLC.md`. All pytest/eval scratch and reports are in `build/`.
 
 ## Current Task
-**Status:** Completed; QA passed and Morpheus review passed.
-**Assigned to:** Trin
-**Progress:** Reviewed the actual eval report and artifact against the installed shared DECISION rubric after the rubric correction. No behavior-specific rubric was added.
+**Status:** Sprint 5 UAT (`docs/sprints/UAT_PLAN_SPRINT5.md`) & Better/Worse measurements (`docs/sprints/EVAL_SPRINT5_SUBAGENTS.md`) complete and APPROVED (`384 passed, 2 skipped, 435 subtests`); Sprint 5 LAUNCHED (2026-11-28).
+**Assigned to:** Trin (`*qa`) — complete
+**Progress:** Verified `.agents/skills/` real-directory layout (35 skills, 0 symlinks), legacy migration & idempotent `update`, `STORY-SKL-3 AC5` harness-discovery output & READMEs, per-skill `evals/evals.json` (`--list --json`, 11 suites) + evaluating-skills workspace tests, Phase 5–6 size/references/descriptions/Gotchas/parity tests (`test_skill_spec.py`, 320 subtests), Phase 7 agent-safe CLI (`--help`, `--dry-run`, `clean --yes`), and full clean-rebuild suite (`368 passed, 2 skipped, 397 subtests`). Live paid Codex+TypeSafe eval remains deferred pending owner approval (Task 3b.3).
 
 ## Next Steps
-1. Tank has completed SDLC documentation, and Oracle reviewed it against the full SDLC rubric.
-2. Keep future local Promptfoo reports/runtime and pytest scratch under `build/`, never `/tmp`.
-3. Do not add Actions or hooks for this gate without a new user decision.
+1. Await user direction on git commit/release or live paid `bobp persona-eval` approval.

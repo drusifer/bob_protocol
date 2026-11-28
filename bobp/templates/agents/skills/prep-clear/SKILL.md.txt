@@ -1,6 +1,7 @@
 ---
 name: prep-clear
-description: Prepare active persona and workspace state before clearing or compacting LLM context. Flushes in-flight decisions, records completed items, writes an explicit cold-start resume plan to state.md, and posts a checkpoint to CHAT.md.
+description: Prepare active persona and workspace state before clearing or compacting LLM context. Use when approaching context limits or before switching personas (*prep-clear) to save state.md and post a CHAT.md checkpoint.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Prepares the active agent persona and workspace state before clearing, compacting, or resetting LLM context.

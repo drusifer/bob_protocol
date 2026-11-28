@@ -1,6 +1,7 @@
 ---
 name: fix
-description: Defect and bugfix work-loop. Diagnoses, confirms root cause with the user, applies surgical fixes with reproduction tests, and verifies zero regressions.
+description: Defect and bugfix work-loop. Use when reproducing and diagnosing a bug, confirming root cause with the user, applying a surgical fix with regression tests, and verifying zero regressions (*fix).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Defect and bugfix work-loop: diagnoses, confirms root cause, and applies targeted fixes with regression tests.

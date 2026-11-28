@@ -1,6 +1,6 @@
 # BobProtocol Documentation Index
 
-**Last Updated:** 2026-11-23
+**Last Updated:** 2026-11-28
 
 ## Quick Access
 
@@ -122,6 +122,7 @@ Located in `agents/templates/`:
 Shipped as `bobp` CLI subcommands, not project-local scripts:
 
 - `bobp chat` - Post messages to CHAT.md
+- `bobp merge [PATH]` - Resolve Git conflicts and chronologically order timestamped Markdown logs (`CHAT.md`, `LESSONS.md`, `DECISIONS.md`, ADRs), or opt into `--git-driver %O %A %B` (run `bobp merge --help` for the `.git/config` + `.gitattributes` snippet)
 - `bobp make <target>` - Run this project's own `make <target>`, captured to build/build.out and posted to CHAT.md
 - `bobp setup-agent-links` - Configure Via MCP/index, create missing `agents/PROJECT.md`, and update `.gitignore` (creates no symlinks; may update user-level Codex Via MCP config). See `.agents/skills/bob-tools/SKILL.md` for details.
 

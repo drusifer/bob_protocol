@@ -24,9 +24,9 @@ import sys
 SUBCOMMANDS = {
     "chat": "bobp.tools.chat",
     "chat-diagram": "bobp.tools.chat_diagram",
-    "chat-merge": "bobp.tools.chat_merge",
     "chat-report": "bobp.tools.chat_report",
     "make": "bobp.tools.make",
+    "merge": "bobp.tools.merge",
     "persona-eval": "bobp.tools.persona_eval",
     "prep-tldr": "bobp.tools.prep_tldr",
     "session-trace": "bobp.tools.session_trace",
@@ -53,6 +53,11 @@ def print_help() -> None:
         print(f"  {name}")
     print()
     print("Run `bobp <subcommand> --help` for subcommand-specific options.")
+    print()
+    print("Exit codes:")
+    print("  0  Success")
+    print("  1  Failure")
+    print("  2  Invalid usage or confirmation required")
 
 
 def main(argv: "list[str] | None" = None) -> int:
@@ -79,13 +84,18 @@ def main(argv: "list[str] | None" = None) -> int:
         print_help()
         return 1
 
-    from bobp.tools import _version_check
+    if not any(arg in ("-h", "--help") for arg in rest):
+        from bobp.tools import _version_check
 
-    _version_check.check(name)
+        _version_check.check(name)
 
     module = importlib.import_module(module_path)
+    prev_argv = sys.argv
     sys.argv = [name, *rest]
-    module.main()
+    try:
+        module.main()
+    finally:
+        sys.argv = prev_argv
     return 0
 
 

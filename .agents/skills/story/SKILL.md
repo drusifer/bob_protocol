@@ -1,6 +1,7 @@
 ---
 name: story
-description: User story and architecture specification planning loop. Slices epics into testable, independent stories with explicit acceptance criteria, system architecture, ADRs, and quality strategies.
+description: User story and architecture specification planning loop. Use when slicing epics into testable, independent user stories with acceptance criteria, system architecture, ADRs, and quality strategies (*plan story).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Story and architecture specification planning loop: slices epics into actionable user stories, ADRs, and acceptance criteria.

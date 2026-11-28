@@ -1,6 +1,7 @@
 ---
 name: sprint
-description: Sprint planning and execution container loop. Orchestrates SDLC verification, breaks stories into an ordered sequence of typed Work Loops in task.md, executes them, and manages sprint close.
+description: Sprint planning and execution container loop. Use when planning a sprint (*plan sprint), orchestrating SDLC verification and typed Work Loops in task.md, or executing sprint closeout (*sprint close).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Sprint planning and execution container loop: orchestrates the sprint cadence from SDLC gate through work-loop execution to launch.
@@ -312,3 +313,9 @@ Read [sprint close](references/sprint-close.md) when all phases have passed revi
 ---
 
 Read [loop rubric](references/loop-rubric.md) when evaluating the sprint process.
+
+## Gotchas
+
+- **SDLC wins on source control:** Never assume a sprint branch or auto-commit; follow `docs/SDLC.md` §6 (some repos forbid committing or pushing without explicit owner authorization).
+- **Mandatory gates cannot be skipped:** Smith Gates 1 & 2, Switch Design Gate 2b, Switch Phase Gate 5a (even as a one-line quick pass), and Tank's SDLC bookends are non-negotiable.
+- **Per-phase chat diagrams require phase markers:** `bobp chat-report` only splits archived diagrams by phase when Mouse posts `--cmd "phase <N>"` markers at each phase start.

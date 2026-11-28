@@ -8,8 +8,8 @@
 - Templates: `_template_SECURITY_FINDING.md` (SEC-NNN) and `_template_SECURITY_REVIEW.md`; reviews go in `reviews/`, findings in `findings/`.
 
 ## Current Task
-**Status:** Findings SEC-001..004 resolved (SEC-002/004 await first CI run).
-**Result:** gitleaks clean; pip-audit clean; npm audit: 8 vulns via promptfoo 0.125.1 (latest, no safe fix). Details: `findings/2026-10-31-promptfoo-transitive-vulns.md` (SEC-001).
+**Status:** Sprint 5 Design Gate 2b (`TH-S5-1..5` resolved) & Phase 1–2 security gates cleared (`No blocking findings`) & Sprint 5 LAUNCHED (2026-11-28).
+**Result:** Phase 5 & 6 quick passes clear (no external org data, clean text/moves); Phase 7 Gate 5a verified zero-write `--help`/`--dry-run` paths, `clean --yes` scope, SEC-007 `printable()` output hygiene, and version-check help bypass test. Clean-rebuild `bobp make security-scan` passed (`gitleaks` 0 leaks, `pip-audit` clean, `npm audit` clean with 3 accepted SEC-001 advisories expiring `2027-01-29`).
 
 ### Open findings / accepted risks
 - FIXED 2026-10-31: SEC-002 (workflows pinned, least privilege, Dependabot), SEC-003 (recap Markdown escaped + test), SEC-004 (CI gitleaks job). SEC-002/004 need confirmation from the first CI run after push.

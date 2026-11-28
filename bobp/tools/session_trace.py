@@ -236,8 +236,13 @@ def print_summary(queries):
 
 
 def main():
+    from ._common import EXIT_CODES_EPILOG
+
     parser = argparse.ArgumentParser(
-        description="Extract and summarize 'via' queries from session transcripts."
+        prog="bobp session-trace",
+        description="Extract and summarize 'via' queries from session transcripts.",
+        epilog=EXIT_CODES_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "--path",

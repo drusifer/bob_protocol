@@ -1,6 +1,7 @@
 ---
 name: epic
-description: Strategic epic and shaping planning loop. Frames the business problem, defines appetite, models domain boundaries, and charts milestone roadmaps without premature line-level coding.
+description: Strategic epic and shaping planning loop. Use when framing a business problem, defining appetite, modeling domain boundaries, and charting milestone roadmaps before story slicing (*plan epic).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Epic planning and shaping loop: defines problem boundaries, appetite, domain concepts, and milestone roadmap.

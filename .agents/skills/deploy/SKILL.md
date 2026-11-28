@@ -1,6 +1,7 @@
 ---
 name: deploy
-description: Deployment and delivery work-loop. Builds, packages, releases to a target environment per docs/SDLC.md, and runs live smoke verification.
+description: Deployment and delivery work-loop. Use when building, packaging, releasing to a target environment per docs/SDLC.md, and running live smoke verification (*deploy).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Deployment and release work-loop: executes predictable builds, deploys to target environments, and runs post-deploy smoke tests.

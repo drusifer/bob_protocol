@@ -784,8 +784,13 @@ def select_suites(suites: list[dict[str, Any]], selector: str) -> list[dict[str,
 
 
 def main(argv: list[str] | None = None) -> None:
+    from ._common import EXIT_CODES_EPILOG
+
     parser = argparse.ArgumentParser(
-        description="Run the Promptfoo skill-use and artifact evaluations in each skill's evals/evals.json."
+        prog="bobp persona-eval",
+        description="Run the Promptfoo skill-use and artifact evaluations in each skill's evals/evals.json.",
+        epilog=EXIT_CODES_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("selector", nargs="?", help="Persona name or eval suite id.")

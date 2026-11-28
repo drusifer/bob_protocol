@@ -1,6 +1,7 @@
 ---
 name: build-env
-description: Set up a project's build environment with mise (mise.toml), Task (Taskfile.yml), and a thin Makefile forwarding shim alongside the language's manifest (Python pyproject.toml + .venv, JavaScript package.json + lockfile, Go, Rust, ...), and record it in docs/SDLC.md. Tank runs this for initial setup, when a language is added, to write or update the SDLC doc, and to check for drift at sprint close.
+description: Set up a project's build environment with mise (mise.toml), Task (Taskfile.yml), and a thin Makefile forwarding shim alongside the language's manifest (Python pyproject.toml + .venv, JavaScript package.json + lockfile, Go, Rust, ...), and record it in docs/SDLC.md. Use when bootstrapping a build environment, adding a language, updating docs/SDLC.md, or checking for drift at sprint close.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 One-line summary: Tank bootstraps a build environment using `mise.toml` for pinned tools, `Taskfile.yml` (go-task v3) for build instructions, a thin `Makefile` forwarding shim, and the language's own manifest isolated inside the project.
@@ -82,115 +83,10 @@ scope; removing it is their call.
 
 ## `docs/SDLC.md` — the project's source of truth for change management, owned by Tank
 
-A bootstrap leaves decisions behind: which manifest, which package manager, which targets are the
-gates. If those live only in a chat log, the next sprint re-decides them or quietly works around
-them. `docs/SDLC.md` is where they are written down. Tank writes it, Tank keeps it current, and
-other personas read it instead of guessing.
+`docs/SDLC.md` records the project's toolchain, setup, make targets, dependency rules, quality gates, change classes, release process, known deviations, and conformance check. Where generic workflow skills disagree with `docs/SDLC.md`, the SDLC wins. **Tank is the only persona who edits `docs/SDLC.md`**; others propose changes with `@Tank *devops sdlc <what and why>`.
 
-Its scope is wider than the build environment: it is **the source of truth for change
-management across the whole project** — how any change is requested, classified, approved,
-gated, integrated and recorded. Sprint and persona instructions describe the team's general
-workflow; the SDLC says how that workflow is applied in *this* repository. Where they disagree,
-the SDLC wins, and whoever notices reports it to Tank so the conflict is removed rather than
-worked around. Write the change-management section from how the project actually operates —
-ask the user about anything you cannot observe (branching, who may push, release approval)
-instead of inventing a process.
-
-**Tank is the only persona who changes the SDLC.** Anyone can propose a change
-(`@Tank *devops sdlc <what and why>`); Tank updates the mechanism and the document together.
-
-### What it contains
-
-Describe what is true in this repo today — commands a reader can run, not aspirations. Keep it
-to a page or two. Use these sections, writing "None" (with a reason) where one doesn't apply:
-
-| Section | Answers |
-|---|---|
-| **Toolchain** | Languages and pinned runtime versions; manifest and lockfile per language; package manager; where the local environment lives. |
-| **Setup** | The exact commands from clean checkout to passing tests. |
-| **Make targets** | Every standard target the project defines, what it runs, and which standard targets are deliberately absent and why. |
-| **Dependencies** | How to add, upgrade and remove one; who may; what must be committed afterwards. |
-| **Quality gates** | What must pass before work is handed off and before a sprint closes (tests, lint, type checks, secret scan), as `make` targets. |
-| **Change management** | Change classes (routine, mechanism, release, emergency) with who proposes, who approves, what must pass and where each is recorded; the request → branch → implement → gate → review → integrate → record flow; commit/push rules; rollback. |
-| **Versioning and release** | Where the version lives, when it is bumped, how an artifact is built or published. |
-| **CI / deploy** | What runs automatically and where it is configured — or that there is none. |
-| **Known deviations** | Anything that departs from the conventions in this skill, and why (e.g. a venv using system site-packages for an OS-only dependency). |
-| **Conformance check** | The project-specific list Tank runs at sprint close (see below). |
-
-End the file with a "Last verified" line: date, and the commit or sprint it was checked against.
-
-### Templates
-
-Start from a template rather than a blank page — they live with the team's other templates in
-`agents/templates/`:
-
-| Template | Use for |
-|---|---|
-| `agents/templates/_template_SDLC.python.md` | Python: `pyproject.toml` + uv + `.venv` |
-| `agents/templates/_template_SDLC.javascript.md` | JavaScript / TypeScript: `package.json` + lockfile |
-| `agents/templates/_template_SDLC.md` | Any other language, or multi-language repo |
-| `agents/templates/_template_MISE.md` / `_template_TASKFILE.md` / `_template_MAKEFILE.md` | `mise.toml`, `Taskfile.yml`, thin `Makefile` shim (each with its own rubric) |
-
-Copy the one that fits to `docs/SDLC.md`, replace every `{placeholder}`, and delete the review
-rubric at the end of the template (from `RUBRIC-START` to `RUBRIC-END`). The language
-templates come pre-filled with that ecosystem's conventional answers; correct any line that is
-not true for the repo — the document describes this project, not the convention. For a
-multi-language repo use the base template, with one Toolchain column and one set of
-`-<lang>` targets per language. When you bootstrap a language that has no template yet and
-expect to meet it again, add `agents/templates/_template_SDLC.<language>.md` in the same shape.
-
-### Review rubric
-
-Each SDLC template ends with the **SDLC rubric**: six criteria (`TRUE`, `WHOLE`, `CLEAN`,
-`CLASS`, `CHECK`, `GAPS`) for judging whether the document is useful to its readers. Check your
-draft against it before posting, and fix anything you would call Weak. Oracle applies the same
-rubric at groom in any sprint where `docs/SDLC.md` changed and rejects on any Weak. The rubric
-judges the *document*; `*devops sdlc-check` below judges whether the *project* matches it — do
-not merge the two. How rubrics work: `agents/templates/ARTIFACTS.md`.
-
-### `*devops sdlc` — create or update it
-
-- **No SDLC yet, environment already exists:** survey it (Procedure step 1), verify it from clean,
-  then document what you found. Fix gaps against this skill's checklist first if they are small;
-  list larger ones under Known deviations and raise them with the user.
-- **No SDLC and no environment:** run the bootstrap Procedure; the SDLC is its step 7.
-- **Mechanism change requested:** change the manifest/Makefile, re-verify from clean, update the
-  affected sections and the Last verified line in the same piece of work.
-
-### Sprint-start gate (blocker)
-
-No sprint is planned without `docs/SDLC.md`. Whoever starts a sprint checks that the file exists
-before the first story is written. If it is missing, planning stops and the request goes to Tank:
-`@Tank *devops sdlc` — planning resumes when Tank posts that the file is written. This is a
-check that the document exists, not a re-verification; drift is caught at close.
-
-### `*devops sdlc-check` — conformance check at sprint close
-
-Run after the last phase is reviewed and before Oracle grooms the docs, so that any correction
-lands in the documentation pass. The question is whether the sprint left the project matching
-its SDLC. Check at least:
-
-1. **Rebuild from clean.** `bobp make distclean`, `bobp make install`, `bobp make test` (and each
-   other quality-gate target the SDLC lists).
-2. **Manifest matches the code.** Every third-party import is declared in the manifest; nothing
-   was installed by hand into the environment; no new dependency file appeared beside the manifest.
-3. **Targets match the document.** Targets the SDLC lists still exist and do what it says; new
-   targets added this sprint are either documented or removed.
-4. **No side doors.** No README, doc or script introduced this sprint tells people to bypass
-   `make` or install outside the project.
-5. **Pins and ignores still hold.** Runtime pin unchanged or deliberately bumped; lockfile
-   committed if the ecosystem has one; environment directory still ignored.
-6. **Changes followed the process.** This sprint's changes were of the class they were treated
-   as, had the approval the SDLC requires, and were recorded where it says.
-7. Anything listed under the SDLC's own Conformance check section.
-
-Outcome, posted to CHAT.md:
-
-- **Conforms** → update the Last verified line and hand off to Oracle.
-- **Drift that is an improvement** (the sprint legitimately changed the mechanism) → Tank updates
-  `docs/SDLC.md` to match, then hands off.
-- **Drift that is a regression** → `@Neo *swe fix <issue>`; the sprint does not close until Tank
-  re-checks. The usual fix-loop limit applies.
+- **Sprint-start gate (blocker):** No sprint is planned without `docs/SDLC.md`. If missing, stop and post `@Tank *devops sdlc`.
+- **Authoring, templates, rubric, and sprint-close conformance check:** Read [SDLC guide](references/sdlc-guide.md) when creating, updating, or auditing `docs/SDLC.md` (`*devops sdlc`, `*devops sdlc-check`).
 
 ## Standard `Taskfile.yml` & Thin `Makefile` Contract
 
@@ -237,3 +133,9 @@ Read [language conventions](references/language-conventions.md) when creating or
 - Do not change dependency versions while migrating them into a manifest; raise upgrades separately.
 - CI, containers and deploy configuration should call the same `make` targets — wiring them is
   Tank's `*devops ci` / `*devops infra` work, not part of this skill.
+
+## Gotchas
+
+- **`bobp make distclean` wrapper caveat (SDLC §9):** `distclean` deletes `build/`, where `bobp make` keeps `build/build.out`, so the wrapper exits with `FileNotFoundError` after `distclean` succeeds. Run `distclean` and `install` as separate commands.
+- **Never overwrite an existing toolchain unasked:** Detect existing manifests, lockfiles, and traditional `Makefile`s before generating `mise.toml` / `Taskfile.yml`; switching package managers requires explicit user approval.
+- **No system-wide installs:** Never use `sudo`, `--break-system-packages`, or unpinned global installs; isolate dependencies inside `.venv/` / `node_modules/` or `mise.toml`.

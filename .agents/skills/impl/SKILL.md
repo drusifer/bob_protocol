@@ -1,6 +1,7 @@
 ---
 name: impl
-description: Feature implementation work-loop. Delivers new capabilities through Test-Driven Development (TDD), acceptance verification, and code review.
+description: Feature implementation work-loop. Use when delivering new capabilities through Test-Driven Development (TDD), acceptance verification, security review, and code review (*impl).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Feature implementation work-loop: executes bounded feature tasks using strict Test-Driven Development (TDD).

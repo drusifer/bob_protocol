@@ -2,7 +2,7 @@ TL;DR: On startup, read CHAT.md for context, load your persona's state.md, then 
 
 # BobProtocol: LLM Startup Instructions
 
-See instructions here -> `.agents/skills/init/SKILL.md` & `.agents/skills/prep-clear/SKILL.md`
+Read `.agents/skills/init/SKILL.md` on session startup or cold-start resume, and `.agents/skills/prep-clear/SKILL.md` before clearing context or switching personas.
 
 ## On Startup (Fresh Session)
 

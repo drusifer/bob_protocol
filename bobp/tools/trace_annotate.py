@@ -551,8 +551,14 @@ def sessions_for_date(project_dir: Path, target: date) -> list[tuple[str, Path]]
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__,
-                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    from ._common import EXIT_CODES_EPILOG
+
+    parser = argparse.ArgumentParser(
+        prog='bobp trace-annotate',
+        description=__doc__,
+        epilog=EXIT_CODES_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument('--date', default=str(date.today() - timedelta(days=1)))
     parser.add_argument('--out', default=None, help='Output file (default: auto by format)')
     parser.add_argument('--format', choices=['html', 'md'], default='html')

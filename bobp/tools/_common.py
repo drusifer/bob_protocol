@@ -20,6 +20,12 @@ from pathlib import Path
 
 # One-line file in <project>/agents/ recording which bobp last set the project up.
 STAMP_NAME = ".bobp-version"
+EXIT_CODES_EPILOG = (
+    "Exit codes:\n"
+    "  0  Success\n"
+    "  1  Failure\n"
+    "  2  Invalid usage or confirmation required\n"
+)
 
 
 def write_text_safely(path: Path, text: str) -> None:

@@ -1,8 +1,8 @@
 # bobp
 
 `bobp` is the packaged, installable front-end for the **Bob Protocol** — a
-multi-persona AI development framework for Claude Code, Codex, and other
-agent harnesses. It wraps the loose collection of helper scripts
+multi-persona AI development framework for Codex, Gemini CLI, Cursor, Copilot,
+and other Agent Skills harnesses. It wraps the loose collection of helper scripts
 (`chat.py`, `setup_agent_links.py`, `make.py`, …) that the protocol relies on
 into a single `bobp` command, and ships the persona/skill/template content
 needed to scaffold the framework into any project.
@@ -56,12 +56,25 @@ bobp never asks a question or changes the project on its own. The line repeats
 on every run until you run `bobp update`. Set `BOBP_NO_VERSION_CHECK=1` to
 silence it (for example in CI).
 
+### Harness discovery (skills, subagents, and `AGENTS.md`)
+
+`bobp install` and `bobp update` install all 35 skills (10 personas and 25 shared skills) as real directories under `.agents/skills/`, compile 30 harness-native subagent definitions (10 personas × 3 harnesses), and write shared instructions to a real root `AGENTS.md` with **no symlinks**:
+
+- **Harness-native persona subagents (all 10 personas, shared working memory):**
+  - **Claude Code:** `.claude/agents/<persona>.md` (native persona discovery + `--agent <persona>`)
+  - **OpenAI Codex:** `.codex/agents/<persona>.toml`
+  - **Gemini CLI:** `.gemini/agents/<persona>.md` (`kind: local`)
+  - Every generated subagent across all three harnesses reads and updates the **exact same** `agents/<persona>/state.md` and `agents/CHAT.md` (zero harness-private memory, inherited model and tools) so you can switch harnesses mid-task seamlessly. Ownership is tracked in `agents/.bobp-subagents` so custom user agents are never overwritten.
+- **Skills (`.agents/skills/`):** discovered automatically by Codex, Gemini CLI, Cursor, and Copilot. Claude Code reads its 10 personas natively from `.claude/agents/` and loads shared workflow skills from `.agents/skills/` on demand.
+- **Root instructions (`AGENTS.md`):** read natively by Codex, Cursor, and Copilot. **Gemini CLI** requires adding `"AGENTS.md"` to `context.fileName` in its own settings.
+
 ## What's in here
 
 - **`bobp/tools/`** — the actual implementation: posting to `CHAT.md`,
-  rendering the Mermaid chat diagram, installing real skills in `.agents/skills/`
-  and configuring Via MCP/capabilities, the `make` output filter, TL;DR tooling,
-  session tracing, and persona evaluation.
+  rendering the Mermaid chat diagram, conflict-safe merging of timestamped
+  Markdown logs (`bobp merge`, plus opt-in Git merge driver), installing real
+  skills in `.agents/skills/` and configuring Via MCP/capabilities, the `make`
+  output filter, TL;DR tooling, session tracing, and persona evaluation.
 - **`bobp/templates/`** — the redistributable Bob Protocol scaffolding
   (persona `SKILL.md` files, shared skills, document templates) that
   `bobp install` copies into a target project. See

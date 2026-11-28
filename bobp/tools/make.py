@@ -36,9 +36,9 @@ TAIL_LINES = 10
 CHAT_MAX = 256
 
 try:
-    from ._common import find_project_root
+    from ._common import EXIT_CODES_EPILOG, find_project_root
 except ImportError:
-    from _common import find_project_root
+    from _common import EXIT_CODES_EPILOG, find_project_root
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -110,18 +110,42 @@ def post_chat(message, project_root):
 
 # ── Argument parsing ─────────────────────────────────────────────────────────
 
+def _print_help() -> None:
+    print("usage: bobp make [-h] [-v | -vv | -vvv] <target> [make-args...]")
+    print()
+    print("Run this project's own `make <target>`, capturing full output to build/build.out")
+    print("and posting a pass/fail status summary to agents/CHAT.md.")
+    print("To run the project Makefile's own `help` target, run: bobp make help")
+    print()
+    print("options:")
+    print("  -h, --help   Show this wrapper help message and exit")
+    print("  -v           Echo stderr live")
+    print("  -vv          Echo stderr and failure lines live")
+    print("  -vvv         Echo all stdout and stderr live")
+    print()
+    print(EXIT_CODES_EPILOG, end="")
+
+
 def parse_args(argv):
     args = list(argv)
+    if args and args[0] in ("-h", "--help"):
+        _print_help()
+        sys.exit(0)
+
     verbosity = 0
 
     # Accept -v, -vv, -vvv as the first argument
     if args and re.fullmatch(r'-v{1,3}', args[0]):
         verbosity = len(args.pop(0)) - 1  # strip leading '-'
 
+    if args and args[0] in ("-h", "--help"):
+        _print_help()
+        sys.exit(0)
+
     if not args:
-        print(__doc__)
+        _print_help()
         print('Error: no make target specified.', file=sys.stderr)
-        sys.exit(1)
+        sys.exit(2)
 
     return verbosity, args[0], args[1:]
 

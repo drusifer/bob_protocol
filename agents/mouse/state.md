@@ -2,42 +2,41 @@
 
 ## Context
 ### Recent Decisions
-- Sprint 2 (Version-Aware bobp, Tier 2) completed 2026-11-01: `bobp --version/-V`, `agents/.bobp-version` stamp, notify-only stderr notice for stale/unstamped projects (owner chose: no prompt, no auto-update, repeat every run). Artifacts: `docs/sprints/USER_STORIES_SPRINT2.md`, `docs/sprints/UAT_PLAN_SPRINT2.md`, `task.md`, `agents/chat_archive/CHAT_SPRINT_2.md`.
-- One fix loop (SEC-005, symlink/FIFO stamp hang), resolved in one round.
-- Nothing committed, version still 0.2.0 (release is the owner's decision, SDLC s6/s7).
+- 2026-11-28: Archived Sprint 3 unfinished board to `docs/sprints/TASK_SPRINT3.md` and created Sprint 4 task board in root `task.md` (`bobp merge`, 3 phases + Stage 3 closeout, no Phase 0).
+- Morpheus Step 3a Plan Review passed (`rubric PLAN: SIZE=PASS GATE=PASS VERIF=PASS ALIGN=PASS OWNER=PASS LEVEL=PASS`).
 
 ### Key Findings
-None yet
+- Sprint 4 stories (`STORY-MRG-1..3`) and architecture (`ADR-S4-1..5`) passed Smith Gate 1, Smith Gate 2, and Switch Gate 2b.
 
 ### Important Notes
-None yet
+- Every coding phase tracks Trin UAT → Switch Gate 5a → Morpheus Review.
 
 ## Current Task
-**Status:** Sprint 2 complete; awaiting owner direction on commit/release and backlog
-**Assigned to:** N/A
-**Started:** N/A
+**Status:** Sprint 5 COMPLETE & LAUNCHED (2026-11-28; Sprints 3 & 4 also complete and archived under `docs/sprints/TASK_SPRINT*.md`).
+**Assigned to:** Mouse (`*sm`) — sprint closed
+**Started:** 2026-11-28
 
 ### Task Description
-No active task
+Coordinated Sprint 3 (`Spec-Compliant Skills, No Links`) Phases 5–7 and Stage 3 Closeout to completion alongside Sprint 4 (`bobp merge`).
 
 ### Progress
-- [ ] Not started
+- [x] Phase 5: Size limits, `references/`, enforcing tests (Bob/Trin/Switch/Morpheus).
+- [x] Phase 6: Descriptions, `## Gotchas`, conditional pointers, `compatibility`, cleanup (Bob/Trin/Switch/Morpheus).
+- [x] Phase 7: Agent-safe CLI (`--help`, `--dry-run`, `clean --yes`, exit codes) (Neo/Trin/Switch/Morpheus).
+- [x] Stage 3 Closeout: Tank clean rebuild & SDLC §3/§7/§9 updates (C.1), Oracle doc grooming & `CHAT_SPRINT_3` archive (C.2), Smith E2E UX `APPROVE` (C.3), Team Retro (C.4), Cypher `*pm launch SPRINT_3` (C.5).
 
 ### Blockers
-None
-
-### Oracle Consultations
-None yet
+None.
 
 ## Next Steps
 ### Immediate Next Action
-Cold start: read `task.md` (Sprint 2, all done) and the retro backlog in `agents/chat_archive/CHAT_SPRINT_2.md`. Plan Sprint 3 only when the owner picks backlog items.
+Await owner direction on git commit, version bump/release (`docs/SDLC.md` §6/§7), or next sprint.
 
 ### Waiting On
-Owner: (1) commit and/or release 0.2.x, (2) whether to stamp this repo's own `agents/` via `bobp update .`.
+User direction.
 
 ### Planned Work
-- [ ] Backlog: changelog home; fix `bobp make distclean` wrapper crash (SDLC s9); add hostile-file cases to the UAT checklist; optional quiet-after-first-notice mode.
+- [ ] Next sprint planning when requested by owner.
 
 ---
-*Last updated: 2026-11-01 (Sprint 2 close)*
+*Last updated: 2026-11-28*

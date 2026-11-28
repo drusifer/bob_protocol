@@ -34,7 +34,7 @@ TLDR:
     phase's messages. Messages before the first marker form a "Planning"
     section. A log with no markers archives exactly as before (one diagram),
     so projects that don't use markers are unaffected.
-    Reuses parse_blocks()/BLOCK_SEP from chat_merge.py rather than
+    Reuses parse_blocks()/BLOCK_SEP from merge.py rather than
     reimplementing CHAT.md's header/blocks split.
 """
 
@@ -50,11 +50,11 @@ from pathlib import Path
 try:
     from . import chat_diagram
     from ._common import find_project_root
-    from .chat_merge import BLOCK_SEP, parse_blocks
+    from .merge import BLOCK_SEP, parse_blocks
 except ImportError:
     import chat_diagram
     from _common import find_project_root
-    from chat_merge import BLOCK_SEP, parse_blocks
+    from merge import BLOCK_SEP, parse_blocks
 
 MERMAID_RENDER_DIR = Path(__file__).resolve().parent / "mermaid_render"
 
@@ -282,8 +282,14 @@ def combine(archive_dir: Path, out_md: Path, out_diagram: Path) -> tuple[Path, P
 
 
 def main() -> None:
+    from ._common import EXIT_CODES_EPILOG
+
     parser = argparse.ArgumentParser(
-        description="Archive CHAT.md under a sprint moniker, or combine all archives.")
+        prog="bobp chat-report",
+        description="Archive CHAT.md under a sprint moniker, or combine all archives.",
+        epilog=EXIT_CODES_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("--moniker", help="Sprint moniker, e.g. SPRINT_1 (archive mode)")
     parser.add_argument("--summary", help="Summary text for the archive heading (archive mode)")
     parser.add_argument("--summary-file", help="Read the summary from a file instead of --summary")

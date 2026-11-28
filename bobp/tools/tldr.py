@@ -16,6 +16,7 @@ TLDR:
     Used by `bobp tldr`.
 """
 
+import argparse
 import json
 import os
 import shutil
@@ -24,9 +25,9 @@ import sys
 from pathlib import Path
 
 try:
-    from ._common import find_project_root
+    from ._common import EXIT_CODES_EPILOG, find_project_root
 except ImportError:
-    from _common import find_project_root
+    from _common import EXIT_CODES_EPILOG, find_project_root
 
 TARGET_EXTENSIONS = {'.py', '.md'}
 
@@ -135,7 +136,13 @@ def discover_files(project_root: Path) -> list[str]:
     return sorted(p for p in paths if p and Path(p).suffix in TARGET_EXTENSIONS)
 
 
-def main():
+def main(argv: "list[str] | None" = None):
+    argparse.ArgumentParser(
+        prog="bobp tldr",
+        description="Print TLDR: block contents from all indexed .py and .md files in this project.",
+        epilog=EXIT_CODES_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    ).parse_args(argv)
     project_root = find_project_root()
     files = discover_files(project_root)
     if not files:

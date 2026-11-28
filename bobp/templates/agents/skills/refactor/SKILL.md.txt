@@ -1,6 +1,7 @@
 ---
 name: refactor
-description: Technical debt and code hygiene work-loop. Restructures existing code to improve maintainability, reduce complexity, and eliminate debt with zero behavioral change.
+description: Technical debt and code hygiene work-loop. Use when restructuring existing code to improve maintainability, reduce complexity, and eliminate debt with zero behavioral change (*refactor).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Technical debt and refactoring work-loop: restructures code with zero behavioral change under strict test protection.

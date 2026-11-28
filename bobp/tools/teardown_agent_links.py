@@ -189,7 +189,14 @@ def uninstall_codex_via_mcp(project_root: Path, dry_run: bool) -> bool:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Remove symlinks created by setup_agent_links.py")
+    from ._common import EXIT_CODES_EPILOG
+
+    parser = argparse.ArgumentParser(
+        prog="bobp teardown-agent-links",
+        description="Remove legacy symlinks created by older bobp versions",
+        epilog=EXIT_CODES_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("--dry-run", action="store_true", help="Print what would be removed without deleting anything")
     parser.add_argument("--keep-mcp", action="store_true", help="Skip via MCP uninstall")
     return parser.parse_args()

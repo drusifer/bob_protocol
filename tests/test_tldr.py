@@ -96,7 +96,7 @@ class MainTests(unittest.TestCase):
                     patch.object(tldr, "discover_files",
                                  return_value=[str(root / "has.py"), str(root / "none.md")]), \
                     redirect_stdout(out):
-                tldr.main()
+                tldr.main([])
 
         text = out.getvalue()
         self.assertIn("has.py:\nOne-line summary of the module.\nTLDR:\n    First line of the block.", text)
@@ -107,7 +107,7 @@ class MainTests(unittest.TestCase):
         with patch.object(tldr, "find_project_root", return_value=Path("/p")), \
                 patch.object(tldr, "discover_files", return_value=[]), redirect_stderr(err):
             with self.assertRaises(SystemExit):
-                tldr.main()
+                tldr.main([])
         self.assertIn("indexed no .py or .md files", err.getvalue())
 
     def test_module_does_not_import_via_as_a_library(self):

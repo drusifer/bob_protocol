@@ -72,20 +72,19 @@
   ```
 
 ## Current Task
-**Status:** Completed (`*ora groom` pass)
-**Assigned to:** Oracle
-**Started:** 2026-11-23
-**Completed:** 2026-11-23
+**Status:** Sprint 5 Task C.2 complete — doc grooming (`rubric SDLC` all PASS) & `CHAT_SPRINT_5` report archived; Sprint 5 LAUNCHED (2026-11-28).
+**Assigned to:** Oracle (`*ora`) — complete
+**Started:** 2026-11-28
+**Completed:** 2026-11-28
 
 ### Task Description
-Full documentation grooming pass (`*ora groom`) following Sprint 3 `.agents/skills/` migration, Tank `mise`/`Task`/thin-`Makefile` updates, and new build templates.
+Sprint 3 Stage 3 Closeout Task C.2: reviewed Tank's updated `docs/SDLC.md` against `SDLC` rubric, synchronized all living docs and packaged mirrors (`README.md`, `bobp/templates/README.md`, `docs/PERSONA_EVALUATION.md`, `STARTUP.md`, `bob-tools/SKILL.md`, `init/SKILL.md`), and archived Sprint 3 chat via `bobp chat-report --moniker SPRINT_3`.
 
 ### Progress
-- [x] Verified zero misplaced/orphan root `.md` files and confirmed `RUBRIC-START` blocks appear only in authoring templates (`agents/templates/` + `bobp/templates/agents/templates/`).
-- [x] Fixed 37 broken links in `agents/DOCUMENTATION_INDEX.md` (+ packaged mirror), updated persona count to 10, added all 22 template entries, and refreshed `setup-agent-links` / `build-env` descriptions.
-- [x] Fixed broken Judge link in `docs/PERSONA_EVALUATION.md` (+ packaged mirror).
-- [x] Re-synchronized drifted mirrors (`STARTUP.md`, `SHORTHAND_GUIDE.md`) and refreshed `README.md`, `bobp/templates/README.md`, and `docs/WALKTHROUGH.md` (+ mirror) for `.agents/skills/` no-links layout, Switch, and Tank's `mise`/`Task` build standard.
-- [x] Flagged `docs/SDLC.md` Sprint 3 updates (layout, per-skill `evals/evals.json`, workspace evaluator) for Tank (`@Tank *devops sdlc`, already tracked as Task C.1 in `task.md`).
+- [x] Reviewed `docs/SDLC.md` against `agents/templates/_template_SDLC.md`: `rubric SDLC: TRUE=PASS WHOLE=PASS CLEAN=PASS CLASS=PASS CHECK=PASS GAPS=PASS`.
+- [x] Updated `docs/PERSONA_EVALUATION.md`, `bob-tools/SKILL.md`, `STARTUP.md`, `init/SKILL.md` + packaged mirrors, and added `STORY-SKL-3 AC5` harness-discovery notes to `README.md` & `bobp/templates/README.md`.
+- [x] Verified zero diff across all mirrored docs and zero stale `catalog.json` references in code/living docs.
+- [x] Archived Sprint 3 chat to `agents/chat_archive/CHAT_SPRINT_3.md` & `.diagram.md`.
 
 ### Blockers
 None.
@@ -95,13 +94,13 @@ None.
 
 ## Next Steps
 ### Immediate Next Action
-Awaiting user direction. Grooming pass is complete and all mirrors/links verified. If resuming Sprint 3, next pending phases in `task.md` are Phase 5–6 (Bob), Phase 7 (Neo), and Closeout (Tank C.1 SDLC update → Oracle C.2 chat report).
+Await user direction for next sprint or release documentation.
 
 ### Waiting On
 User direction.
 
 ### Planned Work
-- [ ] Sprint 3 Closeout Task C.2 (`bobp chat-report --moniker SPRINT_3`) once Sprint 3 Phases 5–7 and Tank's C.1 SDLC check complete.
+- [ ] Next sprint documentation/grooming when requested.
 
 ---
-*Last updated: 2026-11-23*
+*Last updated: 2026-11-28*

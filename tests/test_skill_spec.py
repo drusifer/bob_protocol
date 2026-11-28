@@ -10,9 +10,18 @@ import unittest
 from pathlib import Path
 
 TEMPLATES = Path(__file__).resolve().parent.parent / "bobp" / "templates" / "agents"
+LIVE_SKILLS = Path(__file__).resolve().parent.parent / ".agents" / "skills"
+AGENTS_DIR = Path(__file__).resolve().parent.parent / "agents"
 
 ALLOWED_KEYS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+TRIGGER_RE = re.compile(r"\buse\s+(?:when|for|to)\b", re.IGNORECASE)
+BOBP_CMD_RE = re.compile(
+    r"(?:`bobp\s|\bbobp\s+(?:chat|make|merge|tldr|install|update|pull|clean|diff|"
+    r"setup-agent-links|teardown-agent-links|persona-eval|prep-tldr|"
+    r"session-trace|trace-annotate|chat-diagram|chat-report))"
+)
+GOTCHAS_REQUIRED = ("make", "security", "bob-protocol", "sprint", "build-env")
 
 
 def packaged_skills() -> "list[tuple[str, Path]]":
@@ -78,6 +87,50 @@ class PackagedSkillSpecTests(unittest.TestCase):
                     for target in re.findall(r"references/([\w.-]+\.md)", line):
                         self.assertRegex(line.lower(), r"\bwhen\b|\bif\b")
                         self.assertTrue((path.parent / "references" / target).is_file())
+
+    def test_description_states_when_to_use(self):
+        for directory, path in packaged_skills():
+            with self.subTest(skill=directory):
+                keys, _ = frontmatter(path)
+                self.assertRegex(
+                    keys.get("description", ""),
+                    TRIGGER_RE,
+                    f"{directory}: description should state when to use the skill",
+                )
+
+    def test_bobp_skills_declare_compatibility(self):
+        for directory, path in packaged_skills():
+            with self.subTest(skill=directory):
+                keys, body = frontmatter(path)
+                if BOBP_CMD_RE.search(body):
+                    compat = keys.get("compatibility", "")
+                    self.assertIn("bobp", compat.lower())
+                    self.assertRegex(compat.lower(), r"install\s+bobp")
+
+    def test_no_bare_pointers_removed_agents_tools_or_third_party_org(self):
+        for directory, path in packaged_skills():
+            with self.subTest(skill=directory):
+                text = path.read_text(encoding="utf-8")
+                self.assertNotIn("see instructions here", text.lower())
+                self.assertNotIn("agents/tools", text)
+                self.assertNotIn("investaco", text.lower())
+
+    def test_required_gotchas_sections_present(self):
+        by_name = dict(packaged_skills())
+        for name in GOTCHAS_REQUIRED:
+            with self.subTest(skill=name):
+                _, body = frontmatter(by_name[name])
+                self.assertRegex(body, r"(?m)^## Gotchas\s*$")
+
+    def test_canonical_and_packaged_skills_match(self):
+        for directory, path in packaged_skills():
+            with self.subTest(skill=directory):
+                live = LIVE_SKILLS / directory / "SKILL.md"
+                self.assertTrue(live.is_file(), f"missing live skill {live}")
+                self.assertEqual(live.read_text(encoding="utf-8"), path.read_text(encoding="utf-8"))
+
+    def test_no_stray_pycache_under_agents(self):
+        self.assertEqual(list(AGENTS_DIR.rglob("__pycache__")), [])
 
 
 if __name__ == "__main__":

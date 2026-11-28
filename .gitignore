@@ -1,9 +1,10 @@
 # Environment variables (contains secrets)
 .env
 .history
-# User-specific Claude Code config (contains local paths and tokens)
+# User-specific Claude Code config (keep .claude/agents/ tracked, ignore local settings/worktrees/cache)
 .claude.json
-.claude
+.claude/*
+!.claude/agents/
 # Python virtual environment
 .venv/
 __pycache__/

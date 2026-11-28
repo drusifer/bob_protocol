@@ -1,6 +1,7 @@
 ---
 name: uat
-description: User acceptance and usability verification work-loop. Executes end-to-end acceptance scenarios, audits UX ergonomics, and signs off against business criteria.
+description: User acceptance and usability verification work-loop. Use when executing end-to-end acceptance scenarios, auditing UX ergonomics, and signing off against business criteria (*uat).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 User acceptance testing (UAT) and usability verification work-loop: validates whole-system customer experience and acceptance criteria.

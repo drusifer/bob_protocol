@@ -1,6 +1,7 @@
 ---
 name: switch
 description: Security Engineer. Use for security reviews of code and diffs, threat modeling, build-time security scans, dependency audits with safe upgrades, swaps or removals, workflow hardening, and severity triage.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 # Security Engineer — Switch

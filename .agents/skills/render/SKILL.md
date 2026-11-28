@@ -1,6 +1,7 @@
 ---
 name: render
-description: Render CLI usage guide for InvestaCo. All Render operations must be backed by static config (render.yaml) or a repeatable Makefile target — never one-off CLI commands. Covers deploys, logs, blueprint validation, and env var management.
+description: Render CLI usage guide for declarative cloud deployments. Use when deploying, tailing logs, validating render.yaml blueprints, or managing Render env vars through repeatable Makefile/Taskfile targets.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp) and the Render CLI for live operations.
 ---
 
 One-line summary: All Render operations go through `make <target>` or `render.yaml` — never raw one-off CLI commands.
@@ -11,7 +12,7 @@ TLDR:
     Env vars have no CLI support in v2.20.0 — use `bobp make dump-render-env` and `bobp make push-key` (Python/requests scripts).
     render.yaml is the source of truth for service config; CLI is for operations (deploys, logs, sessions).
 
-# Render CLI — InvestaCo
+# Render CLI Guide
 
 ## Triggers
 
@@ -63,15 +64,15 @@ Upgrade: download from https://github.com/render-oss/cli/releases
 ```yaml
 services:
   - type: web
-    name: InvestaCo
+    name: my-service
     runtime: python
     plan: starter
-    buildCommand: pip install .
-    startCommand: gunicorn wsgi:app
+    buildCommand: uv sync --locked
+    startCommand: uv run gunicorn wsgi:app
     envVars:
-      - key: FIELD_ENCRYPTION_KEY
+      - key: APP_SECRET_KEY
         sync: false          # must be set manually via bobp make push-key
-      - key: FLASK_ENV
+      - key: APP_ENV
         value: production    # hardcoded — do not override in dashboard
       ...
 ```

@@ -1,6 +1,7 @@
 ---
 name: personas
 description: Switch to a specialized agent persona or invoke a persona directly. Use to delegate work to the right specialist.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 One-line summary: Switch to or invoke a specialist persona to delegate work to the right agent.

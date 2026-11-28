@@ -1,6 +1,7 @@
 ---
 name: bloop
-description: Work-Loops conductor and catalog. Autonomous multi-persona execution loops for features (*impl), bugfixes (*fix), refactoring (*refactor), spikes (*spike), UAT (*uat), deployments (*deploy), and agent/skill evaluation (*judge).
+description: Work-Loops conductor and catalog. Use when running autonomous multi-persona execution loops for features (*impl), bugfixes (*fix), refactoring (*refactor), spikes (*spike), UAT (*uat), deployments (*deploy), or agent/skill evaluation (*judge).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Top-level conductor and catalog for Bob Work-Loops (autonomous multi-persona execution chains).

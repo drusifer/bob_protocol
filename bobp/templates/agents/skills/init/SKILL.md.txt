@@ -1,6 +1,7 @@
 ---
 name: init
-description: Initialize or resume a BobProtocol session. Validates agent discovery links, reads team chat context and project capabilities, handles cold-start recovery, posts persona status, and displays the command quick reference.
+description: Initialize or resume a BobProtocol session. Use when starting a fresh session (*init) or recovering from a context clear (*resume) to verify setup, read team chat and capabilities, and post readiness.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Formalizes the initialization and session resume procedure across all supported AI harnesses.
@@ -19,7 +20,7 @@ TLDR:
 
 ## Overview
 
-The `init` skill governs the entry lifecycle for any AI agent entering a BobProtocol workspace. It guarantees that working memory, discovery symlinks, team chat context, and project capability declarations are reconciled consistently regardless of the host environment (Google Antigravity, Gemini CLI, Claude Code, OpenAI Codex, Cursor, GitHub Copilot).
+The `init` skill governs the entry lifecycle for any AI agent entering a BobProtocol workspace. It guarantees that working memory, project setup (`.agents/skills/` and root `AGENTS.md`), team chat context, and project capability declarations are reconciled consistently across supported Agent Skills harnesses.
 
 ---
 

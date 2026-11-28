@@ -1,6 +1,7 @@
 ---
 name: spike
-description: Research spike work-loop. Executes a timeboxed, disposable technical investigation to eliminate uncertainty, benchmark solutions, or evaluate feasibility without committing production code.
+description: Research spike work-loop. Use when running a timeboxed, disposable technical investigation to eliminate uncertainty, benchmark options, or evaluate feasibility without committing production code (*spike).
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 Research spike work-loop: timeboxed, throwaway technical exploration producing an architectural finding or decision.

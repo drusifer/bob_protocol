@@ -1,6 +1,7 @@
 ---
 name: make
-description: Wrap a project's own `make <target>` with output capture (build/build.out) and a CHAT.md status post. Use `bobp make [-v|-vv|-vvv] <target>` — never bare `make`.
+description: Wrap a project's own `make <target>` with output capture (build/build.out) and a CHAT.md status post. Use when running any Makefile target via `bobp make [-v|-vv|-vvv] <target>` instead of bare `make`.
+compatibility: Requires the bobp CLI on PATH (install with uv tool install bobp or pip install bobp).
 ---
 
 One-line summary: Run `bobp make <target>` — never call bare `make`, never call `bobp.tools.make` directly, never pipe the output.
@@ -110,3 +111,9 @@ Use `-v` or `-vv` when you need to see what went wrong during the run. Use
 Add a normal target to this project's own Makefile, the same way you would in any other repo —
 no special `ifdef` block, no second file to keep in sync. `bobp make <target>` picks it up
 automatically since it just runs `make <target>` under the hood.
+
+## Gotchas
+
+- **`bobp make distclean` wrapper crash (SDLC §9):** `distclean` deletes `build/`, where `bobp make` writes `build/build.out`, so the wrapper ends with `FileNotFoundError` after `distclean` itself finishes. Run `distclean` and `install` as separate commands (the next `bobp make` recreates `build/`).
+- **Flag ordering:** Verbosity flags (`-v`, `-vv`, `-vvv`) must precede the target name (`bobp make -vv test`, not `bobp make test -vv`).
+- **Build-log replacement in `CHAT.md`:** Consecutive `bobp make` status entries overwrite the final build message in `agents/CHAT.md` rather than appending, keeping chat noise low.

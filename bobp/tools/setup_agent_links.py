@@ -156,7 +156,7 @@ def migrate_legacy_layout(agents_dir: Path) -> list[str]:
 # not ours to remove.
 LEGACY_TOOL_SCRIPTS = {
     "chat.py": "bobp chat",
-    "chat_merge.py": "bobp chat-merge",
+    "chat_merge.py": "bobp merge",
     "mkf.py": "bobp make",
     "prep_tldr.py": "bobp prep-tldr",
     "session_trace.py": "bobp session-trace",
@@ -460,7 +460,20 @@ def ensure_gitignore_entries(project_root: Path) -> bool:
     return True
 
 
-def main():
+def main(argv: "list[str] | None" = None):
+    import argparse
+
+    from ._common import EXIT_CODES_EPILOG
+
+    argparse.ArgumentParser(
+        prog="bobp setup-agent-links",
+        description=(
+            "Configure Via index/MCP, Codex Via MCP, agents/PROJECT.md, and .gitignore "
+            "for this BobProtocol project (creates no symlinks)."
+        ),
+        epilog=EXIT_CODES_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    ).parse_args(argv)
     print("🔧 Agent Discovery Links Setup")
     print("=" * 40)
 
@@ -498,9 +511,10 @@ def main():
 
     print("\n✅ Done. No links were created.")
     print("\nSkills are real directories in .agents/skills/ (Codex, Gemini CLI, Cursor, Copilot);")
-    print("the shared instructions are AGENTS.md at the project root.")
-    print("Claude Code does not read .agents/skills/; Gemini CLI also needs")
-    print('context.fileName to include "AGENTS.md" in its own settings.')
+    print("harness-native persona subagents live in .claude/agents/, .codex/agents/, and .gemini/agents/")
+    print("(all sharing agents/<persona>/state.md and agents/CHAT.md), and shared instructions are")
+    print("AGENTS.md at the project root. Claude Code discovers the 10 personas in .claude/agents/")
+    print("(not .agents/skills/); Gemini CLI also needs context.fileName to include \"AGENTS.md\".")
     if via_index_ok:
         print("  • via index (.via/index.db)")
     if via_ok:

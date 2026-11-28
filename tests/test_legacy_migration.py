@@ -269,8 +269,11 @@ class RootAgentsMdTests(unittest.TestCase):
     def test_install_writes_a_real_root_agents_md_and_no_links(self):
         _install(self.root)
         agents_md = self.root / "AGENTS.md"
+        bob_agents = self.root / "agents" / "BOB_AGENTS.md"
         self.assertTrue(agents_md.is_file() and not agents_md.is_symlink())
-        self.assertIn("Core Operational Principles", agents_md.read_text())
+        self.assertIn("agents/BOB_AGENTS.md", agents_md.read_text())
+        self.assertTrue(bob_agents.is_file() and not bob_agents.is_symlink())
+        self.assertIn("Core Operational Principles", bob_agents.read_text())
         self.assertFalse((self.root / "agents" / "AGENTS.md").exists())
         self.assertFalse(os.path.lexists(self.root / "agents" / "AGENT.md"))
         self.assertEqual(_symlinks(self.root), [])
@@ -279,18 +282,26 @@ class RootAgentsMdTests(unittest.TestCase):
         (self.root / "AGENTS.md").write_text("project rules\n")
         _install(self.root)
         self.assertEqual((self.root / "AGENTS.md").read_text(), "project rules\n")
+        self.assertIn("Core Operational Principles", (self.root / "agents" / "BOB_AGENTS.md").read_text())
 
     def test_update_never_overwrites_an_edited_root_agents_md(self):
         _install(self.root)
         (self.root / "AGENTS.md").write_text("edited by the project\n")
+        (self.root / "agents" / "BOB_AGENTS.md").write_text("stale bob rules\n")
         _update(self.root)
         self.assertEqual((self.root / "AGENTS.md").read_text(), "edited by the project\n")
+        self.assertIn(
+            "Core Operational Principles", (self.root / "agents" / "BOB_AGENTS.md").read_text()
+        )
 
     def test_update_creates_root_agents_md_when_missing(self):
         _install(self.root)
         (self.root / "AGENTS.md").unlink()
         _update(self.root)
-        self.assertIn("Core Operational Principles", (self.root / "AGENTS.md").read_text())
+        self.assertIn("agents/BOB_AGENTS.md", (self.root / "AGENTS.md").read_text())
+        self.assertIn(
+            "Core Operational Principles", (self.root / "agents" / "BOB_AGENTS.md").read_text()
+        )
 
     def test_dangling_legacy_symlink_is_replaced_with_the_packaged_text(self):
         (self.root / "agents").mkdir()
@@ -298,7 +309,35 @@ class RootAgentsMdTests(unittest.TestCase):
         _update(self.root)
         agents_md = self.root / "AGENTS.md"
         self.assertTrue(agents_md.is_file() and not agents_md.is_symlink())
-        self.assertIn("Core Operational Principles", agents_md.read_text())
+        self.assertIn("agents/BOB_AGENTS.md", agents_md.read_text())
+        self.assertIn(
+            "Core Operational Principles", (self.root / "agents" / "BOB_AGENTS.md").read_text()
+        )
+
+    def test_ensure_root_agents_md_notes_missing_bob_agents_pointer(self):
+        (self.root / "AGENTS.md").write_text("custom rules only\n")
+        actions = _skill_layout.ensure_root_agents_md(self.root, _bob_manage.templates_dir())
+        self.assertTrue(any(a.kind == "note" and a.path == "AGENTS.md" for a in actions))
+
+        (self.root / "AGENTS.md").write_text("Read agents/BOB_AGENTS.md first.\n")
+        actions2 = _skill_layout.ensure_root_agents_md(self.root, _bob_manage.templates_dir())
+        self.assertFalse(any(a.kind == "note" for a in actions2))
+
+    def test_place_bob_agents_md_refuses_symlinks_and_supports_dry_run(self):
+        (self.root / "agents").mkdir()
+        outside = Path(self._tmp.name) / "outside.md"
+        outside.write_text("DO NOT TOUCH\n")
+        os.symlink(outside, self.root / "agents" / "BOB_AGENTS.md")
+        with self.assertRaises(_skill_layout.SkillLayoutError):
+            _skill_layout.place_bob_agents_md(self.root, _bob_manage.templates_dir())
+        self.assertEqual(outside.read_text(), "DO NOT TOUCH\n")
+
+        (self.root / "agents" / "BOB_AGENTS.md").unlink()
+        actions = _skill_layout.place_bob_agents_md(
+            self.root, _bob_manage.templates_dir(), dry_run=True
+        )
+        self.assertEqual(len(actions), 1)
+        self.assertFalse((self.root / "agents" / "BOB_AGENTS.md").exists())
 
     def test_agents_copy_that_differs_from_a_real_root_file_is_kept_and_reported(self):
         (self.root / "AGENTS.md").write_text("root version\n")

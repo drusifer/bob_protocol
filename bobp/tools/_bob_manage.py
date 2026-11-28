@@ -54,8 +54,8 @@ def _ignore_skill_sources(tmpl_agents: Path):
         here = Path(directory)
         skipped = {name for name in names if name == "SKILL.md.txt"}
         if here == tmpl_agents:
-            # Skills are placed by _skill_layout; AGENTS.md goes to the project root.
-            skipped.update({"skills", "AGENTS.md", "AGENT.md"} & set(names))
+            # Skills & BOB_AGENTS.md are placed by _skill_layout; root AGENTS.md is a starter pointer.
+            skipped.update({"skills", "AGENTS.md", "AGENT.md", "BOB_AGENTS.md"} & set(names))
         elif here.parent == tmpl_agents:
             skipped.update(name for name in names if name in ("evals", "references"))
         return skipped
@@ -190,6 +190,7 @@ def install(target: Path, force: bool = False) -> None:
     print("Generating harness subagent definitions (.claude, .codex, .gemini)...")
     _print_lines(_subagent_layout.summarize(_place_subagents_or_exit(target, tmpl)))
     _warn_hidden_subagents(target)
+    _print_lines(_skill_layout.describe(_skill_layout.place_bob_agents_md(target, tmpl)))
     _print_lines(_skill_layout.describe(_skill_layout.ensure_root_agents_md(target, tmpl)))
     _run_setup_agent_links(target)
     write_stamp(target / "agents")
@@ -228,6 +229,9 @@ def update(target: Path, *, dry_run: bool = False) -> None:
         subagent_actions = _place_subagents_or_exit(target, tmpl, dry_run=True)
         _print_lines(_subagent_layout.summarize(subagent_actions, dry_run=True))
         _warn_hidden_subagents(target)
+        _print_lines(
+            _skill_layout.describe(_skill_layout.place_bob_agents_md(target, tmpl, dry_run=True))
+        )
         _print_lines(_skill_layout.describe(_skill_layout.ensure_root_agents_md(target, tmpl, dry_run=True)))
         owned = _skill_layout.read_manifest(agents_dir) if agents_dir.is_dir() else set()
         _print_lines(
@@ -258,6 +262,7 @@ def update(target: Path, *, dry_run: bool = False) -> None:
     print("Updating harness subagent definitions (.claude, .codex, .gemini)...")
     _print_lines(_subagent_layout.summarize(_place_subagents_or_exit(target, tmpl)))
     _warn_hidden_subagents(target)
+    _print_lines(_skill_layout.describe(_skill_layout.place_bob_agents_md(target, tmpl)))
     _print_lines(_skill_layout.describe(_skill_layout.ensure_root_agents_md(target, tmpl)))
     owned = _skill_layout.read_manifest(agents_dir)
     _print_lines(_skill_layout.describe(_skill_layout.remove_claude_skill_copies(target, owned)))
@@ -308,6 +313,18 @@ def pull(src: Path, *, dry_run: bool = False) -> None:
             dry_run=dry_run,
         )
     updated += _merge_existing(src / "agents" / "templates", agents_dir / "templates", dry_run=dry_run)
+    bob_agents_rel = _skill_layout.BOB_AGENTS_MD.as_posix()
+    src_bob_agents = _subagent_layout._read_regular_safe(
+        src, bob_agents_rel, _skill_layout.MAX_AGENTS_MD_BYTES
+    )
+    dst_bob_agents = _subagent_layout._read_regular_safe(
+        root, bob_agents_rel, _skill_layout.MAX_AGENTS_MD_BYTES
+    )
+    if src_bob_agents is not None and dst_bob_agents is not None:
+        dst_path = root / _skill_layout.BOB_AGENTS_MD
+        if not dry_run:
+            write_text_safely(dst_path, src_bob_agents)
+        updated.append(dst_path)
     updated += _subagent_layout.pull_subagents(src, root, dry_run=dry_run)
     if dry_run:
         for path in updated:
@@ -379,5 +396,14 @@ def diff(target: Path) -> None:
                 print(f"Files differ: {rel}")
         else:
             print(f"Only in template: {rel}")
+    bob_agents_rel = _skill_layout.BOB_AGENTS_MD.as_posix()
+    tmpl_bob_agents = (tmpl / _skill_layout.BOB_AGENTS_MD).read_text(encoding="utf-8")
+    tgt_bob_agents = _subagent_layout._read_regular_safe(
+        target, bob_agents_rel, _skill_layout.MAX_AGENTS_MD_BYTES
+    )
+    if tgt_bob_agents is None:
+        print(f"Only in template: {bob_agents_rel}")
+    elif tgt_bob_agents != tmpl_bob_agents:
+        print(f"Files differ: {bob_agents_rel}")
     _print_lines(_subagent_layout.diff_subagents(target, tmpl))
     print("\nDone.")

@@ -66,7 +66,7 @@ silence it (for example in CI).
   - **Gemini CLI:** `.gemini/agents/<persona>.md` (`kind: local`)
   - Every generated subagent across all three harnesses reads and updates the **exact same** `agents/<persona>/state.md` and `agents/CHAT.md` (zero harness-private memory, inherited model and tools) so you can switch harnesses mid-task seamlessly. Ownership is tracked in `agents/.bobp-subagents` so custom user agents are never overwritten.
 - **Skills (`.agents/skills/`):** discovered automatically by Codex, Gemini CLI, Cursor, and Copilot. Claude Code reads its 10 personas natively from `.claude/agents/` and loads shared workflow skills from `.agents/skills/` on demand.
-- **Root instructions (`AGENTS.md`):** read natively by Codex, Cursor, and Copilot. **Gemini CLI** requires adding `"AGENTS.md"` to `context.fileName` in its own settings.
+- **Root instructions (`AGENTS.md`) + `agents/BOB_AGENTS.md`:** `bobp install` / `bobp update` always keep `agents/BOB_AGENTS.md` up to date with Bob Protocol's operating rules, while root `AGENTS.md` is owned by the project and points agents to `agents/BOB_AGENTS.md` (never overwritten on update). Read natively by Codex, Cursor, and Copilot; **Gemini CLI** requires adding `"AGENTS.md"` to `context.fileName` in its own settings.
 
 ## What's in here
 

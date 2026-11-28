@@ -405,11 +405,12 @@ via: {via_state}
 - When `disabled`: personas use standard file and shell tools.
 
 ## Project Standards
-Follow the repository instructions in `AGENTS.md` and persona state files.
+Follow the repository instructions in `AGENTS.md`, `agents/BOB_AGENTS.md`, and persona state files.
 
 ## Key Artifacts
 - `agents/CHAT.md` — Team communication log
-- `AGENTS.md` — Shared agent instructions (project root)
+- `AGENTS.md` — Project agent instructions (points to `agents/BOB_AGENTS.md`)
+- `agents/BOB_AGENTS.md` — Upgradable Bob Protocol operating rules (owned by `bobp`)
 - `.agents/skills/` — Persona and shared skills
 - `agents/<name>/` — Persona state and instructions
 
@@ -512,9 +513,10 @@ def main(argv: "list[str] | None" = None):
     print("\n✅ Done. No links were created.")
     print("\nSkills are real directories in .agents/skills/ (Codex, Gemini CLI, Cursor, Copilot);")
     print("harness-native persona subagents live in .claude/agents/, .codex/agents/, and .gemini/agents/")
-    print("(all sharing agents/<persona>/state.md and agents/CHAT.md), and shared instructions are")
-    print("AGENTS.md at the project root. Claude Code discovers the 10 personas in .claude/agents/")
-    print("(not .agents/skills/); Gemini CLI also needs context.fileName to include \"AGENTS.md\".")
+    print("(all sharing agents/<persona>/state.md and agents/CHAT.md). Bob Protocol operating rules")
+    print("live in agents/BOB_AGENTS.md (updated by `bobp update`), referenced from root AGENTS.md.")
+    print("Claude Code discovers the 10 personas in .claude/agents/ (not .agents/skills/);")
+    print('Gemini CLI also needs context.fileName to include "AGENTS.md".')
     if via_index_ok:
         print("  • via index (.via/index.db)")
     if via_ok:

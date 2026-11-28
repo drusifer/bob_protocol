@@ -370,6 +370,13 @@ def migrate_legacy(project: Path, tmpl: Path, dry_run: bool = False) -> "list[Ac
 
 
 MAX_AGENTS_MD_BYTES = 1024 * 1024
+BOB_AGENTS_MD = Path("agents") / "BOB_AGENTS.md"
+ROOT_AGENTS_POINTER_TEXT = (
+    "# Project Agent Instructions\n\n"
+    "Read and follow [`agents/BOB_AGENTS.md`](agents/BOB_AGENTS.md) for all Bob Protocol "
+    "operating rules, state management, persona roster, and core principles.\n\n"
+    "<!-- Add project-specific instructions below; `bobp update` never overwrites this file. -->\n"
+)
 
 
 def _read_regular(path: Path) -> "str | None":
@@ -382,20 +389,54 @@ def _read_regular(path: Path) -> "str | None":
         return None
 
 
-def ensure_root_agents_md(project: Path, tmpl: Path, dry_run: bool = False) -> "list[Action]":
-    """Make the shared instructions a real <project>/AGENTS.md without overwriting the project's.
+def place_bob_agents_md(project: Path, tmpl: Path, dry_run: bool = False) -> "list[Action]":
+    """Install or refresh bobp-owned `agents/BOB_AGENTS.md` from packaged templates.
 
-    - missing: written from the packaged text;
-    - a legacy symlink to agents/AGENTS.md: replaced by a regular file with the same text;
-    - an existing regular file: left untouched;
+    Unlike root `AGENTS.md` (owned by the project), `agents/BOB_AGENTS.md` is owned
+    by bobp and always updated so upgrades deliver new Bob Protocol operating rules.
+    Refuses to write through a symlinked `agents/` or symlinked/non-regular target.
+    """
+    agents_dir = project / "agents"
+    if agents_dir.is_symlink():
+        raise SkillLayoutError(
+            f"{printable(str(agents_dir))} is a symlink; refusing to write BOB_AGENTS.md through it."
+        )
+    if agents_dir.exists() and not agents_dir.is_dir():
+        raise SkillLayoutError(f"{printable(str(agents_dir))} exists and is not a directory.")
+
+    dest = project / BOB_AGENTS_MD
+    if dest.is_symlink():
+        raise SkillLayoutError(
+            f"{printable(str(dest))} is a symlink; refusing to overwrite it."
+        )
+    if dest.exists() and not dest.is_file():
+        raise SkillLayoutError(f"{printable(str(dest))} exists and is not a regular file.")
+
+    packaged = (tmpl / BOB_AGENTS_MD).read_text(encoding="utf-8")
+    rel = BOB_AGENTS_MD.as_posix()
+    kind = "replace" if dest.exists() else "write"
+    note = "refreshed Bob Protocol instructions" if kind == "replace" else "Bob Protocol instructions"
+    if not dry_run:
+        agents_dir.mkdir(parents=True, exist_ok=True)
+        write_text_safely(dest, packaged)
+    return [Action(kind, rel, note)]
+
+
+def ensure_root_agents_md(project: Path, tmpl: Path, dry_run: bool = False) -> "list[Action]":
+    """Ensure project-owned `<project>/AGENTS.md` exists and points to `agents/BOB_AGENTS.md`.
+
+    - missing: written as a minimal starter pointer to `agents/BOB_AGENTS.md`;
+    - a legacy symlink to `agents/AGENTS.md`: replaced by a regular file with the same text
+      (or the starter pointer when dangling);
+    - an existing regular file: left untouched (notes if it does not reference `agents/BOB_AGENTS.md`);
     - a symlink anywhere else: left alone and reported.
-    A leftover agents/AGENTS.md is removed when it matches the root file and kept
+    A leftover `agents/AGENTS.md` is removed when it matches the root file and kept
     (and reported) when it differs.
     """
+    del tmpl  # Root starter text is ROOT_AGENTS_POINTER_TEXT; full rules live in agents/BOB_AGENTS.md.
     root = project / "AGENTS.md"
     legacy = project / "agents" / "AGENTS.md"
     actions: "list[Action]" = []
-    packaged = (tmpl / "agents" / "AGENTS.md").read_text(encoding="utf-8")
 
     if root.is_symlink():
         if not _points_into_agents(root, project):
@@ -404,7 +445,7 @@ def ensure_root_agents_md(project: Path, tmpl: Path, dry_run: bool = False) -> "
         text = _read_regular(legacy)
         actions.append(Action("convert", "AGENTS.md", "legacy link replaced by a real file"))
         if not dry_run:
-            write_text_safely(root, text if text is not None else packaged)
+            write_text_safely(root, text if text is not None else ROOT_AGENTS_POINTER_TEXT)
         if text is not None:
             actions.append(Action("remove", "agents/AGENTS.md", "content moved to AGENTS.md"))
             if not dry_run:
@@ -412,9 +453,9 @@ def ensure_root_agents_md(project: Path, tmpl: Path, dry_run: bool = False) -> "
         return actions
 
     if not os.path.lexists(root):
-        actions.append(Action("write", "AGENTS.md", "from the packaged instructions"))
+        actions.append(Action("write", "AGENTS.md", "starter pointer to agents/BOB_AGENTS.md"))
         if not dry_run:
-            write_text_safely(root, packaged)
+            write_text_safely(root, ROOT_AGENTS_POINTER_TEXT)
         return actions
 
     root_text = _read_regular(root)
@@ -428,6 +469,14 @@ def ensure_root_agents_md(project: Path, tmpl: Path, dry_run: bool = False) -> "
             actions.append(
                 Action("skipped", "agents/AGENTS.md", "differs from AGENTS.md; merge by hand")
             )
+    if root_text is not None and "agents/BOB_AGENTS.md" not in root_text:
+        actions.append(
+            Action(
+                "note",
+                "AGENTS.md",
+                "does not mention agents/BOB_AGENTS.md; add a pointer so upgraded Bob Protocol rules are read",
+            )
+        )
     return actions
 
 
@@ -464,6 +513,8 @@ _VERBS = {
     "move": "Moved",
     "convert": "Converted",
     "write": "Wrote",
+    "replace": "Updated",
+    "note": "Note",
     "skipped": "Skipped",
 }
 
